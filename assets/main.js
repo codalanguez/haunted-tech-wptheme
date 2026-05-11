@@ -37,7 +37,10 @@
     const progressFill = document.getElementById('hero-progress-fill');
     let index = 0;
     const total = slides.length;
-    const DURATION = 5000; // ms per slide
+    // Read duration + autoplay from Customizer-localized options if present.
+    const OPTS = (typeof HauntedTechOpts !== 'undefined') ? HauntedTechOpts : {};
+    const DURATION = (OPTS.sliderDuration && OPTS.sliderDuration > 0) ? Number(OPTS.sliderDuration) : 5000; // ms per slide
+    const AUTOPLAY = ('sliderAutoplay' in OPTS) ? Boolean(Number(OPTS.sliderAutoplay)) : true;
     let progressStart = Date.now();
     let paused = false;
     let rafId;
@@ -52,11 +55,13 @@
       progressStart = Date.now();
     }
     function tick() {
-      if (!paused) {
+      if (!paused && AUTOPLAY) {
         const elapsed = Date.now() - progressStart;
         const pct = Math.min(100, (elapsed / DURATION) * 100);
         if (progressFill) progressFill.style.width = pct + '%';
         if (elapsed >= DURATION) go(index + 1);
+      } else if (!AUTOPLAY && progressFill) {
+        progressFill.style.width = '0%';
       }
       rafId = requestAnimationFrame(tick);
     }

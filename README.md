@@ -165,13 +165,9 @@ If you create a page with the slug `about`, its post content becomes the bio dis
 
 ### Newsletter
 
-The form in the homepage is a placeholder. Drop in your provider's embed:
+Configured via **Appearance → Customize → Haunted Tech → Newsletter**. Paste the embed code from your provider (Mailchimp, ConvertKit, Substack, Beehiiv, etc.) and it replaces the placeholder form inside the "Join the Signal" callout.
 
-- **Mailchimp** — paste their embed in `front-page.php` inside the `.newsletter-form` slot
-- **ConvertKit** — same
-- **Substack** — same
-
-A future iteration could expose this as a theme-options setting.
+If left empty, a non-functional placeholder form renders, plus a small admin-only link nudging you to *Connect your provider*.
 
 ---
 
@@ -193,14 +189,25 @@ Sections have stable IDs (`#books`, `#web-novels`, `#services`, `#gallery`, `#ne
 
 ---
 
+## Theme options (Appearance → Customize → Haunted Tech)
+
+| Section | Setting | Default | Notes |
+|---|---|---|---|
+| Newsletter   | Embed code      | empty    | Raw HTML/script from your provider; replaces the placeholder form |
+| Hero Slider  | Slide duration  | 5000 ms  | Range 1500–30000; advances each slide after this many ms |
+| Hero Slider  | Auto-rotate     | on       | Uncheck to require manual navigation only |
+
+Slider settings are localized to the front-end JS as `window.HauntedTechOpts.{sliderDuration,sliderAutoplay}` — `assets/main.js` reads them on init.
+
 ## Roadmap
 
-- [ ] Replace static `parts/gallery-static.php` with a `gallery_item` CPT + WP_Query loop
-- [ ] Add **block patterns** for each section so they're insertable from the block editor on any page
-- [ ] Migrate from classic PHP to FSE block theme (templates in `/templates/*.html`)
-- [ ] Theme-options panel for newsletter provider config + slider rotation duration
+- [ ] Replace `inc/gallery-static.php` with a `gallery_item` CPT + WP_Query loop
+- [x] Block patterns for each section so they're insertable from the block editor
+- [x] FSE block theme (templates in `/templates/*.html`, parts in `/parts/*.html`)
+- [x] Theme-options panel for newsletter provider config + slider rotation duration
 - [ ] Optional Patreon WordPress plugin integration so `access_level` actually paywalls
 - [ ] Self-host the Google Fonts for performance + GDPR
+- [ ] Wire `Connect your provider` admin link into a guided onboarding flow
 
 ---
 
