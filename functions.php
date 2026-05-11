@@ -20,7 +20,7 @@
 
 if (!defined('ABSPATH')) { exit; }
 
-define('HAUNTED_TECH_VERSION', '0.8.0');
+define('HAUNTED_TECH_VERSION', '0.9.0');
 define('HAUNTED_TECH_DIR', get_template_directory());
 define('HAUNTED_TECH_URI', get_template_directory_uri());
 
@@ -70,9 +70,13 @@ add_action('wp_enqueue_scripts', function () {
         HAUNTED_TECH_VERSION
     );
 
+    // Self-hosted Font Awesome 6.5.1 (Free). 1 css + 8 webfont files in
+    // assets/fontawesome/. ttf files are leftover fallbacks; browsers prefer
+    // woff2. Total bundle ~1 MB, but unicode-range gating + browser cache
+    // means a typical page costs ~150 KB on first load and ~0 KB thereafter.
     wp_enqueue_style(
         'font-awesome',
-        'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css',
+        HAUNTED_TECH_URI . '/assets/fontawesome/all.min.css',
         [],
         '6.5.1'
     );
@@ -348,3 +352,6 @@ require_once HAUNTED_TECH_DIR . '/inc/render-callbacks.php';
 require_once HAUNTED_TECH_DIR . '/inc/blocks.php';
 require_once HAUNTED_TECH_DIR . '/inc/patterns.php';
 require_once HAUNTED_TECH_DIR . '/inc/rest.php';
+if (is_admin()) {
+    require_once HAUNTED_TECH_DIR . '/inc/onboarding.php';
+}

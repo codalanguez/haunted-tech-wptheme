@@ -2409,3 +2409,39 @@
   }
 
   
+/* =========================================================
+ * v0.9.0 — author byline on book hero
+ * ========================================================= */
+.book-byline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0 0 1.2rem;
+  padding: 0.3rem 0.7rem 0.3rem 0.3rem;
+  background: rgba(15, 13, 10, 0.5);
+  border: 1px solid var(--border-dim);
+  text-decoration: none;
+  transition: all 0.25s;
+}
+.book-byline:hover {
+  border-color: var(--gold);
+  background: rgba(255,212,0,0.05);
+  box-shadow: 0 0 12px rgba(255,212,0,0.2);
+}
+.book-byline-portrait {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--gold);
+  box-shadow: 0 0 8px rgba(255,212,0,0.4);
+  display: block;
+}
+.book-byline-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 0.95rem;
+  color: var(--bone);
+  letter-spacing: 0.04em;
+}
+.book-byline:hover .book-byline-text { color: var(--gold); }

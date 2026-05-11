@@ -244,7 +244,7 @@ function ht_render_crt_monitor($attributes = []) {
               ?>
               <div class="crt-row" id="webnovel-<?php echo esc_attr($wn->post_name); ?>">
                 <div class="crt-status <?php echo esc_attr($status_class); ?>"><?php echo $status_dot; ?></div>
-                <a class="crt-title" href="<?php echo esc_url(get_permalink($wn)); ?>"><?php echo esc_html($slug); ?></a>
+                <a class="crt-title" href="<?php echo esc_url(get_permalink($wn)); ?>" data-open-webnovel="<?php echo esc_attr($wn->post_name); ?>"><?php echo esc_html($slug); ?></a>
                 <div class="crt-tag">[<?php echo esc_html(strtoupper($genre)); ?>]</div>
                 <div class="crt-meta">ch <?php echo (int)$chapter_count; ?> / <?php echo $total ? (int)$total : '??'; ?></div>
                 <div class="crt-state <?php echo esc_attr($status_class); ?>"><?php echo esc_html(strtoupper($status)); ?></div>
@@ -668,6 +668,12 @@ function ht_render_single_book($attributes = []) {
 
           <h1 class="book-title" data-text="<?php echo esc_attr(get_the_title($post_id)); ?>"><?php echo esc_html(get_the_title($post_id)); ?></h1>
 
+          <?php /* Author byline — small portrait + name, click → opens About modal */ ?>
+          <a href="#about" data-open-about class="book-byline" aria-label="<?php esc_attr_e('About the author', 'haunted-tech'); ?>">
+            <img src="<?php echo esc_url(haunted_tech_logo_url()); ?>" alt="" class="book-byline-portrait">
+            <span class="book-byline-text">by <?php bloginfo('name'); ?></span>
+          </a>
+
           <?php if ($subtitle): ?><div class="book-subtitle"><?php echo esc_html($subtitle); ?></div><?php endif; ?>
 
           <?php
@@ -913,6 +919,73 @@ function ht_render_book_modal_shell($attributes = []) {
     </div>
     <?php
     return ob_get_clean();
+}
+
+/* ============================================================
+ * WEB NOVEL MODAL — same shell pattern, REST-fetched
+ * ============================================================ */
+function ht_render_webnovel_modal_shell($attributes = []) {
+    ob_start(); ?>
+    <div class="book-modal webnovel-modal" id="webnovel-modal" role="dialog" aria-modal="true" aria-hidden="true">
+      <div class="book-modal-frame">
+        <div class="book-modal-topbar">
+          <div class="book-modal-breadcrumb">
+            <a href="<?php echo esc_url(home_url('/#web-novels')); ?>">Web Novels</a> <span>&rsaquo;</span> <span id="webnovel-modal-title">…</span>
+          </div>
+          <button class="book-modal-close" data-close-webnovel aria-label="Close web novel">&times;</button>
+        </div>
+        <div class="book-modal-body" id="webnovel-modal-body"></div>
+      </div>
+    </div>
+    <?php
+    return ob_get_clean();
+}
+
+/**
+ * "Also by Coda" for a web novel — pulls 4 other web novels, excludes current.
+ */
+function ht_render_also_by_webnovels($attributes = []) {
+    $current_id = get_the_ID();
+    $others = get_posts([
+        'post_type'      => 'webnovel',
+        'posts_per_page' => 4,
+        'post_status'    => 'publish',
+        'post__not_in'   => $current_id ? [$current_id] : [],
+        'orderby'        => 'date',
+        'order'          => 'DESC',
+    ]);
+    if (empty($others)) return '';
+    ob_start(); ?>
+    <section class="also-by-section">
+      <div class="section-header">
+        <h2 class="section-title">Other Serials</h2>
+        <div class="section-meta">More live channels</div>
+      </div>
+      <div class="also-by-grid">
+        <?php foreach ($others as $wn):
+            $status  = get_field('status', $wn->ID) ?: 'ongoing';
+            $tagline = get_field('tagline', $wn->ID);
+        ?>
+          <a href="<?php echo esc_url(get_permalink($wn)); ?>" data-open-webnovel="<?php echo esc_attr($wn->post_name); ?>" class="also-by-card">
+            <div class="also-by-cover">
+              <div class="also-by-cover-title"><?php echo esc_html(get_the_title($wn)); ?></div>
+            </div>
+            <div class="ab-meta">
+              <div class="ab-tag"><?php echo esc_html(ucfirst($status)); ?></div>
+              <div class="ab-title"><?php echo esc_html(get_the_title($wn)); ?></div>
+              <?php if ($tagline): ?><div class="ab-tagline"><?php echo esc_html($tagline); ?></div><?php endif; ?>
+            </div>
+          </a>
+        <?php endforeach; ?>
+      </div>
+    </section>
+    <?php
+    return ob_get_clean();
+}
+
+function ht_render_webnovel_modal_content() {
+    return ht_render_single_webnovel()
+         . ht_render_also_by_webnovels();
 }
 
 /* ============================================================

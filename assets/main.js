@@ -309,3 +309,67 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   })();
+
+  // ===== v0.9 — Web novel modal (parity with book modal) =====
+  (function(){
+    const modal = document.getElementById('webnovel-modal');
+    if (!modal) return;
+    const body  = document.getElementById('webnovel-modal-body');
+    const title = document.getElementById('webnovel-modal-title');
+    const close = modal.querySelector('[data-close-webnovel]');
+    const REST_ROOT = (window.wpApiSettings && window.wpApiSettings.root) || (location.origin + '/wp-json/');
+    const ENDPOINT  = REST_ROOT + 'haunted-tech/v1/webnovel-modal/';
+    const cache = new Map();
+    async function openWN(slug, fromHash) {
+      if (!slug) return;
+      try {
+        let data = cache.get(slug);
+        if (!data) {
+          const resp = await fetch(ENDPOINT + encodeURIComponent(slug));
+          if (!resp.ok) throw new Error('Web novel fetch failed: ' + resp.status);
+          data = await resp.json();
+          cache.set(slug, data);
+        }
+        body.innerHTML = data.html;
+        if (title) title.textContent = data.title || '';
+        modal.classList.add('active');
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('book-modal-open');
+        body.scrollTop = 0;
+        if (!fromHash) history.replaceState(null, '', '#webnovel-' + slug);
+        // Close conflicting modals
+        const bookModal = document.getElementById('book-modal');
+        if (bookModal && bookModal.classList.contains('active')) {
+          bookModal.classList.remove('active');
+          bookModal.setAttribute('aria-hidden', 'true');
+        }
+      } catch (e) {
+        console.warn('[haunted-tech] webnovel modal load failed', e);
+      }
+    }
+    function shut() {
+      modal.classList.remove('active');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('book-modal-open');
+      if (location.hash.startsWith('#webnovel-')) {
+        history.replaceState(null, '', location.pathname + location.search);
+      }
+    }
+    document.addEventListener('click', e => {
+      const t = e.target.closest('[data-open-webnovel]');
+      if (!t) return;
+      e.preventDefault();
+      openWN(t.dataset.openWebnovel);
+    });
+    close.addEventListener('click', shut);
+    modal.addEventListener('click', e => { if (e.target === modal) shut(); });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && modal.classList.contains('active')) shut();
+    });
+    const m = location.hash.match(/^#webnovel-([\w-]+)/);
+    if (m) openWN(m[1], true);
+    window.addEventListener('hashchange', () => {
+      const m2 = location.hash.match(/^#webnovel-([\w-]+)/);
+      if (m2) openWN(m2[1], true);
+    });
+  })();
