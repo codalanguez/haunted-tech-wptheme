@@ -20,7 +20,7 @@
 
 if (!defined('ABSPATH')) { exit; }
 
-define('HAUNTED_TECH_VERSION', '0.3.0');
+define('HAUNTED_TECH_VERSION', '0.4.0');
 define('HAUNTED_TECH_DIR', get_template_directory());
 define('HAUNTED_TECH_URI', get_template_directory_uri());
 
@@ -60,11 +60,14 @@ add_action('after_setup_theme', function () {
  * 2. Enqueue styles & scripts
  * ------------------------------------------------------------------------- */
 add_action('wp_enqueue_scripts', function () {
+    // Self-hosted Google Fonts (better performance, no third-party request, GDPR-friendly).
+    // Source files live in assets/fonts/. To swap weights, regenerate via a tool like
+    // google-webfonts-helper or edit assets/fonts/fonts.css directly.
     wp_enqueue_style(
         'haunted-tech-fonts',
-        'https://fonts.googleapis.com/css2?family=Forum&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=VT323&display=swap',
+        HAUNTED_TECH_URI . '/assets/fonts/fonts.css',
         [],
-        null
+        HAUNTED_TECH_VERSION
     );
 
     wp_enqueue_style(
