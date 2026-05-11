@@ -165,9 +165,15 @@ If you create a page with the slug `about`, its post content becomes the bio dis
 
 ### Newsletter
 
-Configured via **Appearance → Customize → Haunted Tech → Newsletter**. Paste the embed code from your provider (Mailchimp, ConvertKit, Substack, Beehiiv, etc.) and it replaces the placeholder form inside the "Join the Signal" callout.
+Configured via **Appearance → Customize → Haunted Tech → Newsletter**. Pick a provider:
 
-If left empty, a non-functional placeholder form renders, plus a small admin-only link nudging you to *Connect your provider*.
+| Provider | What you provide | What renders |
+|---|---|---|
+| Placeholder | nothing | Non-functional demo form + admin-only "Connect your provider" link |
+| **Substack** | your Substack URL (e.g. `https://yourname.substack.com`) | Substack's official iframe widget — handles double-opt-in, confirmation, etc. |
+| Custom embed | raw HTML/script from any other provider | Inserted as-is inside the callout (Mailchimp, ConvertKit, Beehiiv, ...) |
+
+The Substack URL field tolerates trailing slashes and accidental `/embed` suffixes — the theme normalizes the URL before building the iframe.
 
 ---
 

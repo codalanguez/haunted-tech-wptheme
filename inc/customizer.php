@@ -32,18 +32,51 @@ add_action('customize_register', function (\WP_Customize_Manager $wp_customize) 
         'priority'    => 10,
     ]);
 
+    /* Provider mode — pick how to render the form */
+    $wp_customize->add_setting('haunted_tech_newsletter_provider', [
+        'type'              => 'option',
+        'capability'        => 'edit_theme_options',
+        'default'           => 'placeholder',
+        'sanitize_callback' => 'haunted_tech_sanitize_provider',
+    ]);
+    $wp_customize->add_control('haunted_tech_newsletter_provider', [
+        'type'    => 'select',
+        'section' => 'haunted_tech_newsletter',
+        'label'   => __('Provider', 'haunted-tech'),
+        'choices' => [
+            'placeholder' => __('— Placeholder form —', 'haunted-tech'),
+            'substack'    => __('Substack (paste your URL below)', 'haunted-tech'),
+            'embed'       => __('Custom embed (paste HTML below)', 'haunted-tech'),
+        ],
+    ]);
+
+    /* Substack URL — used when provider = substack */
+    $wp_customize->add_setting('haunted_tech_substack_url', [
+        'type'              => 'option',
+        'capability'        => 'edit_theme_options',
+        'default'           => '',
+        'sanitize_callback' => 'haunted_tech_sanitize_substack_url',
+    ]);
+    $wp_customize->add_control('haunted_tech_substack_url', [
+        'type'        => 'url',
+        'section'     => 'haunted_tech_newsletter',
+        'label'       => __('Substack URL', 'haunted-tech'),
+        'description' => __('Your Substack home (e.g. https://codalanguez.substack.com). The theme builds the iframe embed automatically.', 'haunted-tech'),
+        'input_attrs' => ['placeholder' => 'https://yourname.substack.com'],
+    ]);
+
+    /* Custom embed code — used when provider = embed */
     $wp_customize->add_setting('haunted_tech_newsletter_embed', [
         'type'              => 'option',
         'capability'        => 'edit_theme_options',
         'default'           => '',
         'sanitize_callback' => 'haunted_tech_sanitize_embed_html',
     ]);
-
     $wp_customize->add_control('haunted_tech_newsletter_embed', [
         'type'        => 'textarea',
         'section'     => 'haunted_tech_newsletter',
-        'label'       => __('Embed code', 'haunted-tech'),
-        'description' => __('HTML/script provided by your newsletter platform. Inserted as-is inside the newsletter callout.', 'haunted-tech'),
+        'label'       => __('Custom embed code', 'haunted-tech'),
+        'description' => __('Raw HTML/script from Mailchimp, ConvertKit, Beehiiv, etc. Used when Provider = Custom embed.', 'haunted-tech'),
         'input_attrs' => ['rows' => 10, 'placeholder' => '<form action="https://yourprovider.com/subscribe" method="post">…</form>'],
     ]);
 
@@ -99,16 +132,63 @@ function haunted_tech_sanitize_duration($value) {
 function haunted_tech_sanitize_embed_html($value) {
     /* Allow form/script-bearing markup since newsletter embeds need it.
      * Only theme-options-capable users can save the field, so XSS surface is
-     * limited to admins. We strip nothing but normalize CRLF. */
+     * limited to admins. We strip nothing but normalize encoding. */
     $value = (string) $value;
     return wp_check_invalid_utf8($value, true);
+}
+
+function haunted_tech_sanitize_provider($value) {
+    $allowed = ['placeholder', 'substack', 'embed'];
+    return in_array($value, $allowed, true) ? $value : 'placeholder';
+}
+
+function haunted_tech_sanitize_substack_url($value) {
+    $value = esc_url_raw(trim((string)$value));
+    /* Tolerate the user pasting either https://name.substack.com or
+     * https://name.substack.com/embed — we'll resolve to the embed form below. */
+    return $value;
 }
 
 /* ---------------------------------------------------------------------------
  * Public accessors used by render callbacks + main.js
  * ------------------------------------------------------------------------- */
+function haunted_tech_get_newsletter_provider() {
+    $p = get_option('haunted_tech_newsletter_provider', 'placeholder');
+    $allowed = ['placeholder', 'substack', 'embed'];
+    return in_array($p, $allowed, true) ? $p : 'placeholder';
+}
+
+function haunted_tech_get_substack_url() {
+    return (string) get_option('haunted_tech_substack_url', '');
+}
+
+/**
+ * Returns whatever HTML should render INSIDE the newsletter callout.
+ * Empty string means "use the built-in placeholder form".
+ */
 function haunted_tech_get_newsletter_embed() {
-    return (string) get_option('haunted_tech_newsletter_embed', '');
+    $provider = haunted_tech_get_newsletter_provider();
+
+    if ($provider === 'substack') {
+        $url = haunted_tech_get_substack_url();
+        if (!$url) return '';
+        /* Normalize: strip trailing slashes, drop /embed if user added it. */
+        $base = rtrim(preg_replace('#/embed/?$#', '', $url), '/');
+        $embed_src = $base . '/embed';
+        /* Substack provides a sandboxed iframe widget that handles the form,
+         * confirmation, and double-opt-in. ~320px is enough for the input + button. */
+        return sprintf(
+            '<iframe src="%s" class="newsletter-embed-frame newsletter-embed-frame--substack" loading="lazy" frameborder="0" scrolling="no" referrerpolicy="no-referrer-when-downgrade" title="%s" style="width:100%%;border:1px solid var(--gold);background:var(--void);min-height:320px;"></iframe>',
+            esc_url($embed_src),
+            esc_attr__('Subscribe via Substack', 'haunted-tech')
+        );
+    }
+
+    if ($provider === 'embed') {
+        return (string) get_option('haunted_tech_newsletter_embed', '');
+    }
+
+    return ''; // placeholder mode
 }
 function haunted_tech_get_slider_duration() {
     return (int) get_option('haunted_tech_slider_duration', 5000);
