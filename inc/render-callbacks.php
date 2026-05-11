@@ -99,6 +99,8 @@ function ht_render_site_header($attributes = []) {
 function ht_render_hero_slider($attributes = []) {
     $hero_slides = haunted_tech_get_hero_slides(3);
     ob_start(); ?>
+    <span id="hero" class="ht-anchor" aria-hidden="true"></span>
+    <span id="top"  class="ht-anchor" aria-hidden="true"></span>
     <div class="hero block-hero" id="hero-slider">
       <div class="hero-watermark" aria-hidden="true">
         <img src="<?php echo esc_url(haunted_tech_logo_url()); ?>" alt="">
@@ -181,7 +183,7 @@ function ht_render_bookshelf($attributes = []) {
                 $width   = 60 + (($i * 7) % 25);
                 $height  = 380 + (($i * 11) % 60);
             ?>
-            <a href="<?php echo esc_url(get_permalink($book)); ?>" class="spine <?php echo esc_attr($variant); ?>" style="width:<?php echo (int)$width; ?>px; height:<?php echo (int)$height; ?>px;">
+            <a id="book-<?php echo esc_attr($book->post_name); ?>" href="<?php echo esc_url(get_permalink($book)); ?>" class="spine <?php echo esc_attr($variant); ?>" style="width:<?php echo (int)$width; ?>px; height:<?php echo (int)$height; ?>px;">
               <div class="spine-ornament">&#9670; &#9670;</div>
               <div class="spine-title"><?php echo esc_html(get_the_title($book)); ?></div>
               <div class="spine-author"><?php echo esc_html($series); ?></div>
@@ -240,7 +242,7 @@ function ht_render_crt_monitor($attributes = []) {
                   $status_class = in_array($status, ['ongoing','complete','hiatus'], true) ? $status : 'ongoing';
                   $slug         = sanitize_title(get_the_title($wn)) . '/';
               ?>
-              <div class="crt-row">
+              <div class="crt-row" id="webnovel-<?php echo esc_attr($wn->post_name); ?>">
                 <div class="crt-status <?php echo esc_attr($status_class); ?>"><?php echo $status_dot; ?></div>
                 <a class="crt-title" href="<?php echo esc_url(get_permalink($wn)); ?>"><?php echo esc_html($slug); ?></a>
                 <div class="crt-tag">[<?php echo esc_html(strtoupper($genre)); ?>]</div>
@@ -281,7 +283,7 @@ function ht_render_services($attributes = []) {
         <div class="section-meta">Commissions Open &mdash; Limited Slots</div>
       </div>
       <div class="services-grid">
-        <div class="service-card">
+        <div class="service-card" id="service-art">
           <div class="service-icon-area"><div class="service-icon">&#10048;</div></div>
           <div class="service-meta">
             <div class="service-eyebrow">Bespoke</div>
@@ -290,7 +292,7 @@ function ht_render_services($attributes = []) {
             <a href="#gallery-art" class="service-btn">View Portfolio</a>
           </div>
         </div>
-        <div class="service-card">
+        <div class="service-card" id="service-covers">
           <div class="service-icon-area"><div class="service-icon">&#10065;</div></div>
           <div class="service-meta">
             <div class="service-eyebrow">Premade &amp; Custom</div>
@@ -299,7 +301,7 @@ function ht_render_services($attributes = []) {
             <a href="#gallery-covers" class="service-btn">View Portfolio</a>
           </div>
         </div>
-        <div class="service-card">
+        <div class="service-card" id="service-ai">
           <div class="service-icon-area"><div class="service-icon">&#9635;</div></div>
           <div class="service-meta">
             <div class="service-eyebrow">AI-Assisted</div>
@@ -858,7 +860,7 @@ function ht_render_single_chapter($attributes = []) {
  * ============================================================ */
 function ht_render_site_footer($attributes = []) {
     ob_start(); ?>
-    <footer class="block-footer">
+    <footer class="block-footer" id="footer">
       <a href="<?php echo esc_url(home_url('/')); ?>" class="footer-logo" aria-label="<?php bloginfo('name'); ?>">
         <img src="<?php echo esc_url(haunted_tech_logo_url()); ?>" alt="<?php echo esc_attr(get_bloginfo('name')); ?> logo">
       </a>

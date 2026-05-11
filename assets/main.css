@@ -1811,3 +1811,30 @@
     .bookshelf { gap: 4px; flex-wrap: wrap; min-height: auto; }
     .spine { min-height: 320px; }
   }
+
+  /* =========================================================
+   * v0.7.0 — additional in-page anchors
+   * Generic scroll-offset so any :target lands clear of the
+   * sticky social bar + header (~140 px combined). Applies to
+   * built-in section IDs and per-content anchors alike.
+   * ========================================================= */
+  :target,
+  .ht-anchor,
+  [id^="book-"],
+  [id^="webnovel-"],
+  [id^="service-"],
+  [id="footer"],
+  [id="hero"],
+  [id="top"] {
+    scroll-margin-top: 140px;
+  }
+  /* Visually inert anchor markers (used at the top of the hero
+   * to expose #hero and #top without altering layout). */
+  .ht-anchor {
+    display: block;
+    height: 0;
+    width: 0;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
