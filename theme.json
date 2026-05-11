@@ -11,20 +11,20 @@
       "defaultGradients": false,
       "defaultPalette": false,
       "palette": [
-        { "name": "Void",         "slug": "void",         "color": "#000000" },
-        { "name": "Onyx",         "slug": "onyx",         "color": "#050403" },
-        { "name": "Obsidian",     "slug": "obsidian",     "color": "#0F0D0A" },
-        { "name": "Panel",        "slug": "panel",        "color": "#14110C" },
-        { "name": "Gold",         "slug": "gold",         "color": "#FFD400" },
-        { "name": "Gold Bright",  "slug": "gold-bright",  "color": "#FFE875" },
-        { "name": "Gold Deep",    "slug": "gold-deep",    "color": "#B89200" },
-        { "name": "Red",          "slug": "red",          "color": "#E50914" },
-        { "name": "Red Bright",   "slug": "red-bright",   "color": "#FF1F2E" },
-        { "name": "Red Deep",     "slug": "red-deep",     "color": "#5A0A12" },
-        { "name": "Teal",         "slug": "teal",         "color": "#1A4550" },
-        { "name": "Cyan",         "slug": "cyan",         "color": "#00FFE0" },
-        { "name": "Bone",         "slug": "bone",         "color": "#F5EFD8" },
-        { "name": "Bone Dim",     "slug": "bone-dim",     "color": "#8C8775" }
+        { "name": "Void",        "slug": "void",        "color": "#000000" },
+        { "name": "Onyx",        "slug": "onyx",        "color": "#050403" },
+        { "name": "Obsidian",    "slug": "obsidian",    "color": "#0F0D0A" },
+        { "name": "Panel",       "slug": "panel",       "color": "#14110C" },
+        { "name": "Gold",        "slug": "gold",        "color": "#FFD400" },
+        { "name": "Gold Bright", "slug": "gold-bright", "color": "#FFE875" },
+        { "name": "Gold Deep",   "slug": "gold-deep",   "color": "#B89200" },
+        { "name": "Red",         "slug": "red",         "color": "#E50914" },
+        { "name": "Red Bright",  "slug": "red-bright",  "color": "#FF1F2E" },
+        { "name": "Red Deep",    "slug": "red-deep",    "color": "#5A0A12" },
+        { "name": "Teal",        "slug": "teal",        "color": "#1A4550" },
+        { "name": "Cyan",        "slug": "cyan",        "color": "#00FFE0" },
+        { "name": "Bone",        "slug": "bone",        "color": "#F5EFD8" },
+        { "name": "Bone Dim",    "slug": "bone-dim",    "color": "#8C8775" }
       ]
     },
     "typography": {
@@ -32,7 +32,8 @@
         {
           "fontFamily": "Forum, serif",
           "name": "Forum",
-          "slug": "forum"
+          "slug": "forum",
+          "fontFace": [{ "fontFamily": "Forum", "fontWeight": "400", "fontStyle": "normal", "src": ["https://fonts.gstatic.com/s/forum/v18/6aey4Ky-Vb8Ew_IWMJMa3mnT.woff2"] }]
         },
         {
           "fontFamily": "Inter, sans-serif",
@@ -58,20 +59,20 @@
         { "name": "Display",  "slug": "display",  "size": "2.4rem" },
         { "name": "Hero",     "slug": "hero",     "size": "clamp(3rem, 9vw, 7rem)" }
       ],
-      "dropCap": false,
+      "dropCap":      false,
       "letterSpacing": true,
       "textTransform": true,
-      "fontStyle": true
+      "fontStyle":    true
     },
     "spacing": {
-      "padding": true,
-      "margin": true,
+      "padding":  true,
+      "margin":   true,
       "blockGap": true,
-      "units": ["px", "em", "rem", "%", "vh", "vw"]
+      "units":    ["px", "em", "rem", "%", "vh", "vw"]
     },
     "layout": {
       "contentSize": "1100px",
-      "wideSize": "1300px"
+      "wideSize":    "1300px"
     }
   },
   "styles": {
@@ -80,12 +81,12 @@
       "text":       "var(--wp--preset--color--bone)"
     },
     "typography": {
-      "fontFamily":  "var(--wp--preset--font-family--inter)",
-      "lineHeight":  "1.6"
+      "fontFamily": "var(--wp--preset--font-family--inter)",
+      "lineHeight": "1.6"
     },
     "elements": {
       "link": {
-        "color": { "text": "var(--wp--preset--color--gold)" },
+        "color":  { "text": "var(--wp--preset--color--gold)" },
         ":hover": { "color": { "text": "var(--wp--preset--color--red)" } }
       },
       "h1": { "typography": { "fontFamily": "var(--wp--preset--font-family--forum)", "textTransform": "uppercase" }, "color": { "text": "var(--wp--preset--color--gold)" } },
@@ -94,12 +95,14 @@
     }
   },
   "customTemplates": [
-    { "name": "page-gallery",   "title": "Gallery",        "postTypes": ["page"] },
-    { "name": "page-about",     "title": "About (Modal)",  "postTypes": ["page"] }
+    { "name": "single-book",     "title": "Single Book Layout",      "postTypes": ["book"] },
+    { "name": "single-webnovel", "title": "Single Web Novel Layout", "postTypes": ["webnovel"] },
+    { "name": "single-chapter",  "title": "Single Chapter Layout",   "postTypes": ["chapter"] },
+    { "name": "archive-book",    "title": "Bookshelf Archive",       "postTypes": ["page"] },
+    { "name": "archive-webnovel","title": "Web Novels Archive",      "postTypes": ["page"] }
   ],
   "templateParts": [
-    { "name": "header",     "title": "Header",     "area": "header" },
-    { "name": "footer",     "title": "Footer",     "area": "footer" },
-    { "name": "social-bar", "title": "Social Bar", "area": "uncategorized" }
+    { "name": "header", "title": "Header", "area": "header" },
+    { "name": "footer", "title": "Footer", "area": "footer" }
   ]
 }

@@ -36,33 +36,86 @@ Install ACF + the REST bridge before activating this theme. The theme registers 
 
 ## Architecture
 
+This is a **Full Site Editing (FSE) block theme**. Every section of the site is exposed as a server-side-rendered **dynamic block** (a PHP render callback that returns HTML), and templates are HTML block markup in `/templates/` that the Site Editor can open and rearrange.
+
 ```
 haunted-tech/
-├── style.css                  WP theme metadata header (minimal)
-├── theme.json                 design tokens for block editor
-├── functions.php              enqueues, CPT, ACF field group, menus, helpers
-├── header.php                 <head>, social bar (top), header, CRT overlays
-├── footer.php                 lightbox, about modal, footer
-├── front-page.php             homepage — assembles every block
-├── index.php                  blog fallback
-├── page.php                   default page
-├── single.php                 default post
-├── single-book.php            Book CPT — cover hero + ACF fields + buy links
-├── single-webnovel.php        Web Novel CPT — series page with chapter ToC
-├── single-chapter.php         Chapter CPT — reading view + prev/next
-├── archive.php                generic archive
-├── archive-book.php           bookshelf-style listing of all books
-├── archive-webnovel.php       CRT-monitor-style listing of all web novels
-├── search.php / searchform.php
-├── 404.php
-├── parts/
-│   └── gallery-static.php     placeholder gallery (TODO: gallery_item CPT)
+├── style.css                       WP theme-metadata header (minimal)
+├── theme.json                      design tokens + custom templates + template parts
+├── functions.php                   theme supports, enqueues, CPT, ACF, helpers, includes
+├── searchform.php                  classic search form (still used by `get_search_form()`)
+│
+├── inc/                            PHP includes
+│   ├── render-callbacks.php          render functions for every block
+│   ├── blocks.php                    register_block_type() for each dynamic block
+│   ├── patterns.php                  register_block_pattern() compositions
+│   └── gallery-static.php            placeholder gallery markup (TODO: gallery_item CPT)
+│
+├── parts/                          FSE template parts (HTML block markup)
+│   ├── header.html                   overlays + social-bar + site-header
+│   └── footer.html                   lightbox + about-modal + site-footer
+│
+├── templates/                      FSE block templates
+│   ├── front-page.html               homepage — composes all section blocks
+│   ├── index.html                    blog fallback
+│   ├── page.html                     default page
+│   ├── single.html                   default post
+│   ├── single-book.html              wraps the haunted-tech/single-book block
+│   ├── single-webnovel.html          wraps the haunted-tech/single-webnovel block
+│   ├── single-chapter.html           wraps the haunted-tech/single-chapter block
+│   ├── archive.html                  generic archive
+│   ├── archive-book.html             bookshelf-style listing
+│   ├── archive-webnovel.html         CRT-monitor-style listing
+│   ├── search.html
+│   └── 404.html
+│
 └── assets/
-    ├── main.css               all the design CSS (~66 KB)
-    ├── main.js                hero slider + gallery + lightbox + about modal
-    ├── logo.png               default site logo (512×512)
-    └── coda-portrait.png      (drop in your own — used by About modal fallback)
+    ├── main.css                    all the design CSS (~66 KB) — also loaded as editor-style
+    ├── main.js                     hero slider + gallery + lightbox + about modal
+    ├── logo.png                    default site logo (512×512)
+    └── coda-portrait.png           (drop in your own — used by About modal fallback)
 ```
+
+### Block catalogue
+
+All blocks live under the **Haunted Tech** category in the block inserter:
+
+| Block | Purpose | Dynamic source |
+|---|---|---|
+| `haunted-tech/social-bar`     | Icon row above the header | Social menu (fallback to defaults) |
+| `haunted-tech/site-header`    | Logo + nav + Subscribe CTA | Primary menu |
+| `haunted-tech/site-footer`    | Footer logo + links + copyright | Footer menu |
+| `haunted-tech/overlays`       | CRT scanline band + static burst | static |
+| `haunted-tech/hero-slider`    | 3-slide rotating hero | `hero_update` CPT |
+| `haunted-tech/bookshelf`      | Spine grid of published books | `book` CPT |
+| `haunted-tech/crt-monitor`    | Terminal-style web novel list | `webnovel` CPT (+ chapter counts) |
+| `haunted-tech/services`       | Three service cards | static |
+| `haunted-tech/gallery`        | Tabbed masonry with lightbox | static (TODO: `gallery_item` CPT) |
+| `haunted-tech/newsletter`     | Subscribe callout | placeholder form |
+| `haunted-tech/lightbox`       | Singleton gallery enlarger | populated by JS |
+| `haunted-tech/about-modal`    | Singleton bio modal | "about" page (post_content + featured image) |
+| `haunted-tech/single-book`    | Bespoke single-book layout | current queried post |
+| `haunted-tech/single-webnovel`| Bespoke single-webnovel layout | current queried post |
+| `haunted-tech/single-chapter` | Bespoke single-chapter reader layout | current queried post |
+
+### Block patterns
+
+Pre-built compositions in the inserter (Patterns → Haunted Tech):
+
+- **Full Homepage** — hero + bookshelf + CRT + services + gallery + newsletter
+- **Books + Web Novels** — bookshelf + CRT
+- **Services + Gallery** — services + gallery
+
+Drop any of these into a page in two clicks.
+
+### Editing the site
+
+After activation, **Appearance → Editor (beta)** opens the Site Editor. From there you can:
+
+- Rearrange any section by drag-dropping our blocks
+- Edit the `header` and `footer` template parts (e.g. swap the Subscribe CTA's destination)
+- Override per-post templates (e.g. give one specific book a custom-themed page)
+- Tweak design tokens (colors, fonts) via the Styles panel — they sync from `theme.json`
 
 ---
 
