@@ -20,7 +20,7 @@
 
 if (!defined('ABSPATH')) { exit; }
 
-define('HAUNTED_TECH_VERSION', '0.2.0');
+define('HAUNTED_TECH_VERSION', '0.3.0');
 define('HAUNTED_TECH_DIR', get_template_directory());
 define('HAUNTED_TECH_URI', get_template_directory_uri());
 
@@ -242,6 +242,7 @@ add_filter('body_class', function ($classes) {
 /* ---------------------------------------------------------------------------
  * 8. Includes — render callbacks, dynamic blocks, patterns
  * ------------------------------------------------------------------------- */
+require_once HAUNTED_TECH_DIR . '/inc/customizer.php';
 require_once HAUNTED_TECH_DIR . '/inc/render-callbacks.php';
 require_once HAUNTED_TECH_DIR . '/inc/blocks.php';
 require_once HAUNTED_TECH_DIR . '/inc/patterns.php';

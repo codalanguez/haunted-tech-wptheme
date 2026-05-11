@@ -327,6 +327,9 @@ function ht_render_gallery($attributes = []) {
  * NEWSLETTER — placeholder form
  * ============================================================ */
 function ht_render_newsletter($attributes = []) {
+    /* If the user has saved an embed in Customizer → Haunted Tech → Newsletter,
+     * inject it inside the callout in place of the placeholder form. */
+    $embed = function_exists('haunted_tech_get_newsletter_embed') ? haunted_tech_get_newsletter_embed() : '';
     ob_start(); ?>
     <section class="newsletter block-newsletter" id="newsletter">
       <div class="newsletter-corner tl"></div>
@@ -337,11 +340,20 @@ function ht_render_newsletter($attributes = []) {
         <div class="newsletter-eyebrow">Encrypted Channel</div>
         <h2 data-text="JOIN THE SIGNAL">JOIN THE <span class="accent">SIGNAL</span></h2>
         <p>Early chapter drops, free shorts, exclusive art, and the occasional voice memo from the static. No spam, ever &mdash; just signal.</p>
-        <form class="newsletter-form" onsubmit="return false;">
-          <input type="email" class="newsletter-input" placeholder="your.handle@encrypted.net" required>
-          <button type="submit" class="newsletter-submit">Subscribe</button>
-        </form>
-        <div class="newsletter-fine">Unsubscribe anytime &middot; PGP key on request</div>
+        <?php if (!empty($embed)): ?>
+          <div class="newsletter-embed"><?php echo $embed; /* admin-saved raw HTML/script */ ?></div>
+        <?php else: ?>
+          <form class="newsletter-form" onsubmit="return false;">
+            <input type="email" class="newsletter-input" placeholder="your.handle@encrypted.net" required>
+            <button type="submit" class="newsletter-submit">Subscribe</button>
+          </form>
+          <div class="newsletter-fine">
+            Unsubscribe anytime &middot; PGP key on request
+            <?php if (current_user_can('edit_theme_options')): ?>
+              &middot; <a href="<?php echo esc_url(admin_url('customize.php?autofocus[section]=haunted_tech_newsletter')); ?>" style="color:var(--gold);">Connect your provider</a>
+            <?php endif; ?>
+          </div>
+        <?php endif; ?>
       </div>
     </section>
     <?php
