@@ -155,9 +155,24 @@ Lists your serialized novels in a terminal-style monitor. Status indicator (●/
 
 If the chapter has an `external_read_url` set, an "off-site" callout appears above the body — used when the actual premium content lives on Patreon / Ream / Substack and WordPress is just the catalog page.
 
-### Gallery — currently static
+### Gallery — `gallery_item` CPT
 
-The gallery section is a placeholder. The intended evolution is a `gallery_item` CPT with fields `service_tab` (art|covers|ai), `tag`, `title`, `description`, `image`, `ratio`. The masonry + lightbox + filter chips + pagination JS is already in place — only the data source needs swapping.
+Each tile is a post of type `gallery_item`. Fields (ACF, registered in PHP — no import needed):
+
+| Field | Use |
+|---|---|
+| `service_tab`   | Which tab the tile lands on (`art` / `covers` / `ai`) |
+| `category`      | Lower-case slug for the Art Commissions filter chips (`portrait`, `bust`, `couple`, `scene`, `ritual`, …). Leave blank for non-art tabs. |
+| `tag`           | Small badge label shown on the card and in the lightbox (e.g. "Portrait", "Bone Frequencies · I", "Chapter Banner") |
+| `description`   | Long caption for the lightbox; first ~18 words also show on the card |
+| `image`         | The artwork. Falls back to the post's featured image, then to a gradient placeholder if neither is set. |
+| `aspect_ratio`  | Tile shape: 1:1 / 3:4 / 4:5 / 2:3 / 16:10 / 16:9 |
+
+Order tiles via the standard *Page Attributes → Order* field; ties break by date DESC.
+
+Filter chips on the **Art Commissions** tab are derived automatically from the unique `category` values across that tab's items. Pagination caps at 9 tiles per page; client-side pagination via the existing JS handles the rest.
+
+If you have **zero** `gallery_item` posts, the section gracefully falls back to the static placeholder shipped with the theme — so the homepage never looks broken.
 
 ### About modal — `about` page
 
@@ -207,7 +222,7 @@ Slider settings are localized to the front-end JS as `window.HauntedTechOpts.{sl
 
 ## Roadmap
 
-- [ ] Replace `inc/gallery-static.php` with a `gallery_item` CPT + WP_Query loop
+- [x] Replace `inc/gallery-static.php` with a `gallery_item` CPT + WP_Query loop (still kept as fallback for empty state)
 - [x] Block patterns for each section so they're insertable from the block editor
 - [x] FSE block theme (templates in `/templates/*.html`, parts in `/parts/*.html`)
 - [x] Theme-options panel for newsletter provider config + slider rotation duration

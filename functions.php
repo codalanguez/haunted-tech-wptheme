@@ -20,7 +20,7 @@
 
 if (!defined('ABSPATH')) { exit; }
 
-define('HAUNTED_TECH_VERSION', '0.5.0');
+define('HAUNTED_TECH_VERSION', '0.6.0');
 define('HAUNTED_TECH_DIR', get_template_directory());
 define('HAUNTED_TECH_URI', get_template_directory_uri());
 
@@ -104,6 +104,7 @@ add_action('wp_enqueue_scripts', function () {
  * 3. Custom post type: hero_update  (data source for the homepage hero slider)
  * ------------------------------------------------------------------------- */
 add_action('init', function () {
+    /* hero_update — drives the homepage hero slider */
     register_post_type('hero_update', [
         'label'        => __('Hero Updates', 'haunted-tech'),
         'labels'       => [
@@ -122,12 +123,69 @@ add_action('init', function () {
         'supports'     => ['title', 'editor', 'custom-fields'],
         'has_archive'  => false,
     ]);
+
+    /* gallery_item — populates the homepage Gallery section's three tabs */
+    register_post_type('gallery_item', [
+        'label'        => __('Gallery Items', 'haunted-tech'),
+        'labels'       => [
+            'name'          => __('Gallery Items',     'haunted-tech'),
+            'singular_name' => __('Gallery Item',      'haunted-tech'),
+            'add_new_item'  => __('Add Gallery Item',  'haunted-tech'),
+            'edit_item'     => __('Edit Gallery Item', 'haunted-tech'),
+        ],
+        'public'       => false,
+        'show_ui'      => true,
+        'show_in_menu' => true,
+        'show_in_rest' => true,
+        'rest_base'    => 'gallery-items',
+        'menu_icon'    => 'dashicons-format-gallery',
+        'menu_position'=> 5,
+        'supports'     => ['title', 'thumbnail', 'page-attributes', 'custom-fields'],
+        'has_archive'  => false,
+    ]);
 });
 
-/* Register the ACF field group for hero_update entries. */
+/* Register the ACF field groups for theme-managed CPTs. */
 add_action('acf/init', function () {
     if (!function_exists('acf_add_local_field_group')) { return; }
 
+    /* ---------- Gallery item ---------- */
+    acf_add_local_field_group([
+        'key'      => 'group_gallery_item',
+        'title'    => 'Gallery Item',
+        'fields'   => [
+            ['key'=>'field_gi_service_tab',  'label'=>'Service Tab',  'name'=>'service_tab',  'type'=>'select',
+             'choices'=>['art'=>'Art Commissions','covers'=>'Book Covers','ai'=>'AI Generation'],
+             'default_value'=>'art', 'required'=>1, 'show_in_rest'=>1],
+            ['key'=>'field_gi_category',     'label'=>'Filter Category','name'=>'category',   'type'=>'text',
+             'instructions'=>'Lower-case slug used by the Art Commissions filter chips (portrait, bust, couple, scene, ritual, …). Leave blank for non-art tabs.', 'show_in_rest'=>1],
+            ['key'=>'field_gi_tag',          'label'=>'Card Tag',      'name'=>'tag',          'type'=>'text',
+             'instructions'=>'Small badge label shown on the card and in the lightbox (e.g. "Portrait", "Bone Frequencies · I", "Chapter Banner").', 'show_in_rest'=>1],
+            ['key'=>'field_gi_description',  'label'=>'Description',   'name'=>'description',  'type'=>'textarea', 'rows'=>4,
+             'instructions'=>'Long caption shown in the lightbox; first ~18 words also show on the card.', 'show_in_rest'=>1],
+            ['key'=>'field_gi_image',        'label'=>'Image',         'name'=>'image',        'type'=>'image',
+             'return_format'=>'array', 'preview_size'=>'medium',
+             'instructions'=>'Optional. If empty, the post’s featured image is used; if neither is set, the card shows a gradient placeholder.', 'show_in_rest'=>1],
+            ['key'=>'field_gi_aspect_ratio', 'label'=>'Aspect Ratio',  'name'=>'aspect_ratio', 'type'=>'select',
+             'choices'=>[
+                '1/1'   => '1:1 (square)',
+                '3/4'   => '3:4 (portrait)',
+                '4/5'   => '4:5 (tall portrait)',
+                '2/3'   => '2:3 (book cover)',
+                '16/10' => '16:10 (landscape)',
+                '16/9'  => '16:9 (wide)',
+             ],
+             'default_value'=>'3/4', 'show_in_rest'=>1],
+        ],
+        'location' => [[['param' => 'post_type', 'operator' => '==', 'value' => 'gallery_item']]],
+        'menu_order'   => 0,
+        'position'     => 'normal',
+        'style'        => 'default',
+        'active'       => true,
+        'show_in_rest' => 1,
+    ]);
+
+    /* ---------- Hero update ---------- */
     acf_add_local_field_group([
         'key'      => 'group_hero_update',
         'title'    => 'Hero Update',
