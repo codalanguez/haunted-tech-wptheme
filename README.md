@@ -205,8 +205,7 @@ Slider settings are localized to the front-end JS as `window.HauntedTechOpts.{sl
 - [x] Block patterns for each section so they're insertable from the block editor
 - [x] FSE block theme (templates in `/templates/*.html`, parts in `/parts/*.html`)
 - [x] Theme-options panel for newsletter provider config + slider rotation duration
-- [ ] Optional Patreon WordPress plugin integration so `access_level` actually paywalls
-- [ ] Self-host the Google Fonts for performance + GDPR
+- [x] Self-host the Google Fonts for performance + GDPR (24 woff2 files in `assets/fonts/`)
 - [ ] Wire `Connect your provider` admin link into a guided onboarding flow
 
 ---

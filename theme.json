@@ -32,8 +32,7 @@
         {
           "fontFamily": "Forum, serif",
           "name": "Forum",
-          "slug": "forum",
-          "fontFace": [{ "fontFamily": "Forum", "fontWeight": "400", "fontStyle": "normal", "src": ["https://fonts.gstatic.com/s/forum/v18/6aey4Ky-Vb8Ew_IWMJMa3mnT.woff2"] }]
+          "slug": "forum"
         },
         {
           "fontFamily": "Inter, sans-serif",
