@@ -1,0 +1,26 @@
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editors
+.idea/
+.vscode/
+*.code-workspace
+*.sublime-project
+*.sublime-workspace
+
+# WordPress
+wp-config.php
+debug.log
+
+# Build / cache
+node_modules/
+.cache/
+.parcel-cache/
+*.log
+*.tmp
+
+# OS-specific
+.env
+.env.*
