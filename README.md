@@ -139,11 +139,37 @@ The three most recent updates appear in the slider, sorted DESC by publish date.
 
 ### Bookshelf — `book` CPT (ACF-registered)
 
-Each book renders as a vertical spine on the shelf. Hover lifts the spine and glitches the title. Click → `single-book.php`.
+Each book renders as a vertical spine on the shelf. Hover lifts the spine and glitches the title. **Click opens a modal overlay** (the whole single-book layout slides in over the homepage) — the standalone `/books/<slug>/` page still works for direct links + SEO and contains identical content.
 
-ACF fields consumed: `subtitle`, `series`, `series_number`, `blurb`, `genre`, `isbn`, `asin`, `page_count`, `publish_date`, `cover`, `buy_amazon`, `buy_bn`, `buy_kobo`, `buy_apple`, `kindle_unlimited`.
+ACF fields consumed:
 
-If `buy_amazon` is empty but `asin` is set, the theme builds the Amazon URL from the ASIN.
+| Field | Use |
+|---|---|
+| `subtitle`, `series`, `series_number` | hero meta + cover engraving |
+| `blurb`, `genre`, `isbn`, `asin`, `page_count`, `publish_date`, `cover`, `kindle_unlimited` | hero details |
+| `buy_amazon`, `buy_bn`, `buy_kobo`, `buy_apple` | retailer buttons |
+| `goodreads_url`, `bookbub_url`, `storygraph_url` *(v0.8)* | "Find online" discovery row |
+| `content_warnings_graphic`, `content_warnings` *(v0.8)* | collapsible warning panel (comma-separated lists; graphic items render in brighter red) |
+| `excerpt_eyebrow`, `excerpt_html` *(v0.8)* | "Chapter One" preview with drop-cap |
+
+If `buy_amazon` is empty but `asin` is set, the theme builds the Amazon URL from the ASIN. **Every field is conditional** — empty values collapse out of the layout entirely (no empty labels, no broken buttons).
+
+### Book Modal *(v0.8)*
+
+A site-wide singleton (`haunted-tech/book-modal` block, lives in the footer template part). Click any book spine, "Also by" card, or "More in series" sibling and the modal fetches that book's HTML via `/wp-json/haunted-tech/v1/book-modal/<slug>` and injects it. URL updates to `#book-<slug>` (shareable + back/forward works). Esc, ×, or backdrop click closes.
+
+Same content shape as the standalone `/books/<slug>/` page — composed of:
+
+1. Book hero (`haunted-tech/single-book`)
+2. Excerpt (`haunted-tech/book-excerpt`)
+3. More in this Series (`haunted-tech/book-more-in-series`)
+4. Also by *Author* (`haunted-tech/also-by`)
+
+Sections 2–4 each return `''` if their data is empty, so a brand-new book with just a blurb still renders cleanly.
+
+### Back to Top *(v0.8)*
+
+A floating gold-bordered arrow in the bottom-right corner, also a footer singleton. Fades in after the user scrolls past 600 px, smooth-scrolls to `#top` on click.
 
 ### CRT Monitor — `webnovel` CPT (ACF-registered)
 
