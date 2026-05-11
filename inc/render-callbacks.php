@@ -183,7 +183,7 @@ function ht_render_bookshelf($attributes = []) {
                 $width   = 60 + (($i * 7) % 25);
                 $height  = 380 + (($i * 11) % 60);
             ?>
-            <a id="book-<?php echo esc_attr($book->post_name); ?>" href="<?php echo esc_url(get_permalink($book)); ?>" class="spine <?php echo esc_attr($variant); ?>" style="width:<?php echo (int)$width; ?>px; height:<?php echo (int)$height; ?>px;">
+            <a id="book-<?php echo esc_attr($book->post_name); ?>" href="<?php echo esc_url(get_permalink($book)); ?>" data-open-book="<?php echo esc_attr($book->post_name); ?>" class="spine <?php echo esc_attr($variant); ?>" style="width:<?php echo (int)$width; ?>px; height:<?php echo (int)$height; ?>px;">
               <div class="spine-ornament">&#9670; &#9670;</div>
               <div class="spine-title"><?php echo esc_html(get_the_title($book)); ?></div>
               <div class="spine-author"><?php echo esc_html($series); ?></div>
@@ -596,69 +596,330 @@ function ht_render_about_modal($attributes = []) {
 }
 
 /* ============================================================
- * SINGLE BOOK — bespoke layout for one book post
+ * SINGLE BOOK — bespoke book hero matching mockup 14/15/16.
+ * Every field conditional: empty values collapse out entirely.
  * ============================================================ */
 function ht_render_single_book($attributes = []) {
     $post_id = get_the_ID();
     if (!$post_id || get_post_type($post_id) !== 'book') return '';
-    $subtitle = get_field('subtitle', $post_id);
-    $series   = get_field('series', $post_id);
-    $series_n = get_field('series_number', $post_id);
-    $blurb    = get_field('blurb', $post_id);
-    $genre    = get_field('genre', $post_id);
-    $isbn     = get_field('isbn', $post_id);
-    $asin     = get_field('asin', $post_id);
-    $pages    = get_field('page_count', $post_id);
-    $pub_date = get_field('publish_date', $post_id);
-    $cover    = get_field('cover', $post_id);
-    $amazon   = get_field('buy_amazon', $post_id);
-    $bn       = get_field('buy_bn', $post_id);
-    $kobo     = get_field('buy_kobo', $post_id);
-    $apple    = get_field('buy_apple', $post_id);
-    $ku       = get_field('kindle_unlimited', $post_id);
+
+    $subtitle    = get_field('subtitle', $post_id);
+    $series      = get_field('series', $post_id);
+    $series_n    = get_field('series_number', $post_id);
+    $blurb       = get_field('blurb', $post_id);
+    $genre       = get_field('genre', $post_id);
+    $isbn        = get_field('isbn', $post_id);
+    $asin        = get_field('asin', $post_id);
+    $pages       = get_field('page_count', $post_id);
+    $pub_date    = get_field('publish_date', $post_id);
+    $cover       = get_field('cover', $post_id);
+    $amazon      = get_field('buy_amazon', $post_id);
+    $bn          = get_field('buy_bn', $post_id);
+    $kobo        = get_field('buy_kobo', $post_id);
+    $apple       = get_field('buy_apple', $post_id);
+    $ku          = get_field('kindle_unlimited', $post_id);
+    /* v0.8 discovery + content-warning fields */
+    $goodreads   = get_field('goodreads_url', $post_id);
+    $bookbub     = get_field('bookbub_url',   $post_id);
+    $storygraph  = get_field('storygraph_url', $post_id);
+    $cw_graphic  = get_field('content_warnings_graphic', $post_id);
+    $cw_standard = get_field('content_warnings',         $post_id);
+
+    if (!$amazon && $asin) $amazon = 'https://www.amazon.com/dp/' . urlencode($asin);
+
     $cover_url = '';
     if (is_array($cover) && !empty($cover['url'])) $cover_url = $cover['url'];
     elseif (has_post_thumbnail($post_id)) $cover_url = get_the_post_thumbnail_url($post_id, 'large');
-    if (!$amazon && $asin) $amazon = 'https://www.amazon.com/dp/' . urlencode($asin);
+
+    $cw_graphic_items  = array_filter(array_map('trim', explode(',', (string)$cw_graphic)));
+    $cw_standard_items = array_filter(array_map('trim', explode(',', (string)$cw_standard)));
+    $cw_total          = count($cw_graphic_items) + count($cw_standard_items);
+
+    $find_links = array_filter([
+        'Goodreads'  => $goodreads,
+        'BookBub'    => $bookbub,
+        'StoryGraph' => $storygraph,
+    ]);
+
     ob_start(); ?>
-    <article id="post-<?php echo (int)$post_id; ?>" class="ht-book single-book" style="display:grid;grid-template-columns:1fr 1.4fr;gap:4rem;">
-      <div class="book-cover-hero" style="background:var(--obsidian);border:1px solid var(--border);position:relative;aspect-ratio:2/3;">
-        <?php if ($cover_url): ?>
-          <img src="<?php echo esc_url($cover_url); ?>" alt="<?php echo esc_attr(get_the_title($post_id)); ?>" style="display:block;width:100%;height:100%;object-fit:cover;">
-        <?php else: ?>
-          <div class="book-cover" style="height:100%;"><?php echo esc_html(get_the_title($post_id)); ?></div>
-        <?php endif; ?>
-        <?php if ($ku): ?>
-          <div style="position:absolute;top:1rem;right:1rem;background:var(--gold);color:var(--void);font-family:'Forum',serif;font-size:0.7rem;letter-spacing:0.3em;text-transform:uppercase;padding:0.5rem 0.8rem;">&#9670; Kindle Unlimited</div>
-        <?php endif; ?>
-      </div>
-      <div class="book-meta-hero">
-        <?php if ($series): ?>
-          <div style="font-family:'Forum',serif;font-size:0.75rem;letter-spacing:0.4em;color:var(--red);text-transform:uppercase;margin-bottom:0.75rem;text-shadow:0 0 6px rgba(229,9,20,0.4);">
-            &#9670; <?php echo esc_html($series); ?><?php if ($series_n): ?> &middot; Book <?php echo (int)$series_n; ?><?php endif; ?>
-          </div>
-        <?php endif; ?>
-        <h1 data-text="<?php echo esc_attr(get_the_title($post_id)); ?>" style="font-family:'Forum',serif;font-size:clamp(2rem,5vw,3.5rem);color:var(--gold);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.5rem;text-shadow:0 0 24px rgba(255,212,0,0.4);"><?php echo esc_html(get_the_title($post_id)); ?></h1>
-        <?php if ($subtitle): ?><div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.3rem;color:var(--bone-dim);margin-bottom:2rem;"><?php echo esc_html($subtitle); ?></div><?php endif; ?>
-        <div class="book-detail-row" style="display:flex;gap:1.5rem;font-family:'Inter',sans-serif;font-size:0.8rem;letter-spacing:0.2em;color:var(--bone-dim);text-transform:uppercase;margin-bottom:2rem;flex-wrap:wrap;">
-          <?php if ($genre): ?><span><?php echo esc_html($genre); ?></span><?php endif; ?>
-          <?php if ($pages): ?><span><?php echo (int)$pages; ?> pages</span><?php endif; ?>
-          <?php if ($pub_date): ?><span><?php echo esc_html($pub_date); ?></span><?php endif; ?>
-          <?php if ($isbn): ?><span>ISBN <?php echo esc_html($isbn); ?></span><?php endif; ?>
+    <section class="book-hero">
+      <div class="book-hero-inner">
+        <div class="book-cover-wrap">
+          <?php if ($ku): ?><div class="ku-badge">Kindle Unlimited</div><?php endif; ?>
+          <?php if ($cover_url): ?>
+            <img src="<?php echo esc_url($cover_url); ?>" alt="<?php echo esc_attr(get_the_title($post_id)); ?>" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;z-index:1;">
+          <?php else: ?>
+            <div class="book-cover-art">
+              <?php if ($series): ?>
+                <div class="cover-series-mark"><?php echo esc_html($series); ?><?php if ($series_n): ?> &middot; <?php echo (int)$series_n; ?><?php endif; ?></div>
+              <?php endif; ?>
+              <div class="cover-title"><?php echo esc_html(get_the_title($post_id)); ?></div>
+              <div class="cover-author"><?php bloginfo('name'); ?></div>
+            </div>
+          <?php endif; ?>
         </div>
-        <?php if ($blurb): ?>
-          <div style="font-family:'Cormorant Garamond',serif;font-size:1.15rem;line-height:1.8;color:var(--bone);margin-bottom:2.5rem;"><?php echo wp_kses_post(wpautop($blurb)); ?></div>
-        <?php endif; ?>
-        <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
-          <?php if ($amazon): ?><a href="<?php echo esc_url($amazon); ?>" class="cta" style="padding:0.7rem 1.4rem;font-size:0.8rem;">Amazon</a><?php endif; ?>
-          <?php if ($bn): ?><a href="<?php echo esc_url($bn); ?>" class="cta" style="padding:0.7rem 1.4rem;font-size:0.8rem;">B&amp;N</a><?php endif; ?>
-          <?php if ($kobo): ?><a href="<?php echo esc_url($kobo); ?>" class="cta" style="padding:0.7rem 1.4rem;font-size:0.8rem;">Kobo</a><?php endif; ?>
-          <?php if ($apple): ?><a href="<?php echo esc_url($apple); ?>" class="cta" style="padding:0.7rem 1.4rem;font-size:0.8rem;">Apple</a><?php endif; ?>
+
+        <div class="book-meta-col">
+          <?php if ($series): ?>
+            <div class="book-series-mark">
+              <?php echo esc_html($series); ?><?php if ($series_n): ?> &middot; Book <?php echo (int)$series_n; ?><?php endif; ?>
+            </div>
+          <?php endif; ?>
+
+          <h1 class="book-title" data-text="<?php echo esc_attr(get_the_title($post_id)); ?>"><?php echo esc_html(get_the_title($post_id)); ?></h1>
+
+          <?php if ($subtitle): ?><div class="book-subtitle"><?php echo esc_html($subtitle); ?></div><?php endif; ?>
+
+          <?php
+          $details = array_filter([
+              $genre    ? ['Genre',     esc_html($genre)]    : null,
+              $pages    ? ['Pages',     (int)$pages]         : null,
+              $pub_date ? ['Published', esc_html($pub_date)] : null,
+              $isbn     ? ['ISBN',      esc_html($isbn)]     : null,
+              $asin     ? ['ASIN',      esc_html($asin)]     : null,
+          ]);
+          if (!empty($details)): ?>
+            <div class="book-detail-row">
+              <?php foreach ($details as $d): ?>
+                <span><strong><?php echo esc_html($d[0]); ?>:</strong> <?php echo $d[1]; ?></span>
+              <?php endforeach; ?>
+            </div>
+          <?php endif; ?>
+
+          <?php
+          $buys = array_filter([
+              $amazon ? ['Amazon',         $amazon] : null,
+              $bn     ? ['Barnes & Noble', $bn]     : null,
+              $kobo   ? ['Kobo',           $kobo]   : null,
+              $apple  ? ['Apple Books',    $apple]  : null,
+          ]);
+          if (!empty($buys)): ?>
+            <div class="book-buy-row">
+              <?php foreach ($buys as $b): ?>
+                <a href="<?php echo esc_url($b[1]); ?>" class="buy-btn" target="_blank" rel="noopener"><?php echo esc_html($b[0]); ?></a>
+              <?php endforeach; ?>
+            </div>
+          <?php endif; ?>
+
+          <?php if (!empty($find_links)): ?>
+            <div class="book-find-row">
+              <span class="book-find-label">Find online</span>
+              <?php foreach ($find_links as $label => $url): ?>
+                <a href="<?php echo esc_url($url); ?>" class="find-btn" target="_blank" rel="noopener"><?php echo esc_html($label); ?></a>
+              <?php endforeach; ?>
+            </div>
+          <?php endif; ?>
+
+          <?php if ($blurb): ?>
+            <div class="book-blurb"><?php echo wp_kses_post(wpautop($blurb)); ?></div>
+          <?php endif; ?>
+
+          <?php if ($cw_total > 0): ?>
+            <details class="content-warnings">
+              <summary>Content Warnings <span class="cw-count"><?php echo (int)$cw_total; ?> listed</span></summary>
+              <div class="cw-body">
+                <p class="cw-intro">This book engages with difficult material on purpose. If any of these would harm your day, this isn't the book for it.</p>
+                <?php if (!empty($cw_graphic_items)): ?>
+                  <ul class="cw-list cw-graphic">
+                    <?php foreach ($cw_graphic_items as $cw): ?><li><?php echo esc_html($cw); ?></li><?php endforeach; ?>
+                  </ul>
+                <?php endif; ?>
+                <?php if (!empty($cw_standard_items)): ?>
+                  <ul class="cw-list" style="margin-top:0.6rem;">
+                    <?php foreach ($cw_standard_items as $cw): ?><li><?php echo esc_html($cw); ?></li><?php endforeach; ?>
+                  </ul>
+                <?php endif; ?>
+              </div>
+            </details>
+          <?php endif; ?>
         </div>
       </div>
-    </article>
+    </section>
     <?php
     return ob_get_clean();
+}
+
+/* ============================================================
+ * BOOK EXCERPT — chapter preview with drop-cap
+ * ============================================================ */
+function ht_render_book_excerpt($attributes = []) {
+    $post_id = get_the_ID();
+    if (!$post_id || get_post_type($post_id) !== 'book') return '';
+    $excerpt = get_field('excerpt_html', $post_id);
+    if (!$excerpt) return '';
+    $eyebrow = get_field('excerpt_eyebrow', $post_id);
+    $amazon  = get_field('buy_amazon', $post_id);
+    $asin    = get_field('asin', $post_id);
+    if (!$amazon && $asin) $amazon = 'https://www.amazon.com/dp/' . urlencode($asin);
+    ob_start(); ?>
+    <section class="book-excerpt-section">
+      <?php if ($eyebrow): ?><div class="book-excerpt-eyebrow"><?php echo esc_html($eyebrow); ?></div><?php endif; ?>
+      <h3 class="book-excerpt-title">Begin Reading</h3>
+      <div class="book-excerpt-body"><?php echo wp_kses_post($excerpt); ?></div>
+      <?php if ($amazon): ?>
+        <div class="book-excerpt-fade">
+          <a href="<?php echo esc_url($amazon); ?>" class="cta" target="_blank" rel="noopener">Continue Reading on Amazon</a>
+        </div>
+      <?php endif; ?>
+    </section>
+    <?php
+    return ob_get_clean();
+}
+
+/* ============================================================
+ * MORE IN THIS SERIES — mini-shelf of series siblings
+ * Returns '' if not part of a series or no siblings exist.
+ * ============================================================ */
+function ht_render_book_more_in_series($attributes = []) {
+    $post_id = get_the_ID();
+    if (!$post_id || get_post_type($post_id) !== 'book') return '';
+    $series = get_field('series', $post_id);
+    if (!$series) return '';
+
+    $siblings = get_posts([
+        'post_type'      => 'book',
+        'posts_per_page' => 12,
+        'post_status'    => 'publish',
+        'meta_query'     => [['key' => 'series', 'value' => $series]],
+        'meta_key'       => 'series_number',
+        'orderby'        => 'meta_value_num',
+        'order'          => 'ASC',
+    ]);
+    if (count($siblings) < 2) return '';
+
+    $variants = ['oxblood', 'obsidian', 'teal', 'charcoal', 'gold'];
+    ob_start(); ?>
+    <section class="more-series-section">
+      <div class="section-header">
+        <h2 class="section-title"><?php echo esc_html($series); ?></h2>
+        <div class="section-meta"><?php echo (int)count($siblings); ?>-book series</div>
+      </div>
+      <div class="series-spine-row">
+        <?php foreach ($siblings as $i => $sib):
+            $variant    = $variants[$i % count($variants)];
+            $is_current = ($sib->ID === $post_id);
+            $width      = 64 + (($i * 7) % 25);
+            $height     = 380 + (($i * 11) % 60);
+            $n          = get_field('series_number', $sib->ID) ?: '?';
+            $cls        = 'more-spine ' . $variant . ($is_current ? ' current' : '');
+        ?>
+          <a <?php echo $is_current ? '' : 'href="' . esc_url(get_permalink($sib)) . '" data-open-book="' . esc_attr($sib->post_name) . '"'; ?>
+             class="<?php echo esc_attr($cls); ?>"
+             style="width:<?php echo (int)$width; ?>px; height:<?php echo (int)$height; ?>px;">
+            <div class="more-spine-ornament">&#9670; &#9670;</div>
+            <div class="more-spine-title"><?php echo esc_html(get_the_title($sib)); ?> &mdash; <?php echo esc_html($n); ?></div>
+            <div class="more-spine-author"><?php echo esc_html($series); ?></div>
+            <div class="more-spine-ornament">&#9670; &#9670;</div>
+          </a>
+        <?php endforeach; ?>
+        <div class="series-shelf-base"></div>
+      </div>
+    </section>
+    <?php
+    return ob_get_clean();
+}
+
+/* ============================================================
+ * ALSO BY CODA — cross-promo grid of other books
+ * Excludes current book and same-series siblings.
+ * ============================================================ */
+function ht_render_also_by($attributes = []) {
+    $current_id     = get_the_ID();
+    $current_series = $current_id ? get_field('series', $current_id) : '';
+    $exclude_ids    = $current_id ? [$current_id] : [];
+
+    if ($current_series) {
+        $sibling_ids = get_posts([
+            'post_type'      => 'book',
+            'posts_per_page' => -1,
+            'meta_query'     => [['key' => 'series', 'value' => $current_series]],
+            'fields'         => 'ids',
+        ]);
+        $exclude_ids = array_merge($exclude_ids, $sibling_ids);
+    }
+
+    $others = get_posts([
+        'post_type'      => 'book',
+        'posts_per_page' => 4,
+        'post_status'    => 'publish',
+        'post__not_in'   => array_unique($exclude_ids),
+        'orderby'        => 'date',
+        'order'          => 'DESC',
+    ]);
+    if (empty($others)) return '';
+
+    ob_start(); ?>
+    <section class="also-by-section">
+      <div class="section-header">
+        <h2 class="section-title">Also by <?php bloginfo('name'); ?></h2>
+        <div class="section-meta">Other haunted infrastructure</div>
+      </div>
+      <div class="also-by-grid">
+        <?php foreach ($others as $b):
+            $b_series  = get_field('series', $b->ID);
+            $b_blurb   = get_field('blurb',  $b->ID);
+            $tag       = $b_series ?: 'Standalone';
+            $tagline   = $b_blurb ? wp_trim_words($b_blurb, 18, '…') : '';
+            $b_cover   = get_field('cover', $b->ID);
+            $cover_url = (is_array($b_cover) && !empty($b_cover['url'])) ? $b_cover['url']
+                       : (has_post_thumbnail($b->ID) ? get_the_post_thumbnail_url($b->ID, 'medium') : '');
+        ?>
+          <a href="<?php echo esc_url(get_permalink($b)); ?>" data-open-book="<?php echo esc_attr($b->post_name); ?>" class="also-by-card">
+            <div class="also-by-cover" style="<?php echo $cover_url ? 'padding:0;' : ''; ?>">
+              <?php if ($cover_url): ?>
+                <img src="<?php echo esc_url($cover_url); ?>" alt="<?php echo esc_attr(get_the_title($b)); ?>" style="display:block;width:100%;height:100%;object-fit:cover;">
+              <?php else: ?>
+                <div class="also-by-cover-title"><?php echo esc_html(get_the_title($b)); ?></div>
+              <?php endif; ?>
+            </div>
+            <div class="ab-meta">
+              <div class="ab-tag"><?php echo esc_html($tag); ?></div>
+              <div class="ab-title"><?php echo esc_html(get_the_title($b)); ?></div>
+              <?php if ($tagline): ?><div class="ab-tagline"><?php echo esc_html($tagline); ?></div><?php endif; ?>
+            </div>
+          </a>
+        <?php endforeach; ?>
+      </div>
+    </section>
+    <?php
+    return ob_get_clean();
+}
+
+/* ============================================================
+ * COMPOSED MODAL CONTENT — used by REST endpoint + single-book template.
+ * ============================================================ */
+function ht_render_book_modal_content() {
+    return ht_render_single_book()
+         . ht_render_book_excerpt()
+         . ht_render_book_more_in_series()
+         . ht_render_also_by();
+}
+
+/* ============================================================
+ * BOOK MODAL — singleton shell, populated via REST on click
+ * ============================================================ */
+function ht_render_book_modal_shell($attributes = []) {
+    ob_start(); ?>
+    <div class="book-modal" id="book-modal" role="dialog" aria-modal="true" aria-hidden="true">
+      <div class="book-modal-frame">
+        <div class="book-modal-topbar">
+          <div class="book-modal-breadcrumb">
+            <a href="<?php echo esc_url(home_url('/#books')); ?>">Books</a> <span>&rsaquo;</span> <span id="book-modal-title">…</span>
+          </div>
+          <button class="book-modal-close" aria-label="Close book">&times;</button>
+        </div>
+        <div class="book-modal-body" id="book-modal-body"><!-- populated via REST --></div>
+      </div>
+    </div>
+    <?php
+    return ob_get_clean();
+}
+
+/* ============================================================
+ * BACK TO TOP — floating arrow
+ * ============================================================ */
+function ht_render_back_to_top($attributes = []) {
+    return '<a href="#top" class="back-to-top" id="back-to-top" aria-label="Back to top" title="Back to top">&uarr;</a>';
 }
 
 /* ============================================================

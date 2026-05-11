@@ -20,7 +20,7 @@
 
 if (!defined('ABSPATH')) { exit; }
 
-define('HAUNTED_TECH_VERSION', '0.7.0');
+define('HAUNTED_TECH_VERSION', '0.8.0');
 define('HAUNTED_TECH_DIR', get_template_directory());
 define('HAUNTED_TECH_URI', get_template_directory_uri());
 
@@ -148,6 +148,46 @@ add_action('init', function () {
 /* Register the ACF field groups for theme-managed CPTs. */
 add_action('acf/init', function () {
     if (!function_exists('acf_add_local_field_group')) { return; }
+
+    /* ---------- Extra Book fields (v0.8.0) ----------
+     * Augments the existing Book field group (imported from book-fields.json)
+     * with the modal-era fields: content warnings, discovery links, excerpt.
+     * These render conditionally — empty fields collapse out of the layout.
+     */
+    acf_add_local_field_group([
+        'key'      => 'group_book_extras',
+        'title'    => 'Book — Modal & Discovery',
+        'fields'   => [
+            ['key'=>'field_book_cw_graphic', 'label'=>'Content Warnings · Graphic',
+             'name'=>'content_warnings_graphic', 'type'=>'textarea', 'rows'=>3,
+             'instructions'=>'Comma-separated list. These render in the brighter red treatment (top of the list).',
+             'show_in_rest'=>1],
+            ['key'=>'field_book_cw_standard', 'label'=>'Content Warnings · Standard',
+             'name'=>'content_warnings', 'type'=>'textarea', 'rows'=>3,
+             'instructions'=>'Comma-separated list. Rendered in muted oxblood-bordered chips.',
+             'show_in_rest'=>1],
+            ['key'=>'field_book_goodreads', 'label'=>'Goodreads URL',
+             'name'=>'goodreads_url', 'type'=>'url', 'show_in_rest'=>1],
+            ['key'=>'field_book_bookbub',   'label'=>'BookBub URL',
+             'name'=>'bookbub_url',   'type'=>'url', 'show_in_rest'=>1],
+            ['key'=>'field_book_storygraph','label'=>'StoryGraph URL',
+             'name'=>'storygraph_url','type'=>'url', 'show_in_rest'=>1],
+            ['key'=>'field_book_excerpt_eyebrow', 'label'=>'Excerpt Eyebrow',
+             'name'=>'excerpt_eyebrow', 'type'=>'text',
+             'instructions'=>'Small label above the excerpt heading (e.g. "Chapter One · The Server Where She Buried Him")',
+             'show_in_rest'=>1],
+            ['key'=>'field_book_excerpt_html', 'label'=>'Excerpt',
+             'name'=>'excerpt_html', 'type'=>'wysiwyg', 'tabs'=>'visual', 'toolbar'=>'basic', 'media_upload'=>0,
+             'instructions'=>'A short teaser passage (typically 3-6 paragraphs). The first letter gets a drop-cap; a "Continue Reading" CTA appears below.',
+             'show_in_rest'=>1],
+        ],
+        'location' => [[['param' => 'post_type', 'operator' => '==', 'value' => 'book']]],
+        'menu_order'   => 5,
+        'position'     => 'normal',
+        'style'        => 'default',
+        'active'       => true,
+        'show_in_rest' => 1,
+    ]);
 
     /* ---------- Gallery item ---------- */
     acf_add_local_field_group([
@@ -307,3 +347,4 @@ require_once HAUNTED_TECH_DIR . '/inc/customizer.php';
 require_once HAUNTED_TECH_DIR . '/inc/render-callbacks.php';
 require_once HAUNTED_TECH_DIR . '/inc/blocks.php';
 require_once HAUNTED_TECH_DIR . '/inc/patterns.php';
+require_once HAUNTED_TECH_DIR . '/inc/rest.php';

@@ -220,3 +220,92 @@
       if (e.key === 'ArrowRight' && currentIndex < currentItems.length - 1) { currentIndex++; renderLightbox(); }
     });
   })();
+
+  // ===== v0.8 — Book modal (REST-fetched) + Back-to-top arrow =====
+  (function(){
+    const modal = document.getElementById('book-modal');
+    if (!modal) return;
+    const body  = document.getElementById('book-modal-body');
+    const title = document.getElementById('book-modal-title');
+    const close = modal.querySelector('.book-modal-close');
+
+    // Endpoint base — same-origin /wp-json/haunted-tech/v1/book-modal/<slug>
+    const REST_ROOT = (window.wpApiSettings && window.wpApiSettings.root) || (location.origin + '/wp-json/');
+    const ENDPOINT  = REST_ROOT + 'haunted-tech/v1/book-modal/';
+    const cache = new Map();
+
+    async function openBook(slug, fromHash) {
+      if (!slug) return;
+      try {
+        let data = cache.get(slug);
+        if (!data) {
+          const resp = await fetch(ENDPOINT + encodeURIComponent(slug));
+          if (!resp.ok) throw new Error('Book fetch failed: ' + resp.status);
+          data = await resp.json();
+          cache.set(slug, data);
+        }
+        body.innerHTML = data.html;
+        if (title) title.textContent = data.title || '';
+        modal.classList.add('active');
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('book-modal-open');
+        body.scrollTop = 0;
+        if (!fromHash) history.replaceState(null, '', '#book-' + slug);
+        // Close conflicting modals
+        const about = document.getElementById('about-modal');
+        if (about && about.classList.contains('active')) {
+          about.classList.remove('active');
+          about.setAttribute('aria-hidden', 'true');
+        }
+      } catch (e) {
+        console.warn('[haunted-tech] book modal load failed', e);
+      }
+    }
+    function shut() {
+      modal.classList.remove('active');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('book-modal-open');
+      if (location.hash.startsWith('#book-')) {
+        history.replaceState(null, '', location.pathname + location.search);
+      }
+    }
+    // Delegate clicks for any [data-open-book] (works for dynamically-injected links too)
+    document.addEventListener('click', e => {
+      const t = e.target.closest('[data-open-book]');
+      if (!t) return;
+      e.preventDefault();
+      openBook(t.dataset.openBook);
+    });
+    close.addEventListener('click', shut);
+    modal.addEventListener('click', e => { if (e.target === modal) shut(); });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && modal.classList.contains('active')) shut();
+    });
+    // Open on direct hash load (e.g. someone shared codalanguez.com/#book-hexrose)
+    const m = location.hash.match(/^#book-([\w-]+)/);
+    if (m) openBook(m[1], true);
+    window.addEventListener('hashchange', () => {
+      const m2 = location.hash.match(/^#book-([\w-]+)/);
+      if (m2) openBook(m2[1], true);
+    });
+  })();
+
+  (function(){
+    const btn = document.getElementById('back-to-top');
+    if (!btn) return;
+    const THRESHOLD = 600;
+    let ticking = false;
+    function update() {
+      const y = window.scrollY || document.documentElement.scrollTop;
+      btn.classList.toggle('visible', y > THRESHOLD);
+      ticking = false;
+    }
+    window.addEventListener('scroll', () => {
+      if (!ticking) { requestAnimationFrame(update); ticking = true; }
+    }, { passive: true });
+    update();
+    btn.addEventListener('click', e => {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  })();
