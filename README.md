@@ -275,7 +275,29 @@ Slider settings are localized to the front-end JS as `window.HauntedTechOpts.{sl
 - [x] FSE block theme (templates in `/templates/*.html`, parts in `/parts/*.html`)
 - [x] Theme-options panel for newsletter provider config + slider rotation duration
 - [x] Self-host the Google Fonts for performance + GDPR (24 woff2 files in `assets/fonts/`)
-- [ ] Wire `Connect your provider` admin link into a guided onboarding flow
+- [x] **v0.8** — Book modal SPA + back-to-top + book single overhaul
+- [x] **v0.9** — Web novel modal (parity with book modal, REST-fetched, hash-routed at `#webnovel-<slug>`)
+- [x] **v0.9** — Author byline on book hero (links to About modal)
+- [x] **v0.9** — Self-host Font Awesome 6.5.1 Free (`assets/fontawesome/`)
+- [x] **v0.9** — Onboarding admin notice with 7-step setup checklist (`inc/onboarding.php`)
+
+## Setup checklist (admin notice)
+
+After activation, an admin notice at the top of every WP admin screen guides you through the 7-step setup. Each row is either a green ✓ (done) or a red ◆ with a "Set up" button that deep-links to the right page:
+
+| # | Step | Where to fix |
+|---|---|---|
+| 1 | Upload your site logo | Customizer → Site Identity |
+| 2 | Set up the Primary menu | Appearance → Menus |
+| 3 | Set up the Social menu | Appearance → Menus → Social |
+| 4 | Connect a newsletter provider | Customizer → Haunted Tech → Newsletter |
+| 5 | Publish your first Hero Update | Hero Updates → Add New |
+| 6 | Publish your first Book | Books → Add New |
+| 7 | Create an About page (slug `about`) | Pages → Add New |
+
+A progress bar shows N of 7 done. Once all 7 are done, the notice hides automatically. Dismissible per user — the Dismiss link sets a `user_meta` flag so each editor sees the checklist on their first visit but can hide it afterward. On theme reactivation, dismiss flags reset across all users.
+
+The Onboarding renderer lives in `inc/onboarding.php` and only loads in admin (gated behind `is_admin()`).
 
 ---
 
