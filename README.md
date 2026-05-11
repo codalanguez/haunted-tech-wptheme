@@ -206,7 +206,26 @@ The Customizer's "Site Identity → Logo" setting is wired through `haunted_tech
 
 ## Anchor / deep linking
 
-Sections have stable IDs (`#books`, `#web-novels`, `#services`, `#gallery`, `#newsletter`, `#about`). Nav menu items can target them with `#` URLs. The gallery JS also reads URL hashes like `#gallery-art`, `#gallery-covers`, `#gallery-ai` to deep-link into specific tabs.
+Every meaningful spot on the homepage has a stable `id`. Use any of them as a Custom Link URL in **Appearance → Menus**, in any Button block, or as a CTA.
+
+| Anchor | Where it lands |
+|---|---|
+| `#top` / `#hero` | Top of the hero slider (use `#top` for a "back to top" button) |
+| `#books` | Bookshelf section |
+| `#book-<slug>` | A specific book's spine on the shelf (slug = the book's post slug) |
+| `#web-novels` | CRT-monitor web novels section |
+| `#webnovel-<slug>` | A specific web novel row in the CRT monitor |
+| `#services` | Services section |
+| `#service-art` / `#service-covers` / `#service-ai` | The individual service cards |
+| `#gallery` | Gallery section (lands on whichever tab is currently active) |
+| `#gallery-art` / `#gallery-covers` / `#gallery-ai` | Gallery section with a specific tab pre-selected (the JS reads the hash) |
+| `#newsletter` | "Join the Signal" newsletter callout |
+| `#about` | Opens the About modal instead of scrolling (handled by JS) |
+| `#footer` | Site footer |
+
+CSS `scroll-margin-top: 140px` is applied to all of these so they clear the sticky social bar + header on landing.
+
+A read-only **Anchors Reference** section also lives inside *Appearance → Customize → Haunted Tech* — same list, in case you don't want to flip back to the README while wiring up menus.
 
 ---
 
@@ -214,9 +233,12 @@ Sections have stable IDs (`#books`, `#web-novels`, `#services`, `#gallery`, `#ne
 
 | Section | Setting | Default | Notes |
 |---|---|---|---|
-| Newsletter   | Embed code      | empty    | Raw HTML/script from your provider; replaces the placeholder form |
-| Hero Slider  | Slide duration  | 5000 ms  | Range 1500–30000; advances each slide after this many ms |
-| Hero Slider  | Auto-rotate     | on       | Uncheck to require manual navigation only |
+| Anchors Reference | (read-only)  | n/a      | Cheat-sheet of every in-page anchor URL the theme exposes |
+| Newsletter   | Provider         | placeholder | placeholder / substack / embed |
+| Newsletter   | Substack URL     | empty    | Used when provider = substack; theme builds the iframe |
+| Newsletter   | Custom embed     | empty    | Used when provider = embed; raw HTML/script |
+| Hero Slider  | Slide duration   | 5000 ms  | Range 1500–30000; advances each slide after this many ms |
+| Hero Slider  | Auto-rotate      | on       | Uncheck to require manual navigation only |
 
 Slider settings are localized to the front-end JS as `window.HauntedTechOpts.{sliderDuration,sliderAutoplay}` — `assets/main.js` reads them on init.
 

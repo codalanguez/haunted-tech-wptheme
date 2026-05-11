@@ -20,8 +20,64 @@ add_action('customize_register', function (\WP_Customize_Manager $wp_customize) 
 
     $wp_customize->add_panel('haunted_tech', [
         'title'       => __('Haunted Tech', 'haunted-tech'),
-        'description' => __('Theme-specific options: newsletter provider embed and hero slider behavior.', 'haunted-tech'),
+        'description' => __('Theme-specific options: newsletter provider embed, hero slider behavior, and an anchor reference for menu setup.', 'haunted-tech'),
         'priority'    => 30,
+    ]);
+
+    /* ---------- Anchors reference section (read-only info) ---------- */
+    $wp_customize->add_section('haunted_tech_anchors', [
+        'title'       => __('Anchors Reference', 'haunted-tech'),
+        'description' => sprintf(
+            '<p style="margin:0 0 0.6em 0;"><strong>%s</strong></p>'
+          . '<p style="margin:0 0 0.6em 0;font-size:12px;line-height:1.5;">%s</p>'
+          . '<ul style="font-family:Consolas,Menlo,monospace;font-size:11px;line-height:1.7;margin:0 0 0 1em;padding:0;">'
+          . '<li><code>#top</code> &mdash; %s</li>'
+          . '<li><code>#hero</code> &mdash; %s</li>'
+          . '<li><code>#books</code> &mdash; %s</li>'
+          . '<li><code>#web-novels</code> &mdash; %s</li>'
+          . '<li><code>#services</code> &mdash; %s</li>'
+          . '<li><code>#service-art</code>, <code>#service-covers</code>, <code>#service-ai</code> &mdash; %s</li>'
+          . '<li><code>#gallery</code> &mdash; %s</li>'
+          . '<li><code>#gallery-art</code>, <code>#gallery-covers</code>, <code>#gallery-ai</code> &mdash; %s</li>'
+          . '<li><code>#newsletter</code> &mdash; %s</li>'
+          . '<li><code>#about</code> &mdash; %s</li>'
+          . '<li><code>#footer</code> &mdash; %s</li>'
+          . '<li><code>#book-&lt;slug&gt;</code> &mdash; %s</li>'
+          . '<li><code>#webnovel-&lt;slug&gt;</code> &mdash; %s</li>'
+          . '</ul>'
+          . '<p style="margin:0.8em 0 0 0;font-size:12px;line-height:1.5;">%s</p>',
+            esc_html__('Available in-page anchors', 'haunted-tech'),
+            esc_html__('Use any of these as a Custom Link URL in Appearance → Menus or in a Button block.', 'haunted-tech'),
+            esc_html__('top of page (alias of #hero)', 'haunted-tech'),
+            esc_html__('hero slider', 'haunted-tech'),
+            esc_html__('bookshelf section', 'haunted-tech'),
+            esc_html__('CRT-monitor web novels section', 'haunted-tech'),
+            esc_html__('services section', 'haunted-tech'),
+            esc_html__('individual service cards', 'haunted-tech'),
+            esc_html__('gallery section', 'haunted-tech'),
+            esc_html__('gallery with a specific tab pre-selected', 'haunted-tech'),
+            esc_html__('newsletter callout', 'haunted-tech'),
+            esc_html__('opens the About modal (instead of scrolling)', 'haunted-tech'),
+            esc_html__('site footer', 'haunted-tech'),
+            esc_html__('a specific book\'s spine on the homepage shelf (the slug is the book\'s post slug)', 'haunted-tech'),
+            esc_html__('a specific web novel\'s row in the CRT monitor', 'haunted-tech'),
+            esc_html__('Example: a menu item with URL "/#service-covers" scrolls to the Book Cover Design card from anywhere on the site.', 'haunted-tech')
+        ),
+        'panel'    => 'haunted_tech',
+        'priority' => 5,
+    ]);
+
+    /* The section needs at least one control to render. We use a hidden
+     * setting just to satisfy that requirement; nothing is actually saved. */
+    $wp_customize->add_setting('haunted_tech_anchors_noop', [
+        'default'    => '',
+        'capability' => 'edit_theme_options',
+        'sanitize_callback' => '__return_empty_string',
+    ]);
+    $wp_customize->add_control('haunted_tech_anchors_noop', [
+        'type'        => 'hidden',
+        'section'     => 'haunted_tech_anchors',
+        'label'       => '',
     ]);
 
     /* ---------- Newsletter section ---------- */
