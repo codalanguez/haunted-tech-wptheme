@@ -2122,6 +2122,25 @@
     animation: glitch-shift-fast 0.4s;
   }
   .buy-btn:hover::before { color: var(--red-deep); }
+
+  /* v0.9 — Download Free (reader-magnet primary CTA).
+     Inverts the .buy-btn pattern: filled on rest to draw the eye,
+     brighter glow on hover. Used when download_url is set on a book. */
+  .buy-btn-download {
+    background: var(--gold);
+    color: var(--void);
+    border-color: var(--gold-bright);
+    font-weight: 600;
+    text-shadow: 0 0 8px rgba(255,212,0,0.35);
+    box-shadow: 0 0 14px rgba(255,212,0,0.35);
+  }
+  .buy-btn-download::before { content: '⬇'; color: var(--red-deep); }
+  .buy-btn-download:hover {
+    background: var(--gold-bright);
+    color: var(--void);
+    box-shadow: 0 0 28px rgba(255,212,0,0.7), 0 0 48px rgba(229,9,20,0.25);
+  }
+  .buy-btn-download:hover::before { color: var(--red); }
   .book-find-row {
     display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem;
     margin: 0 0 2rem;
