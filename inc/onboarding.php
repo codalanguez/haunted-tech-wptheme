@@ -77,6 +77,16 @@ function haunted_tech_onboarding_steps() {
         'hint'  => __('Populates the About modal — content + featured image', 'haunted-tech'),
     ];
 
+    /* 8. Links page — Linktree-style bio-link page (v0.9.1) */
+    $links = get_page_by_path('links');
+    $links_ok = $links && $links->post_status === 'publish';
+    $steps[] = [
+        'done'  => $links_ok,
+        'title' => __('Create a Links page (slug: links)', 'haunted-tech'),
+        'url'   => admin_url('post-new.php?post_type=page'),
+        'hint'  => __('Add the Linktree Page block — your social-bio destination', 'haunted-tech'),
+    ];
+
     return $steps;
 }
 
