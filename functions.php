@@ -156,6 +156,7 @@ add_action('acf/init', function () {
     /* ---------- Extra Book fields (v0.8.0) ----------
      * Augments the existing Book field group (imported from book-fields.json)
      * with the modal-era fields: content warnings, discovery links, excerpt.
+     * v0.9 adds download_url for reader-magnet titles.
      * These render conditionally — empty fields collapse out of the layout.
      */
     acf_add_local_field_group([
@@ -183,6 +184,10 @@ add_action('acf/init', function () {
             ['key'=>'field_book_excerpt_html', 'label'=>'Excerpt',
              'name'=>'excerpt_html', 'type'=>'wysiwyg', 'tabs'=>'visual', 'toolbar'=>'basic', 'media_upload'=>0,
              'instructions'=>'A short teaser passage (typically 3-6 paragraphs). The first letter gets a drop-cap; a "Continue Reading" CTA appears below.',
+             'show_in_rest'=>1],
+            ['key'=>'field_book_download_url', 'label'=>'Free Download URL',
+             'name'=>'download_url', 'type'=>'url',
+             'instructions'=>'For reader-magnet titles (BookFunnel, StoryOrigin, etc.). When set, the book page renders a prominent "Download Free" CTA at the top of the buy-button row, before any paid retailer links. Use your Pretty Link slug for click tracking.',
              'show_in_rest'=>1],
         ],
         'location' => [[['param' => 'post_type', 'operator' => '==', 'value' => 'book']]],
@@ -327,6 +332,12 @@ if (!class_exists('Haunted_Tech_Social_Walker')) {
                 'threads.net'    => 'fa-brands fa-threads',
                 'twitter.com'    => 'fa-brands fa-x-twitter',
                 'x.com'          => 'fa-brands fa-x-twitter',
+                /* v0.9 — extra platforms */
+                'youtube.com'    => 'fa-brands fa-youtube',
+                'facebook.com'   => 'fa-brands fa-facebook',
+                'bookbub.com'    => 'fa-solid fa-book-bookmark',
+                'civitai.com'    => 'fa-solid fa-palette',
+                'redbubble.com'  => 'fa-solid fa-shirt',
             ];
             foreach ($map as $needle => $cls) {
                 if (strpos($host, $needle) !== false) return $cls;
