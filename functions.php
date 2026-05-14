@@ -95,6 +95,12 @@ add_action('wp_enqueue_scripts', function () {
         HAUNTED_TECH_VERSION
     );
 
+    // overflow-x:clip has the same visual effect as hidden (no horizontal
+    // overflow shown) but does NOT create a scroll container, so the header's
+    // `position:sticky;top:0` works correctly in all browsers including Safari.
+    // TODO: move this into the body rule in assets/main.css directly.
+    wp_add_inline_style( 'haunted-tech-main', 'body{overflow-x:clip}' );
+
     wp_enqueue_script(
         'haunted-tech-main',
         HAUNTED_TECH_URI . '/assets/main.js',
@@ -151,8 +157,7 @@ add_action('init', function () {
 
 /* Register the ACF field groups for theme-managed CPTs. */
 add_action('acf/init', function () {
-    if (!function_exists('acf_add_local_field_group')) { return; }
-
+    if (!function_exists('acf_add_local_field_group')) { return; }\n
     /* ---------- Extra Book fields (v0.8.0) ----------
      * Augments the existing Book field group (imported from book-fields.json)
      * with the modal-era fields: content warnings, discovery links, excerpt.
@@ -214,7 +219,7 @@ add_action('acf/init', function () {
              'instructions'=>'Long caption shown in the lightbox; first ~18 words also show on the card.', 'show_in_rest'=>1],
             ['key'=>'field_gi_image',        'label'=>'Image',         'name'=>'image',        'type'=>'image',
              'return_format'=>'array', 'preview_size'=>'medium',
-             'instructions'=>'Optional. If empty, the post’s featured image is used; if neither is set, the card shows a gradient placeholder.', 'show_in_rest'=>1],
+             'instructions'=>'Optional. If empty, the post's featured image is used; if neither is set, the card shows a gradient placeholder.', 'show_in_rest'=>1],
             ['key'=>'field_gi_aspect_ratio', 'label'=>'Aspect Ratio',  'name'=>'aspect_ratio', 'type'=>'select',
              'choices'=>[
                 '1/1'   => '1:1 (square)',
