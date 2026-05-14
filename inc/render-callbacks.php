@@ -624,6 +624,8 @@ function ht_render_single_book($attributes = []) {
     $storygraph  = get_field('storygraph_url', $post_id);
     $cw_graphic  = get_field('content_warnings_graphic', $post_id);
     $cw_standard = get_field('content_warnings',         $post_id);
+    /* v0.9 reader-magnet field */
+    $download    = get_field('download_url', $post_id);
 
     if (!$amazon && $asin) $amazon = 'https://www.amazon.com/dp/' . urlencode($asin);
 
@@ -693,16 +695,23 @@ function ht_render_single_book($attributes = []) {
           <?php endif; ?>
 
           <?php
+          /* Buy / acquire row.
+           * If a download_url is set (reader magnet), "Download Free" leads
+           * the row with a primary-CTA class hook (buy-btn-download). Paid
+           * retailer buttons follow in the standard buy-btn treatment. */
           $buys = array_filter([
-              $amazon ? ['Amazon',         $amazon] : null,
-              $bn     ? ['Barnes & Noble', $bn]     : null,
-              $kobo   ? ['Kobo',           $kobo]   : null,
-              $apple  ? ['Apple Books',    $apple]  : null,
+              $download ? ['Download Free',  $download, 'buy-btn buy-btn-download'] : null,
+              $amazon   ? ['Amazon',         $amazon,   'buy-btn'] : null,
+              $bn       ? ['Barnes & Noble', $bn,       'buy-btn'] : null,
+              $kobo     ? ['Kobo',           $kobo,     'buy-btn'] : null,
+              $apple    ? ['Apple Books',    $apple,    'buy-btn'] : null,
           ]);
           if (!empty($buys)): ?>
             <div class="book-buy-row">
-              <?php foreach ($buys as $b): ?>
-                <a href="<?php echo esc_url($b[1]); ?>" class="buy-btn" target="_blank" rel="noopener"><?php echo esc_html($b[0]); ?></a>
+              <?php foreach ($buys as $b):
+                  $cls = $b[2] ?? 'buy-btn';
+              ?>
+                <a href="<?php echo esc_url($b[1]); ?>" class="<?php echo esc_attr($cls); ?>" target="_blank" rel="noopener"><?php echo esc_html($b[0]); ?></a>
               <?php endforeach; ?>
             </div>
           <?php endif; ?>
