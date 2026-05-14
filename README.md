@@ -97,6 +97,7 @@ All blocks live under the **Haunted Tech** category in the block inserter:
 | `haunted-tech/single-book`    | Bespoke single-book layout | current queried post |
 | `haunted-tech/single-webnovel`| Bespoke single-webnovel layout | current queried post |
 | `haunted-tech/single-chapter` | Bespoke single-chapter reader layout | current queried post |
+| `haunted-tech/linktree`       | Linktree-style bio-link page: avatar + bio + stacked books, web novels, social | `book` + `webnovel` CPTs + social menu |
 
 ### Block patterns
 
@@ -151,6 +152,7 @@ ACF fields consumed:
 | `goodreads_url`, `bookbub_url`, `storygraph_url` *(v0.8)* | "Find online" discovery row |
 | `content_warnings_graphic`, `content_warnings` *(v0.8)* | collapsible warning panel (comma-separated lists; graphic items render in brighter red) |
 | `excerpt_eyebrow`, `excerpt_html` *(v0.8)* | "Chapter One" preview with drop-cap |
+| `download_url` *(v0.9)* | When set, the buy row renders a primary "Download Free" CTA (gold-filled, `buy-btn-download` class) before the paid retailer buttons. Use a Pretty Link for click tracking. |
 
 If `buy_amazon` is empty but `asin` is set, the theme builds the Amazon URL from the ASIN. **Every field is conditional** — empty values collapse out of the layout entirely (no empty labels, no broken buttons).
 
@@ -203,6 +205,21 @@ If you have **zero** `gallery_item` posts, the section gracefully falls back to 
 ### About modal — `about` page
 
 If you create a page with the slug `about`, its post content becomes the bio displayed in the About modal. The page's featured image becomes the portrait. The "About" nav link opens the modal via JS instead of navigating to `/about` (the URL hash still works for direct linking, including `…?#about`).
+
+### Linktree page — `haunted-tech/linktree` block *(v0.9.1)*
+
+A single-block dynamic page for social-bio-link use (Instagram bio, TikTok bio, email signature, business cards). Drop the **Linktree Page** block on any WP page and it renders, in order:
+
+- **Avatar** — site custom-logo (or `assets/logo.png` fallback), 120 px circle with gold ring + glow
+- **Site name** — Forum-serif, gold, with the existing glitch tear animation
+- **Bio** — pulled from Settings → General → Tagline (`blogdescription`)
+- **Books** — every published `book` post as a stacked tile (cover, series eyebrow, title, 14-word tagline). Books with `download_url` set show a gold **"Free Download"** eyebrow instead of the series name.
+- **Web Novels** — every published `webnovel` post (cover, status eyebrow, title, tagline)
+- **Follow** — `social` nav menu rendered through `Haunted_Tech_Social_Walker`, so all auto-mapped brand icons (YouTube, Facebook, BookBub, Civitai, Redbubble, etc.) light up here too
+
+All sections are conditional — empty CPTs or an unassigned social menu collapse out of the layout. Mobile-friendly 640 px column max-width; cards reflow at ≤480 px.
+
+Suggested page slug: `/links`. Set the page as a draft, drop a single `haunted-tech/linktree` block in the body, publish, then use `https://yoursite.com/links` as your social-bio destination.
 
 ### Newsletter
 
@@ -280,10 +297,13 @@ Slider settings are localized to the front-end JS as `window.HauntedTechOpts.{sl
 - [x] **v0.9** — Author byline on book hero (links to About modal)
 - [x] **v0.9** — Self-host Font Awesome 6.5.1 Free (`assets/fontawesome/`)
 - [x] **v0.9** — Onboarding admin notice with 7-step setup checklist (`inc/onboarding.php`)
+- [x] **v0.9** — `download_url` book field + `.buy-btn-download` primary-CTA styling (free-download support for reader magnets)
+- [x] **v0.9** — Extra social-bar brand icons (YouTube, Facebook, BookBub, Civitai, Redbubble)
+- [x] **v0.9.1** — Linktree page block (avatar + bio + stacked Books / Web Novels / Follow)
 
 ## Setup checklist (admin notice)
 
-After activation, an admin notice at the top of every WP admin screen guides you through the 7-step setup. Each row is either a green ✓ (done) or a red ◆ with a "Set up" button that deep-links to the right page:
+After activation, an admin notice at the top of every WP admin screen guides you through the 8-step setup. Each row is either a green ✓ (done) or a red ◆ with a "Set up" button that deep-links to the right page:
 
 | # | Step | Where to fix |
 |---|---|---|
@@ -294,8 +314,9 @@ After activation, an admin notice at the top of every WP admin screen guides you
 | 5 | Publish your first Hero Update | Hero Updates → Add New |
 | 6 | Publish your first Book | Books → Add New |
 | 7 | Create an About page (slug `about`) | Pages → Add New |
+| 8 | Create a Links page (slug `links`, contains the Linktree block) | Pages → Add New |
 
-A progress bar shows N of 7 done. Once all 7 are done, the notice hides automatically. Dismissible per user — the Dismiss link sets a `user_meta` flag so each editor sees the checklist on their first visit but can hide it afterward. On theme reactivation, dismiss flags reset across all users.
+A progress bar shows N of 8 done. Once all 8 are done, the notice hides automatically. Dismissible per user — the Dismiss link sets a `user_meta` flag so each editor sees the checklist on their first visit but can hide it afterward. On theme reactivation, dismiss flags reset across all users.
 
 The Onboarding renderer lives in `inc/onboarding.php` and only loads in admin (gated behind `is_admin()`).
 
