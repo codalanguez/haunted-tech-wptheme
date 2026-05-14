@@ -1229,3 +1229,122 @@ function ht_render_site_footer($attributes = []) {
     <?php
     return ob_get_clean();
 }
+
+
+/* ============================================================
+ * LINKTREE — single-page bio-link layout: avatar + bio + stacked
+ * link cards for every published Book, Web Novel, and a social-bar
+ * footer. Drop the haunted-tech/linktree block on any WP page.
+ * ============================================================ */
+function ht_render_linktree($attributes = []) {
+    $books = get_posts([
+        'post_type'      => 'book',
+        'posts_per_page' => -1,
+        'post_status'    => 'publish',
+        'orderby'        => 'date',
+        'order'          => 'DESC',
+    ]);
+    $webnovels = get_posts([
+        'post_type'      => 'webnovel',
+        'posts_per_page' => -1,
+        'post_status'    => 'publish',
+        'orderby'        => 'date',
+        'order'          => 'DESC',
+    ]);
+    $bio = get_bloginfo('description');
+    ob_start(); ?>
+    <section class="block-linktree">
+      <div class="linktree-card">
+
+        <div class="linktree-header">
+          <img class="linktree-avatar" src="<?php echo esc_url(haunted_tech_logo_url()); ?>" alt="<?php echo esc_attr(get_bloginfo('name')); ?>">
+          <h1 class="linktree-name" data-text="<?php echo esc_attr(get_bloginfo('name')); ?>"><?php bloginfo('name'); ?></h1>
+          <?php if ($bio): ?><p class="linktree-bio"><?php echo esc_html($bio); ?></p><?php endif; ?>
+        </div>
+
+        <?php if (!empty($books)): ?>
+          <div class="linktree-section">
+            <h2 class="linktree-section-title">Books</h2>
+            <div class="linktree-stack">
+              <?php foreach ($books as $b):
+                  $cover = get_field('cover', $b->ID);
+                  $cover_url = (is_array($cover) && !empty($cover['url'])) ? $cover['url']
+                             : (has_post_thumbnail($b->ID) ? get_the_post_thumbnail_url($b->ID, 'medium') : '');
+                  $series  = get_field('series', $b->ID);
+                  $tag     = get_field('tagline', $b->ID);
+                  $sub     = $tag ? wp_trim_words($tag, 14, "\xE2\x80\xA6") : '';
+                  $is_free = (bool) get_field('download_url', $b->ID);
+              ?>
+                <a href="<?php echo esc_url(get_permalink($b)); ?>" class="linktree-tile linktree-tile--book<?php echo $is_free ? ' linktree-tile--free' : ''; ?>">
+                  <div class="linktree-tile-cover">
+                    <?php if ($cover_url): ?>
+                      <img src="<?php echo esc_url($cover_url); ?>" alt="" loading="lazy">
+                    <?php else: ?>
+                      <span>&#9670;</span>
+                    <?php endif; ?>
+                  </div>
+                  <div class="linktree-tile-body">
+                    <?php if ($is_free): ?><div class="linktree-tile-eyebrow linktree-tile-eyebrow--free">Free Download</div>
+                    <?php elseif ($series): ?><div class="linktree-tile-eyebrow"><?php echo esc_html($series); ?></div><?php endif; ?>
+                    <div class="linktree-tile-title"><?php echo esc_html(get_the_title($b)); ?></div>
+                    <?php if ($sub): ?><div class="linktree-tile-sub"><?php echo esc_html($sub); ?></div><?php endif; ?>
+                  </div>
+                  <div class="linktree-tile-cta">&rarr;</div>
+                </a>
+              <?php endforeach; ?>
+            </div>
+          </div>
+        <?php endif; ?>
+
+        <?php if (!empty($webnovels)): ?>
+          <div class="linktree-section">
+            <h2 class="linktree-section-title">Web Novels</h2>
+            <div class="linktree-stack">
+              <?php foreach ($webnovels as $wn):
+                  $cover = get_field('cover', $wn->ID);
+                  $cover_url = (is_array($cover) && !empty($cover['url'])) ? $cover['url']
+                             : (has_post_thumbnail($wn->ID) ? get_the_post_thumbnail_url($wn->ID, 'medium') : '');
+                  $tag = get_field('tagline', $wn->ID) ?: get_field('blurb', $wn->ID);
+                  $sub = $tag ? wp_trim_words($tag, 14, "\xE2\x80\xA6") : '';
+                  $status = get_field('status', $wn->ID);
+              ?>
+                <a href="<?php echo esc_url(get_permalink($wn)); ?>" class="linktree-tile linktree-tile--webnovel">
+                  <div class="linktree-tile-cover">
+                    <?php if ($cover_url): ?>
+                      <img src="<?php echo esc_url($cover_url); ?>" alt="" loading="lazy">
+                    <?php else: ?>
+                      <span>&#9998;</span>
+                    <?php endif; ?>
+                  </div>
+                  <div class="linktree-tile-body">
+                    <?php if ($status): ?><div class="linktree-tile-eyebrow"><?php echo esc_html(ucfirst((string)$status)); ?></div><?php endif; ?>
+                    <div class="linktree-tile-title"><?php echo esc_html(get_the_title($wn)); ?></div>
+                    <?php if ($sub): ?><div class="linktree-tile-sub"><?php echo esc_html($sub); ?></div><?php endif; ?>
+                  </div>
+                  <div class="linktree-tile-cta">&rarr;</div>
+                </a>
+              <?php endforeach; ?>
+            </div>
+          </div>
+        <?php endif; ?>
+
+        <?php if (has_nav_menu('social')): ?>
+          <div class="linktree-section linktree-section--social">
+            <h2 class="linktree-section-title">Follow</h2>
+            <ul class="linktree-social">
+              <?php wp_nav_menu([
+                  'theme_location' => 'social',
+                  'container'      => false,
+                  'items_wrap'     => '%3$s',
+                  'walker'         => new Haunted_Tech_Social_Walker(),
+                  'fallback_cb'    => false,
+              ]); ?>
+            </ul>
+          </div>
+        <?php endif; ?>
+
+      </div>
+    </section>
+    <?php
+    return ob_get_clean();
+}
