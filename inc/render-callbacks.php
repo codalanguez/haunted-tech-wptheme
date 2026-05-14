@@ -67,7 +67,19 @@ function ht_render_site_header($attributes = []) {
     <header class="block-header">
       <div class="header-inner">
         <a href="<?php echo esc_url(home_url('/')); ?>" class="logo" aria-label="<?php bloginfo('name'); ?>">
-          <img src="<?php echo esc_url(haunted_tech_logo_url()); ?>" alt="<?php echo esc_attr(get_bloginfo('name')); ?> logo">
+          <?php
+          $_logo_id = get_theme_mod('custom_logo');
+          if ($_logo_id) {
+              echo wp_get_attachment_image($_logo_id, [200, 200], false, [
+                  'alt'      => esc_attr(get_bloginfo('name')) . ' logo',
+                  'loading'  => 'eager',
+                  'decoding' => 'async',
+                  'class'    => 'site-logo-img',
+              ]);
+          } else {
+              echo '<img src="' . esc_url(haunted_tech_logo_url()) . '" alt="' . esc_attr(get_bloginfo('name')) . ' logo" width="512" height="512" loading="eager">';
+          }
+          ?>
           <span class="logo-text-wrap">
             <span class="logo-text"><?php bloginfo('name'); ?></span>
             <?php $tagline = get_bloginfo('description'); if ($tagline): ?>
@@ -103,7 +115,14 @@ function ht_render_hero_slider($attributes = []) {
     <span id="top"  class="ht-anchor" aria-hidden="true"></span>
     <div class="hero block-hero" id="hero-slider">
       <div class="hero-watermark" aria-hidden="true">
-        <img src="<?php echo esc_url(haunted_tech_logo_url()); ?>" alt="">
+        <?php
+        $_wm_id = get_theme_mod('custom_logo');
+        if ($_wm_id) {
+            echo wp_get_attachment_image($_wm_id, 'medium', false, ['alt' => '', 'loading' => 'eager', 'decoding' => 'async']);
+        } else {
+            echo '<img src="' . esc_url(haunted_tech_logo_url()) . '" alt="" width="512" height="512" loading="eager">';
+        }
+        ?>
       </div>
       <div class="hero-frame">
         <div class="deco-corner-tr"></div>
