@@ -308,14 +308,14 @@ if (!class_exists('Haunted_Tech_Social_Walker')) {
         public function start_el(&$output, $item, $depth = 0, $args = null, $id = 0) {
             $url   = $item->url   ?? '#';
             $label = $item->title ?? '';
-            $icon  = self::icon_for($url);
+            $icon  = self::icon_for($url, $label);
             $output .= sprintf(
                 '<li><a href="%s" data-label="%s" aria-label="%s"><i class="%s"></i></a></li>',
                 esc_url($url), esc_attr($label), esc_attr($label), esc_attr($icon)
             );
         }
         public function end_el(&$output, $item, $depth = 0, $args = null) { /* no-op */ }
-        public static function icon_for($url) {
+        public static function icon_for($url, $label = '') {
             $host = parse_url($url, PHP_URL_HOST) ?: '';
             $map = [
                 'patreon.com'    => 'fa-brands fa-patreon',
@@ -342,6 +342,38 @@ if (!class_exists('Haunted_Tech_Social_Walker')) {
             foreach ($map as $needle => $cls) {
                 if (strpos($host, $needle) !== false) return $cls;
             }
+
+            /* v0.9.2 — slug/label fallback. Lets Pretty Link URLs
+             * (codalanguez.com/go/<slug>) resolve to brand icons by also
+             * checking the URL path and the menu item label for platform
+             * keywords. Slugs are intentionally shorter than the host keys
+             * (no ".com" suffix) to match path segments. X/Twitter is omitted
+             * from this pass since the single letter "x" is too ambiguous —
+             * use the host map (twitter.com / x.com) instead. */
+            $haystack = strtolower(($url ?: '') . ' ' . ($label ?: ''));
+            $slug_map = [
+                'patreon'   => 'fa-brands fa-patreon',
+                'reamstories' => 'fa-solid fa-book-open-reader',
+                'ream'      => 'fa-solid fa-book-open-reader',
+                'substack'  => 'fa-solid fa-envelope-open-text',
+                'discord'   => 'fa-brands fa-discord',
+                'bluesky'   => 'fa-brands fa-bluesky',
+                'bsky'      => 'fa-brands fa-bluesky',
+                'instagram' => 'fa-brands fa-instagram',
+                'tiktok'    => 'fa-brands fa-tiktok',
+                'goodreads' => 'fa-brands fa-goodreads-g',
+                'amazon'    => 'fa-brands fa-amazon',
+                'threads'   => 'fa-brands fa-threads',
+                'youtube'   => 'fa-brands fa-youtube',
+                'facebook'  => 'fa-brands fa-facebook',
+                'bookbub'   => 'fa-solid fa-book-bookmark',
+                'civitai'   => 'fa-solid fa-palette',
+                'redbubble' => 'fa-solid fa-shirt',
+            ];
+            foreach ($slug_map as $needle => $cls) {
+                if (strpos($haystack, $needle) !== false) return $cls;
+            }
+
             return 'fa-solid fa-link';
         }
     }
