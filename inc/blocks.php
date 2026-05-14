@@ -47,6 +47,7 @@ add_action('init', function () {
         ['slug' => 'book-modal',          'title' => 'Book Modal (singleton)',  'render' => 'ht_render_book_modal_shell',    'icon' => 'fullscreen-alt'],
         ['slug' => 'webnovel-modal',      'title' => 'Web Novel Modal (singleton)','render' => 'ht_render_webnovel_modal_shell','icon' => 'fullscreen-alt'],
         ['slug' => 'also-by-webnovels',   'title' => 'Also by (Web Novels)',    'render' => 'ht_render_also_by_webnovels',   'icon' => 'admin-page'],
+        ['slug' => 'linktree',            'title' => 'Linktree Page',           'render' => 'ht_render_linktree',            'icon' => 'admin-links'],
         ['slug' => 'back-to-top',         'title' => 'Back-to-Top Arrow',       'render' => 'ht_render_back_to_top',         'icon' => 'arrow-up-alt'],
     ];
 
