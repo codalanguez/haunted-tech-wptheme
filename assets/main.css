@@ -2650,3 +2650,134 @@
     .linktree-tile-title { font-size: 0.95rem; }
     .linktree-tile-sub { font-size: 0.8rem; }
   }
+
+
+  /* =========================================================
+   * v0.9.3 — COMMISSION INQUIRY FORMS
+   * Shortcodes: [ht_commission_art] [ht_commission_cover] [ht_commission_ai]
+   * Self-posting forms, wp_mail() delivery, Haunted Tech aesthetic.
+   * ========================================================= */
+  .htf-wrap {
+    max-width: 680px;
+    margin: 3rem auto;
+    padding: 0 1rem;
+  }
+  .htf-form {
+    background: var(--obsidian);
+    border: 1px solid var(--border-dim);
+    padding: 2.5rem 2rem;
+  }
+  .htf-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    margin-bottom: 1.4rem;
+  }
+  .htf-label {
+    font-family: 'Forum', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .htf-req { color: var(--red); margin-left: 0.2em; }
+  .htf-input {
+    background: var(--void);
+    border: 1px solid var(--border-dim);
+    color: var(--bone);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    padding: 0.65rem 0.9rem;
+    width: 100%;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  .htf-input:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 2px rgba(255,212,0,0.15);
+  }
+  .htf-select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'%3E%3Cpath fill='%23ffd400' d='M5 7L0 0h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.9rem center;
+    padding-right: 2.5rem;
+    cursor: pointer;
+  }
+  textarea.htf-input { resize: vertical; min-height: 7rem; line-height: 1.6; }
+  .htf-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+  }
+  .htf-req-note {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.85rem;
+    color: var(--bone-dim);
+    margin: 0;
+  }
+  .htf-submit {
+    font-family: 'Forum', serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--void);
+    background: var(--gold);
+    border: none;
+    padding: 0.85rem 2rem;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+  }
+  .htf-submit:hover {
+    background: #ffe44d;
+    box-shadow: 0 0 18px rgba(255,212,0,0.4);
+    transform: translateY(-1px);
+  }
+  .htf-error-box {
+    background: rgba(90,10,18,0.25);
+    border: 1px solid var(--red);
+    color: var(--bone);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    padding: 1rem 1.2rem;
+    margin-bottom: 1.5rem;
+  }
+  .htf-error-list { margin: 0; padding-left: 1.2rem; }
+  .htf-error-list li { margin-bottom: 0.3rem; }
+  .htf-success {
+    text-align: center;
+    padding: 4rem 2rem;
+    border: 1px solid var(--border-dim);
+    background: var(--obsidian);
+  }
+  .htf-success-icon {
+    font-size: 2.5rem;
+    color: var(--gold);
+    text-shadow: 0 0 20px rgba(255,212,0,0.5);
+    margin-bottom: 1.2rem;
+  }
+  .htf-success-title {
+    font-family: 'Forum', serif;
+    font-size: clamp(1.4rem, 4vw, 2rem);
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 0 0 0.75rem;
+  }
+  .htf-success-msg {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--bone);
+    margin: 0;
+  }
+  @media (max-width: 600px) {
+    .htf-form { padding: 1.5rem 1rem; }
+    .htf-footer { flex-direction: column; align-items: flex-start; }
+  }
