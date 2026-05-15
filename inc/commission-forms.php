@@ -1,7 +1,7 @@
 <?php
 /**
  * Commission inquiry forms — three shortcodes, each self-submits
- * and sends an email to the site admin via wp_mail().
+ * and sends an email to coda@codalanguez.com via wp_mail().
  *
  * Shortcodes:
  *   [ht_commission_art]   — Art Commissions
@@ -12,6 +12,9 @@
  */
 
 if (!defined('ABSPATH')) { exit; }
+
+/** Recipient for all commission inquiry emails. */
+define('HT_COMMISSION_EMAIL', 'coda@codalanguez.com');
 
 /* ============================================================
  * Process form submission + send email.
@@ -49,21 +52,22 @@ function ht_commission_process($form_id, $subject_prefix, $fields) {
         return ['errors' => $errors];
     }
 
-    $name  = sanitize_text_field(wp_unslash($_POST['name'] ?? ''));
+    $first = sanitize_text_field(wp_unslash($_POST['first_name'] ?? ''));
+    $last  = sanitize_text_field(wp_unslash($_POST['last_name']  ?? ''));
+    $name  = trim($first . ' ' . $last) ?: $first;
     $email = sanitize_email(wp_unslash($_POST['email'] ?? ''));
 
     $body  = "New {$subject_prefix} inquiry from {$name} <{$email}>\n\n";
     $body .= implode("\n", $lines);
     $body .= "\n\n---\nSent via " . get_bloginfo('name') . ' — ' . get_bloginfo('url');
 
-    $to      = get_option('admin_email');
-    $subject = "[{$subject_prefix}] Inquiry from {$name}";
+    $subject = "[{$subject_prefix}] Inquiry from {$first}";
     $headers = [
         'Content-Type: text/plain; charset=UTF-8',
         "Reply-To: {$name} <{$email}>",
     ];
 
-    return ['success' => wp_mail($to, $subject, $body, $headers)];
+    return ['success' => wp_mail(HT_COMMISSION_EMAIL, $subject, $body, $headers)];
 }
 
 /* ============================================================
@@ -121,8 +125,7 @@ function ht_commission_render($form_id, $subject_prefix, $fields) {
             echo '<p class="htf-success-msg">Thank you — I\'ll review your inquiry and reply within 2&#8211;3 business days.</p>';
             echo '</div>';
         } else {
-            $admin = get_option('admin_email');
-            echo '<div class="htf-error-box">There was a problem sending your message. Please try again or <a href="mailto:' . esc_attr($admin) . '">email directly</a>.</div>';
+            echo '<div class="htf-error-box">There was a problem sending your message. Please try again or <a href="mailto:' . esc_attr(HT_COMMISSION_EMAIL) . '">email directly</a>.</div>';
         }
         echo '</div>';
         return ob_get_clean();
@@ -159,7 +162,8 @@ function ht_commission_render($form_id, $subject_prefix, $fields) {
  * ============================================================ */
 add_shortcode('ht_commission_art', function () {
     return ht_commission_render('ht_art', 'Art Commission', [
-        ['id' => 'name',        'label' => 'Your Name',                              'type' => 'text',     'required' => true],
+        ['id' => 'first_name',  'label' => 'First Name',                             'type' => 'text',     'required' => true],
+        ['id' => 'last_name',   'label' => 'Last Name',                              'type' => 'text',     'required' => false],
         ['id' => 'email',       'label' => 'Email Address',                          'type' => 'email',    'required' => true],
         ['id' => 'comm_type',   'label' => 'Commission Type',                        'type' => 'select',   'required' => true,
          'options' => ['Character Portrait', 'Scene / Illustration', 'Cyber-Gothic / Dark Art', 'Couple / Multi-character', 'Other']],
@@ -183,7 +187,8 @@ add_shortcode('ht_commission_art', function () {
  * ============================================================ */
 add_shortcode('ht_commission_cover', function () {
     return ht_commission_render('ht_cover', 'Book Cover', [
-        ['id' => 'name',        'label' => 'Your Name',                              'type' => 'text',     'required' => true],
+        ['id' => 'first_name',  'label' => 'First Name',                             'type' => 'text',     'required' => true],
+        ['id' => 'last_name',   'label' => 'Last Name',                              'type' => 'text',     'required' => false],
         ['id' => 'pen_name',    'label' => 'Pen Name (if different)',                'type' => 'text',     'required' => false],
         ['id' => 'email',       'label' => 'Email Address',                          'type' => 'email',    'required' => true],
         ['id' => 'cover_type',  'label' => 'Cover Type',                             'type' => 'select',   'required' => true,
@@ -208,7 +213,8 @@ add_shortcode('ht_commission_cover', function () {
  * ============================================================ */
 add_shortcode('ht_commission_ai', function () {
     return ht_commission_render('ht_ai', 'AI Generation', [
-        ['id' => 'name',        'label' => 'Your Name',                              'type' => 'text',     'required' => true],
+        ['id' => 'first_name',  'label' => 'First Name',                             'type' => 'text',     'required' => true],
+        ['id' => 'last_name',   'label' => 'Last Name',                              'type' => 'text',     'required' => false],
         ['id' => 'email',       'label' => 'Email Address',                          'type' => 'email',    'required' => true],
         ['id' => 'use_case',    'label' => 'Use Case',                               'type' => 'select',   'required' => true,
          'options' => ['Character art', 'Mood board', 'Chapter / scene banner', 'Social media assets', 'Book cover (AI-assisted)', 'Other']],
