@@ -2852,7 +2852,7 @@
   max-height: 88vh;
   height: 700px;
   width: 100%;
-  background: var(--obsidian);
+  background: var(--void);
   border: 1px solid var(--gold);
   box-shadow:
     0 0 0 4px var(--void),
@@ -2879,9 +2879,6 @@
 /* ----- Left poster panel: large icon + atmospheric tagline ----- */
 .commission-poster {
   background: var(--void);
-  background-image:
-    radial-gradient(ellipse at center, rgba(255,212,0,0.10) 0%, transparent 60%),
-    radial-gradient(ellipse at 30% 80%, rgba(229,9,20,0.10) 0%, transparent 50%);
   position: relative;
   border-right: 1px solid var(--border-dim);
   display: flex;
