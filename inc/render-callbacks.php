@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Render callbacks for the Haunted Tech custom blocks.
  *
