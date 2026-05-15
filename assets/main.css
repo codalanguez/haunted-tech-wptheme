@@ -2848,8 +2848,9 @@
 }
 .commission-frame {
   position: relative;
-  max-width: 720px;
+  max-width: 1100px;
   max-height: 88vh;
+  height: 700px;
   width: 100%;
   background: var(--obsidian);
   border: 1px solid var(--gold);
@@ -2857,13 +2858,77 @@
     0 0 0 4px var(--void),
     0 0 0 5px var(--gold),
     0 40px 80px rgba(229, 9, 20, 0.3);
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 5fr 7fr;
+  grid-template-rows: 1fr;
   overflow: hidden;
+}
+@media (max-width: 900px) {
+  .commission-frame {
+    grid-template-columns: 1fr;
+    grid-template-rows: 240px 1fr;
+    max-height: 92vh;
+    height: 92vh;
+  }
 }
 @media (max-width: 600px) {
   .commission-modal { padding: 1rem; }
-  .commission-frame { max-height: 92vh; }
+  .commission-frame { grid-template-rows: 200px 1fr; }
+}
+
+/* ----- Left poster panel: large icon + atmospheric tagline ----- */
+.commission-poster {
+  background: var(--void);
+  background-image:
+    radial-gradient(ellipse at center, rgba(255,212,0,0.10) 0%, transparent 60%),
+    radial-gradient(ellipse at 30% 80%, rgba(229,9,20,0.10) 0%, transparent 50%);
+  position: relative;
+  border-right: 1px solid var(--border-dim);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2rem;
+  overflow: hidden;
+}
+@media (max-width: 900px) {
+  .commission-poster { border-right: none; border-bottom: 1px solid var(--border-dim); padding: 2rem 1.5rem; }
+}
+.commission-poster::after {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(90deg, transparent 70%, rgba(15,13,10,0.6) 100%),
+    repeating-linear-gradient(0deg, transparent 0, transparent 3px, rgba(0,0,0,0.18) 3px, rgba(0,0,0,0.18) 4px);
+  pointer-events: none;
+}
+.commission-poster-icon {
+  font-size: 9rem;
+  line-height: 1;
+  color: var(--gold);
+  text-shadow:
+    0 0 30px rgba(255,212,0,0.5),
+    0 0 60px rgba(229,9,20,0.25);
+  margin-bottom: 2.5rem;
+  position: relative;
+  z-index: 1;
+}
+@media (max-width: 900px) {
+  .commission-poster-icon { font-size: 5rem; margin-bottom: 1rem; }
+}
+.commission-poster-tagline {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 1.15rem;
+  color: var(--bone);
+  text-align: center;
+  line-height: 1.65;
+  max-width: 90%;
+  position: relative;
+  z-index: 1;
+}
+@media (max-width: 900px) {
+  .commission-poster-tagline { font-size: 0.95rem; }
 }
 .commission-frame::before, .commission-frame::after {
   content: ''; position: absolute; width: 50px; height: 50px;
@@ -2960,10 +3025,10 @@
 }
 .commission-body::-webkit-scrollbar-thumb:hover { background: var(--red); box-shadow: 0 0 8px var(--red); }
 
-/* Tighter form spacing inside the modal so it doesn't feel cramped.
- * Form keeps its own obsidian background + gold-ish border so it reads
- * as a distinct panel floating over the transparent modal frame. */
-.commission-body .htf-wrap { max-width: none; padding: 0; margin: 0; }
+/* Form sits cleanly inside the modal's right column — strip its outer
+ * wrap/panel chrome so the modal frame is the only visible container. */
+.commission-body .htf-wrap { max-width: none; margin: 0; padding: 0; }
+.commission-body .htf-form { background: none; border: none; padding: 0; }
 
 body.commission-open { overflow: hidden; }
 /* Hide the sticky header + social bar while a commission modal is open so

@@ -341,17 +341,41 @@ function ht_render_services($attributes = []) {
       </div>
     </section>
 
-    <!-- Commission inquiry modals — opened by data-open-commission buttons.
-         Styled to match the About modal: full-screen overlay, gold-framed
-         panel with corner accents + scanline backdrop. -->
+    <!-- Commission inquiry modals — match the About modal structure:
+         left poster (large icon + tagline) + right meta (eyebrow, title,
+         scrolling form body). -->
     <?php foreach ([
-        'art'   => ['eyebrow' => 'Bespoke',            'title' => 'Art Commission',    'shortcode' => '[ht_commission_art]'],
-        'cover' => ['eyebrow' => 'Premade & Custom',   'title' => 'Book Cover Design', 'shortcode' => '[ht_commission_cover]'],
-        'ai'    => ['eyebrow' => 'AI-Assisted',        'title' => 'AI Generation',     'shortcode' => '[ht_commission_ai]'],
+        'art'   => [
+            'eyebrow'  => 'Bespoke',
+            'title'    => 'Art Commission',
+            'icon'     => '&#10048;',
+            'tagline'  => 'Original character art, cyber-gothic portraits, and scene illustrations. Hand-drawn with neon-glitch finish.',
+            'shortcode'=> '[ht_commission_art]',
+        ],
+        'cover' => [
+            'eyebrow'  => 'Premade & Custom',
+            'title'    => 'Book Cover Design',
+            'icon'     => '&#10065;',
+            'tagline'  => 'Full-wrap cover design for dark romance, horror, and cyberpunk fiction. Ebook, paperback, hardcover.',
+            'shortcode'=> '[ht_commission_cover]',
+        ],
+        'ai'    => [
+            'eyebrow'  => 'AI-Assisted',
+            'title'    => 'AI Generation',
+            'icon'     => '&#9635;',
+            'tagline'  => 'Custom AI-generated character art, mood boards, and chapter banners — finished by hand.',
+            'shortcode'=> '[ht_commission_ai]',
+        ],
     ] as $key => $cfg): ?>
     <div class="commission-modal" id="commission-modal-<?php echo esc_attr($key); ?>" role="dialog" aria-modal="true" aria-labelledby="cm-title-<?php echo esc_attr($key); ?>" aria-hidden="true">
       <div class="commission-frame">
         <button class="commission-close" aria-label="Close inquiry form">&times;</button>
+
+        <div class="commission-poster">
+          <div class="commission-poster-icon" aria-hidden="true"><?php echo $cfg['icon']; ?></div>
+          <div class="commission-poster-tagline"><?php echo esc_html($cfg['tagline']); ?></div>
+        </div>
+
         <div class="commission-meta">
           <div class="commission-meta-head">
             <div class="commission-eyebrow"><?php echo esc_html($cfg['eyebrow']); ?></div>
