@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Render callbacks for the Haunted Tech custom blocks.
  *
@@ -353,145 +353,70 @@ function ht_render_gallery($attributes = []) {
         return ob_get_clean();
     }
 
-    /* Group items by service tab */
-    $grouped = ['art' => [], 'covers' => [], 'ai' => []];
-    foreach ($all_items as $item) {
-        $tab = get_field('service_tab', $item->ID) ?: 'art';
-        if (isset($grouped[$tab])) $grouped[$tab][] = $item;
-    }
+    $page_size   = 9;
+    $total_pages = max(1, (int) ceil(count($all_items) / $page_size));
 
-    $tab_labels = [
-        'art'    => 'Art Commissions',
-        'covers' => 'Book Covers',
-        'ai'     => 'AI Generation',
-    ];
-    $tab_targets = [
-        'art'    => 'panel-art',
-        'covers' => 'panel-covers',
-        'ai'     => 'panel-ai',
-    ];
-    $tab_cta = [
-        'art'    => 'All Commissions',
-        'covers' => 'All Covers',
-        'ai'     => 'All AI Pieces',
-    ];
-
-    /* First non-empty tab is active by default */
-    $first_active = 'art';
-    foreach (array_keys($tab_labels) as $key) {
-        if (!empty($grouped[$key])) { $first_active = $key; break; }
-    }
-
-    $page_size = 9;
     ob_start(); ?>
     <section class="gallery block-gallery" id="gallery">
       <div class="section-header">
         <h2 class="section-title">Gallery</h2>
-        <div class="section-meta">Recent Work &mdash; Filter by Service</div>
+        <div class="section-meta">Recent Work</div>
       </div>
 
-      <div class="gallery-tabs" role="tablist">
-        <?php foreach ($tab_labels as $key => $label):
-            $is_active = ($key === $first_active);
-        ?>
-          <button class="gallery-tab<?php echo $is_active ? ' active' : ''; ?>" data-target="<?php echo esc_attr($tab_targets[$key]); ?>" role="tab" aria-selected="<?php echo $is_active ? 'true' : 'false'; ?>"><?php echo esc_html($label); ?></button>
-        <?php endforeach; ?>
-      </div>
-
-      <?php foreach ($tab_labels as $tab => $label):
-          $items       = $grouped[$tab];
-          $is_active   = ($tab === $first_active);
-          $panel_id    = $tab_targets[$tab];
-          $total_pages = max(1, (int) ceil(count($items) / $page_size));
-      ?>
-        <div class="gallery-panel<?php echo $is_active ? ' active' : ''; ?>" id="<?php echo esc_attr($panel_id); ?>" role="tabpanel" data-page="1" data-pages="<?php echo (int)$total_pages; ?>">
-
-          <?php
-          /* Filter chips only on the Art Commissions tab. Derive unique category labels from this tab's items. */
-          if ($tab === 'art' && !empty($items)):
-              $cats = [];
-              foreach ($items as $i) {
-                  $raw = trim((string) get_field('category', $i->ID));
-                  if ($raw === '') continue;
-                  $slug  = strtolower(sanitize_title($raw));
-                  $cats[$slug] = ucfirst($raw);
+      <div class="gallery-panel active" id="panel-all" role="region" data-page="1" data-pages="<?php echo (int)$total_pages; ?>">
+        <div class="masonry">
+          <?php foreach ($all_items as $idx => $item):
+              $page_num   = (int) floor($idx / $page_size) + 1;
+              $cat_raw    = (string) get_field('category', $item->ID);
+              $cat_slug   = $cat_raw !== '' ? strtolower(sanitize_title($cat_raw)) : '';
+              $card_tag   = (string) get_field('tag', $item->ID);
+              $desc       = (string) get_field('description', $item->ID);
+              $ratio      = (string) (get_field('aspect_ratio', $item->ID) ?: '3/4');
+              $variant    = 'v' . ((($idx % 8) + 1));
+              $image      = get_field('image', $item->ID);
+              $image_url  = '';
+              if (is_array($image) && !empty($image['url'])) {
+                  $image_url = $image['url'];
+              } elseif (has_post_thumbnail($item->ID)) {
+                  $image_url = get_the_post_thumbnail_url($item->ID, 'large');
               }
-              if (!empty($cats)): ?>
-                <div class="gallery-chips" role="toolbar" aria-label="Filter commissions">
-                  <button class="gallery-chip active" data-filter="all">All</button>
-                  <?php foreach ($cats as $slug => $label_cat): ?>
-                    <button class="gallery-chip" data-filter="<?php echo esc_attr($slug); ?>"><?php echo esc_html($label_cat); ?></button>
-                  <?php endforeach; ?>
-                </div>
-          <?php endif; endif; ?>
-
-          <?php if (!empty($items)): ?>
-            <div class="masonry">
-              <?php foreach ($items as $idx => $item):
-                  $page_num   = (int) floor($idx / $page_size) + 1;
-                  $cat_raw    = (string) get_field('category', $item->ID);
-                  $cat_slug   = $cat_raw !== '' ? strtolower(sanitize_title($cat_raw)) : '';
-                  $card_tag   = (string) get_field('tag', $item->ID);
-                  $desc       = (string) get_field('description', $item->ID);
-                  $ratio      = (string) (get_field('aspect_ratio', $item->ID) ?: '3/4');
-                  $variant    = 'v' . ((($idx % 8) + 1));
-                  $image      = get_field('image', $item->ID);
-                  $image_url  = '';
-                  if (is_array($image) && !empty($image['url'])) {
-                      $image_url = $image['url'];
-                  } elseif (has_post_thumbnail($item->ID)) {
-                      $image_url = get_the_post_thumbnail_url($item->ID, 'large');
-                  }
-                  $alt = is_array($image) && !empty($image['alt']) ? $image['alt'] : get_the_title($item);
-                  $page_class = $page_num > 1 ? ' page-hidden' : '';
-              ?>
-                <a href="<?php echo $image_url ? esc_url($image_url) : '#'; ?>"
-                   class="gallery-item<?php echo esc_attr($page_class); ?>"
-                   data-page="<?php echo (int)$page_num; ?>"
-                   <?php if ($cat_slug): ?>data-cat="<?php echo esc_attr($cat_slug); ?>"<?php endif; ?>
-                   data-tag="<?php echo esc_attr($card_tag); ?>"
-                   data-title="<?php echo esc_attr(get_the_title($item)); ?>"
-                   data-desc="<?php echo esc_attr($desc); ?>"
-                   data-image-class="<?php echo esc_attr($variant); ?>">
-                  <div class="gallery-image <?php echo esc_attr($variant); ?>" style="--ratio: <?php echo esc_attr($ratio); ?>; position:relative;">
-                    <?php if ($image_url): ?>
-                      <img src="<?php echo esc_url($image_url); ?>" alt="<?php echo esc_attr($alt); ?>" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;z-index:1;">
-                    <?php else: ?>
-                      <span class="gallery-image-label"><?php echo esc_html(get_the_title($item)); ?></span>
-                    <?php endif; ?>
-                  </div>
-                  <div class="gallery-meta">
-                    <?php if ($card_tag): ?><div class="gallery-tag"><?php echo esc_html($card_tag); ?></div><?php endif; ?>
-                    <div class="gallery-title"><?php echo esc_html(get_the_title($item)); ?></div>
-                    <?php if ($desc): ?><div class="gallery-caption"><?php echo esc_html(wp_trim_words($desc, 18, '…')); ?></div><?php endif; ?>
-                  </div>
-                </a>
-              <?php endforeach; ?>
-            </div>
-
-            <div class="gallery-footer">
-              <button class="gallery-arrow prev" aria-label="Previous page" disabled>&larr;</button>
-              <div class="gallery-page-indicator">Page <span>1</span> / <?php echo (int)$total_pages; ?></div>
-              <button class="gallery-arrow next" aria-label="Next page" <?php echo $total_pages <= 1 ? 'disabled' : ''; ?>>&rarr;</button>
-              <a href="<?php echo esc_url(home_url('/gallery/?service=' . $tab)); ?>" class="gallery-view-all"><?php echo esc_html($tab_cta[$tab]); ?></a>
-            </div>
-
-          <?php else: ?>
-            <div style="text-align:center;padding:3rem 2rem;font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--bone-dim);">
-              No <?php echo esc_html(strtolower($label)); ?> items yet.
-              <?php if (current_user_can('edit_posts')): ?>
-                <br>
-                <a href="<?php echo esc_url(admin_url('post-new.php?post_type=gallery_item')); ?>" style="color:var(--gold);">Add the first one</a> &mdash; set <em>Service Tab</em> to "<?php echo esc_html($label); ?>".
-              <?php endif; ?>
-            </div>
-          <?php endif; ?>
+              $alt = is_array($image) && !empty($image['alt']) ? $image['alt'] : get_the_title($item);
+              $page_class = $page_num > 1 ? ' page-hidden' : '';
+          ?>
+            <a href="<?php echo $image_url ? esc_url($image_url) : '#'; ?>"
+               class="gallery-item<?php echo esc_attr($page_class); ?>"
+               data-page="<?php echo (int)$page_num; ?>"
+               <?php if ($cat_slug): ?>data-cat="<?php echo esc_attr($cat_slug); ?>"<?php endif; ?>
+               data-tag="<?php echo esc_attr($card_tag); ?>"
+               data-title="<?php echo esc_attr(get_the_title($item)); ?>"
+               data-desc="<?php echo esc_attr($desc); ?>"
+               data-image-class="<?php echo esc_attr($variant); ?>">
+              <div class="gallery-image <?php echo esc_attr($variant); ?>" style="--ratio: <?php echo esc_attr($ratio); ?>; position:relative;">
+                <?php if ($image_url): ?>
+                  <img src="<?php echo esc_url($image_url); ?>" alt="<?php echo esc_attr($alt); ?>" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;z-index:1;">
+                <?php else: ?>
+                  <span class="gallery-image-label"><?php echo esc_html(get_the_title($item)); ?></span>
+                <?php endif; ?>
+              </div>
+              <div class="gallery-meta">
+                <?php if ($card_tag): ?><div class="gallery-tag"><?php echo esc_html($card_tag); ?></div><?php endif; ?>
+                <div class="gallery-title"><?php echo esc_html(get_the_title($item)); ?></div>
+                <?php if ($desc): ?><div class="gallery-caption"><?php echo esc_html(wp_trim_words($desc, 18, '…')); ?></div><?php endif; ?>
+              </div>
+            </a>
+          <?php endforeach; ?>
         </div>
-      <?php endforeach; ?>
+
+        <div class="gallery-footer">
+          <button class="gallery-arrow prev" aria-label="Previous page" disabled>&larr;</button>
+          <div class="gallery-page-indicator">Page <span>1</span> / <?php echo (int)$total_pages; ?></div>
+          <button class="gallery-arrow next" aria-label="Next page" <?php echo $total_pages <= 1 ? 'disabled' : ''; ?>>&rarr;</button>
+        </div>
+      </div>
     </section>
     <?php
     return ob_get_clean();
 }
-
 /* ============================================================
  * NEWSLETTER — placeholder form
  * ============================================================ */
