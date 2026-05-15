@@ -109,28 +109,29 @@
   @keyframes led-pulse { 0%,100%{box-shadow:0 0 4px var(--red), 0 0 8px var(--red);} 50%{box-shadow:0 0 8px var(--red-bright), 0 0 20px var(--red);} }
 
   /* ============ HEADER ============
-   * Sticky behavior is applied to the template-part *wrapper* — not the
-   * <header> itself — so the social bar + nav both stay pinned to the top
-   * across the whole page. Sticky on <header> alone fails because its
-   * direct parent (the .wp-block-template-part div) is only as tall as its
-   * own content; once you scroll past the wrapper's bottom edge, sticky
-   * detaches. Moving sticky one level up to the wrapper (whose parent
-   * .wp-site-blocks spans the full document) sidesteps that. */
+   * Sticky on <header> alone fails because its direct parent (the
+   * .wp-block-template-part wrapper div) is only as tall as the social bar
+   * + header combined — once you scroll past that, sticky detaches.
+   *
+   * Fix: `display: contents` on the wrapper removes its box from layout,
+   * so the social bar and <header> become direct children of
+   * .wp-site-blocks (which spans the full document). The header can then
+   * stick within the full page; the social bar (no sticky) scrolls away
+   * naturally above it. */
   .wp-site-blocks > .wp-block-template-part:first-of-type {
-    position: sticky;
-    top: 0;
-    z-index: 60;
+    display: contents;
   }
-  /* Compensate for the sticky bar when jumping to in-page anchors (#books,
-   * #web-novels, etc.) so headings don't slide behind it. */
-  html { scroll-padding-top: 130px; }
+  /* Compensate for the sticky header when jumping to in-page anchors so
+   * headings don't slide behind it. */
+  html { scroll-padding-top: 100px; }
 
   header {
     border-bottom: 1px solid var(--border);
     padding: 1.4rem 3rem;
     background: linear-gradient(180deg, rgba(0,0,0,0.96), rgba(0,0,0,0.78));
     backdrop-filter: blur(10px);
-    position: relative;
+    position: sticky;
+    top: 0;
     z-index: 50;
   }
   header::before {
