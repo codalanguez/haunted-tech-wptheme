@@ -62,7 +62,6 @@
       <button class="gallery-arrow prev" aria-label="Previous page" disabled>&larr;</button>
       <div class="gallery-page-indicator">Page <span>1</span> / 1</div>
       <button class="gallery-arrow next" aria-label="Next page" disabled>&rarr;</button>
-      <a href="#" class="gallery-view-all">All Commissions</a>
     </div>
   </div>
 
@@ -74,7 +73,9 @@
       </a>
     </div>
     <div class="gallery-footer">
-      <a href="#" class="gallery-view-all">All Covers</a>
+      <button class="gallery-arrow prev" aria-label="Previous page" disabled>&larr;</button>
+      <div class="gallery-page-indicator">Page <span>1</span> / 1</div>
+      <button class="gallery-arrow next" aria-label="Next page" disabled>&rarr;</button>
     </div>
   </div>
 
@@ -86,7 +87,9 @@
       </a>
     </div>
     <div class="gallery-footer">
-      <a href="#" class="gallery-view-all">All AI Pieces</a>
+      <button class="gallery-arrow prev" aria-label="Previous page" disabled>&larr;</button>
+      <div class="gallery-page-indicator">Page <span>1</span> / 1</div>
+      <button class="gallery-arrow next" aria-label="Next page" disabled>&rarr;</button>
     </div>
   </div>
 </section>
