@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Render callbacks for the Haunted Tech custom blocks.
  *
@@ -473,7 +473,6 @@ function ht_render_gallery($attributes = []) {
               <button class="gallery-arrow prev" aria-label="Previous page" disabled>&larr;</button>
               <div class="gallery-page-indicator">Page <span>1</span> / <?php echo (int)$total_pages; ?></div>
               <button class="gallery-arrow next" aria-label="Next page" <?php echo $total_pages <= 1 ? 'disabled' : ''; ?>>&rarr;</button>
-              <a href="<?php echo esc_url(home_url('/gallery/?service=' . $tab)); ?>" class="gallery-view-all"><?php echo esc_html($tab_cta[$tab]); ?></a>
             </div>
 
           <?php else: ?>
