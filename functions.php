@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Haunted Tech — theme bootstrap (FSE block-theme edition).
  *
@@ -157,7 +157,7 @@ add_action('init', function () {
 
 /* Register the ACF field groups for theme-managed CPTs. */
 add_action('acf/init', function () {
-    if (!function_exists('acf_add_local_field_group')) { return; }\n
+    if (!function_exists('acf_add_local_field_group')) { return; }
     /* ---------- Extra Book fields (v0.8.0) ----------
      * Augments the existing Book field group (imported from book-fields.json)
      * with the modal-era fields: content warnings, discovery links, excerpt.
