@@ -2851,10 +2851,10 @@
   max-width: 720px;
   max-height: 88vh;
   width: 100%;
-  background: var(--obsidian);
+  background: transparent;
   border: 1px solid var(--gold);
   box-shadow:
-    0 0 0 4px var(--void),
+    0 0 0 4px transparent,
     0 0 0 5px var(--gold),
     0 40px 80px rgba(229, 9, 20, 0.3);
   display: flex;
@@ -2960,9 +2960,10 @@
 }
 .commission-body::-webkit-scrollbar-thumb:hover { background: var(--red); box-shadow: 0 0 8px var(--red); }
 
-/* Tighter form spacing inside the modal so it doesn't feel cramped */
-.commission-body .htf-wrap { max-width: none; padding: 0; }
-.commission-body .htf-form { padding: 0; border: none; background: none; }
+/* Tighter form spacing inside the modal so it doesn't feel cramped.
+ * Form keeps its own obsidian background + gold-ish border so it reads
+ * as a distinct panel floating over the transparent modal frame. */
+.commission-body .htf-wrap { max-width: none; padding: 0; margin: 0; }
 
 body.commission-open { overflow: hidden; }
 
