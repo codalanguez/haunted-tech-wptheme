@@ -2830,28 +2830,31 @@
  * ========================================================== */
 .commission-modal {
   position: fixed; inset: 0;
-  /* Light tint over the page — the page shows through, especially inside
-   * the (transparent) gold frame, so the visible result reads as a
-   * "gold frame floating over the home page with a black form inside"
-   * rather than a flat black box. */
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.94);
   z-index: 2100;
   display: none;
   align-items: center;
   justify-content: center;
   padding: 2rem;
-  backdrop-filter: blur(6px);
+  backdrop-filter: blur(10px);
 }
 .commission-modal.active { display: flex; animation: lightbox-fade 0.4s ease-out; }
+.commission-modal::before {
+  content: '';
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(0deg, transparent 0, transparent 2px, rgba(255,212,0,0.04) 2px, rgba(255,212,0,0.04) 3px);
+  pointer-events: none;
+  animation: scanline-drift 8s linear infinite;
+}
 .commission-frame {
   position: relative;
   max-width: 720px;
   max-height: 88vh;
   width: 100%;
-  background: transparent;
+  background: var(--obsidian);
   border: 1px solid var(--gold);
   box-shadow:
-    0 0 0 4px transparent,
+    0 0 0 4px var(--void),
     0 0 0 5px var(--gold),
     0 40px 80px rgba(229, 9, 20, 0.3);
   display: flex;
