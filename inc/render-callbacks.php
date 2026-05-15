@@ -310,7 +310,7 @@ function ht_render_services($attributes = []) {
             <div class="service-desc">Original character art, cyber-gothic portraits, and scene illustrations. Hand-drawn with neon-glitch finish. Personal or commercial licenses available.</div>
             <div class="service-actions">
               <a href="#gallery-art" class="service-btn">View Portfolio</a>
-              <a href="#inquire-art" class="service-btn service-btn-inquire">Inquire &rarr;</a>
+              <button type="button" class="service-btn service-btn-inquire" data-open-commission="art">Inquire &rarr;</button>
             </div>
           </div>
         </div>
@@ -322,7 +322,7 @@ function ht_render_services($attributes = []) {
             <div class="service-desc">Full-wrap cover design for dark romance, horror, and cyberpunk fiction. Includes ebook, paperback, hardcover layouts plus branded series styling.</div>
             <div class="service-actions">
               <a href="#gallery-covers" class="service-btn">View Portfolio</a>
-              <a href="#inquire-cover" class="service-btn service-btn-inquire">Inquire &rarr;</a>
+              <button type="button" class="service-btn service-btn-inquire" data-open-commission="cover">Inquire &rarr;</button>
             </div>
           </div>
         </div>
@@ -334,36 +334,46 @@ function ht_render_services($attributes = []) {
             <div class="service-desc">Custom AI-generated character art, mood boards, and chapter banners. Flux + SDXL workflows. Final pieces are post-processed and finished by hand.</div>
             <div class="service-actions">
               <a href="#gallery-ai" class="service-btn">View Portfolio</a>
-              <a href="#inquire-ai" class="service-btn service-btn-inquire">Inquire &rarr;</a>
+              <button type="button" class="service-btn service-btn-inquire" data-open-commission="ai">Inquire &rarr;</button>
             </div>
           </div>
         </div>
       </div>
-
-      <div class="services-forms" id="commission-forms">
-        <div class="services-form-panel" id="inquire-art">
-          <div class="services-form-header">
-            <span class="services-form-icon">&#10048;</span>
-            <h3 class="services-form-title">Art Commission Inquiry</h3>
-          </div>
-          <?php echo do_shortcode('[ht_commission_art]'); ?>
-        </div>
-        <div class="services-form-panel" id="inquire-cover">
-          <div class="services-form-header">
-            <span class="services-form-icon">&#10065;</span>
-            <h3 class="services-form-title">Book Cover Design Inquiry</h3>
-          </div>
-          <?php echo do_shortcode('[ht_commission_cover]'); ?>
-        </div>
-        <div class="services-form-panel" id="inquire-ai">
-          <div class="services-form-header">
-            <span class="services-form-icon">&#9635;</span>
-            <h3 class="services-form-title">AI Generation Inquiry</h3>
-          </div>
-          <?php echo do_shortcode('[ht_commission_ai]'); ?>
-        </div>
-      </div>
     </section>
+
+    <!-- Commission inquiry modals — opened by data-open-commission buttons -->
+    <?php foreach ([
+        'art'   => ['icon' => '&#10048;', 'title' => 'Art Commission Inquiry',      'shortcode' => '[ht_commission_art]'],
+        'cover' => ['icon' => '&#10065;', 'title' => 'Book Cover Design Inquiry',   'shortcode' => '[ht_commission_cover]'],
+        'ai'    => ['icon' => '&#9635;',  'title' => 'AI Generation Inquiry',       'shortcode' => '[ht_commission_ai]'],
+    ] as $key => $cfg): ?>
+    <dialog class="commission-modal" id="commission-modal-<?php echo esc_attr($key); ?>" aria-labelledby="cm-title-<?php echo esc_attr($key); ?>">
+      <div class="commission-modal-frame">
+        <button class="commission-modal-close" aria-label="Close inquiry form">&times;</button>
+        <div class="commission-modal-header">
+          <span class="commission-modal-icon"><?php echo $cfg['icon']; ?></span>
+          <h3 class="commission-modal-title" id="cm-title-<?php echo esc_attr($key); ?>"><?php echo esc_html($cfg['title']); ?></h3>
+        </div>
+        <?php echo do_shortcode($cfg['shortcode']); ?>
+      </div>
+    </dialog>
+    <?php endforeach; ?>
+
+    <script>
+    (function(){
+      var modals = document.querySelectorAll('.commission-modal');
+      document.querySelectorAll('[data-open-commission]').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          var dlg = document.getElementById('commission-modal-' + this.dataset.openCommission);
+          if (dlg) dlg.showModal();
+        });
+      });
+      modals.forEach(function(dlg){
+        dlg.querySelector('.commission-modal-close').addEventListener('click', function(){ dlg.close(); });
+        dlg.addEventListener('click', function(e){ if (e.target === dlg) dlg.close(); });
+      });
+    })();
+    </script>
     <?php
     return ob_get_clean();
 }
@@ -431,9 +441,7 @@ function ht_render_gallery($attributes = []) {
         <?php endforeach; ?>
       </div>
 
-      <?php
-      $tab_inquire = ['art' => 'inquire-art', 'covers' => 'inquire-cover', 'ai' => 'inquire-ai'];
-      foreach ($tab_labels as $tab => $label):
+      <?php foreach ($tab_labels as $tab => $label):
           $items       = $grouped[$tab];
           $is_active   = ($tab === $first_active);
           $panel_id    = $tab_targets[$tab];
@@ -508,7 +516,7 @@ function ht_render_gallery($attributes = []) {
               <button class="gallery-arrow prev" aria-label="Previous page" disabled>&larr;</button>
               <div class="gallery-page-indicator">Page <span>1</span> / <?php echo (int)$total_pages; ?></div>
               <button class="gallery-arrow next" aria-label="Next page" <?php echo $total_pages <= 1 ? 'disabled' : ''; ?>>&rarr;</button>
-              <a href="#<?php echo esc_attr($tab_inquire[$tab]); ?>" class="gallery-inquire">Inquire &rarr;</a>
+              <a href="#services" class="gallery-inquire">Inquire &rarr;</a>
             </div>
 
           <?php else: ?>
@@ -592,7 +600,7 @@ function ht_render_lightbox($attributes = []) {
           <div class="lightbox-title" id="lightbox-title"></div>
           <div class="lightbox-divider"></div>
           <div class="lightbox-desc" id="lightbox-desc"></div>
-          <a href="#commission-forms" class="lightbox-cta">Inquire</a>
+          <a href="#services" class="lightbox-cta">Inquire</a>
         </div>
       </div>
     </div>
