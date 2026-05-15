@@ -3028,12 +3028,18 @@
 .commission-body .htf-form { background: none; border: none; padding: 0; }
 
 body.commission-open { overflow: hidden; }
-/* Hide the sticky header + social bar while a commission modal is open so
- * the modal truly covers the whole site (the sticky header has its own
- * backdrop-filter stacking context that otherwise stays visible above the
- * modal overlay). */
+/* Hide every page-level visual while a commission modal is open so the
+ * modal overlay reads as a clean, fully-black backdrop — matching the
+ * about modal exactly.
+ *   - header / social-bar: would otherwise sit above the overlay thanks
+ *     to their own backdrop-filter stacking contexts.
+ *   - .crt-band / .static-burst: position:fixed page-level "overlays"
+ *     with mix-blend-mode:screen — their brightness bleeds THROUGH the
+ *     94% black modal overlay because screen-blend adds light. */
 body.commission-open header,
-body.commission-open .social-bar { display: none; }
+body.commission-open .social-bar,
+body.commission-open .crt-band,
+body.commission-open .static-burst { display: none !important; }
 
 /* ==========================================================
  * GALLERY INQUIRE BUTTON (v0.9.1)
