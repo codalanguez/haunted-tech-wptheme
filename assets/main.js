@@ -1,4 +1,7 @@
-  // ===== About modal: open from any [data-open-about], close on Esc / × / backdrop =====
+  // ===== About modal: open from any [data-open-about] OR any <a> whose href
+  // resolves to #about (so user-created WP menu items pointing to /#about
+  // or #about work without needing the data attribute). Close on Esc / × /
+  // backdrop. =====
   (function(){
     const modal = document.getElementById('about-modal');
     if (!modal) return;
@@ -13,15 +16,29 @@
       modal.setAttribute('aria-hidden', 'true');
       document.body.classList.remove('about-open');
     }
-    document.querySelectorAll('[data-open-about]').forEach(trigger => {
-      trigger.addEventListener('click', e => { e.preventDefault(); open(); });
+    // Delegated click handler — catches both [data-open-about] triggers and
+    // any anchor pointing at the #about hash (same-page or cross-page).
+    // Cross-page anchors still navigate; the hash-load handler below opens
+    // the modal once the home page is loaded.
+    document.addEventListener('click', function(e){
+      const a = e.target.closest('a, [data-open-about]');
+      if (!a) return;
+      const isAboutTrigger =
+        a.hasAttribute('data-open-about') ||
+        (a.tagName === 'A' && (a.getAttribute('href') || '').match(/(^|\/)#about$/));
+      if (!isAboutTrigger) return;
+      // Same-page: open the modal without navigating.
+      if (a.tagName !== 'A' || a.pathname === location.pathname || a.getAttribute('href').charAt(0) === '#') {
+        e.preventDefault();
+        open();
+      }
     });
     closeBtn.addEventListener('click', close);
     modal.addEventListener('click', e => { if (e.target === modal) close(); });
     document.addEventListener('keydown', e => {
       if (e.key === 'Escape' && modal.classList.contains('active')) close();
     });
-    // Open on direct hash load (#about)
+    // Open on direct hash load (#about) or any hashchange to #about.
     if (location.hash === '#about') open();
     window.addEventListener('hashchange', () => { if (location.hash === '#about') open(); });
   })();
