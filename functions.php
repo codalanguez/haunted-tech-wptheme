@@ -219,7 +219,7 @@ add_action('acf/init', function () {
              'instructions'=>'Long caption shown in the lightbox; first ~18 words also show on the card.', 'show_in_rest'=>1],
             ['key'=>'field_gi_image',        'label'=>'Image',         'name'=>'image',        'type'=>'image',
              'return_format'=>'array', 'preview_size'=>'medium',
-             'instructions'=>'Optional. If empty, the post's featured image is used; if neither is set, the card shows a gradient placeholder.', 'show_in_rest'=>1],
+             'instructions'=>'Optional. If empty, the post\'s featured image is used; if neither is set, the card shows a gradient placeholder.', 'show_in_rest'=>1],
             ['key'=>'field_gi_aspect_ratio', 'label'=>'Aspect Ratio',  'name'=>'aspect_ratio', 'type'=>'select',
              'choices'=>[
                 '1/1'   => '1:1 (square)',
