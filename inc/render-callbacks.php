@@ -341,36 +341,60 @@ function ht_render_services($attributes = []) {
       </div>
     </section>
 
-    <!-- Commission inquiry modals — opened by data-open-commission buttons -->
+    <!-- Commission inquiry modals — opened by data-open-commission buttons.
+         Styled to match the About modal: full-screen overlay, gold-framed
+         panel with corner accents + scanline backdrop. -->
     <?php foreach ([
-        'art'   => ['icon' => '&#10048;', 'title' => 'Art Commission Inquiry',      'shortcode' => '[ht_commission_art]'],
-        'cover' => ['icon' => '&#10065;', 'title' => 'Book Cover Design Inquiry',   'shortcode' => '[ht_commission_cover]'],
-        'ai'    => ['icon' => '&#9635;',  'title' => 'AI Generation Inquiry',       'shortcode' => '[ht_commission_ai]'],
+        'art'   => ['eyebrow' => 'Bespoke',            'title' => 'Art Commission',    'shortcode' => '[ht_commission_art]'],
+        'cover' => ['eyebrow' => 'Premade & Custom',   'title' => 'Book Cover Design', 'shortcode' => '[ht_commission_cover]'],
+        'ai'    => ['eyebrow' => 'AI-Assisted',        'title' => 'AI Generation',     'shortcode' => '[ht_commission_ai]'],
     ] as $key => $cfg): ?>
-    <dialog class="commission-modal" id="commission-modal-<?php echo esc_attr($key); ?>" aria-labelledby="cm-title-<?php echo esc_attr($key); ?>">
-      <div class="commission-modal-frame">
-        <button class="commission-modal-close" aria-label="Close inquiry form">&times;</button>
-        <div class="commission-modal-header">
-          <span class="commission-modal-icon"><?php echo $cfg['icon']; ?></span>
-          <h3 class="commission-modal-title" id="cm-title-<?php echo esc_attr($key); ?>"><?php echo esc_html($cfg['title']); ?></h3>
+    <div class="commission-modal" id="commission-modal-<?php echo esc_attr($key); ?>" role="dialog" aria-modal="true" aria-labelledby="cm-title-<?php echo esc_attr($key); ?>" aria-hidden="true">
+      <div class="commission-frame">
+        <button class="commission-close" aria-label="Close inquiry form">&times;</button>
+        <div class="commission-meta">
+          <div class="commission-meta-head">
+            <div class="commission-eyebrow"><?php echo esc_html($cfg['eyebrow']); ?></div>
+            <h2 class="commission-title" id="cm-title-<?php echo esc_attr($key); ?>" data-text="<?php echo esc_attr($cfg['title']); ?>"><?php echo esc_html($cfg['title']); ?></h2>
+            <div class="commission-divider"></div>
+          </div>
+          <div class="commission-body-wrap">
+            <div class="commission-body">
+              <?php echo do_shortcode($cfg['shortcode']); ?>
+            </div>
+          </div>
         </div>
-        <?php echo do_shortcode($cfg['shortcode']); ?>
       </div>
-    </dialog>
+    </div>
     <?php endforeach; ?>
 
     <script>
     (function(){
       var modals = document.querySelectorAll('.commission-modal');
+      function open(key){
+        var m = document.getElementById('commission-modal-' + key);
+        if (!m) return;
+        m.classList.add('active');
+        m.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('commission-open');
+      }
+      function close(m){
+        m.classList.remove('active');
+        m.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('commission-open');
+      }
       document.querySelectorAll('[data-open-commission]').forEach(function(btn){
-        btn.addEventListener('click', function(){
-          var dlg = document.getElementById('commission-modal-' + this.dataset.openCommission);
-          if (dlg) dlg.showModal();
+        btn.addEventListener('click', function(e){
+          e.preventDefault();
+          open(this.dataset.openCommission);
         });
       });
-      modals.forEach(function(dlg){
-        dlg.querySelector('.commission-modal-close').addEventListener('click', function(){ dlg.close(); });
-        dlg.addEventListener('click', function(e){ if (e.target === dlg) dlg.close(); });
+      modals.forEach(function(m){
+        m.querySelector('.commission-close').addEventListener('click', function(){ close(m); });
+        m.addEventListener('click', function(e){ if (e.target === m) close(m); });
+      });
+      document.addEventListener('keydown', function(e){
+        if (e.key === 'Escape') modals.forEach(function(m){ if (m.classList.contains('active')) close(m); });
       });
     })();
     </script>
@@ -441,11 +465,15 @@ function ht_render_gallery($attributes = []) {
         <?php endforeach; ?>
       </div>
 
-      <?php foreach ($tab_labels as $tab => $label):
+      <?php
+      /* Map gallery tab → commission modal key (covers→cover; art/ai pass-through). */
+      $tab_to_modal = ['art' => 'art', 'covers' => 'cover', 'ai' => 'ai'];
+      foreach ($tab_labels as $tab => $label):
           $items       = $grouped[$tab];
           $is_active   = ($tab === $first_active);
           $panel_id    = $tab_targets[$tab];
           $total_pages = max(1, (int) ceil(count($items) / $page_size));
+          $modal_key   = $tab_to_modal[$tab];
       ?>
         <div class="gallery-panel<?php echo $is_active ? ' active' : ''; ?>" id="<?php echo esc_attr($panel_id); ?>" role="tabpanel" data-page="1" data-pages="<?php echo (int)$total_pages; ?>">
 
@@ -516,7 +544,7 @@ function ht_render_gallery($attributes = []) {
               <button class="gallery-arrow prev" aria-label="Previous page" disabled>&larr;</button>
               <div class="gallery-page-indicator">Page <span>1</span> / <?php echo (int)$total_pages; ?></div>
               <button class="gallery-arrow next" aria-label="Next page" <?php echo $total_pages <= 1 ? 'disabled' : ''; ?>>&rarr;</button>
-              <a href="#services" class="gallery-inquire">Inquire &rarr;</a>
+              <button type="button" class="gallery-inquire" data-open-commission="<?php echo esc_attr($modal_key); ?>">Inquire &rarr;</button>
             </div>
 
           <?php else: ?>
@@ -600,7 +628,6 @@ function ht_render_lightbox($attributes = []) {
           <div class="lightbox-title" id="lightbox-title"></div>
           <div class="lightbox-divider"></div>
           <div class="lightbox-desc" id="lightbox-desc"></div>
-          <a href="#services" class="lightbox-cta">Inquire</a>
         </div>
       </div>
     </div>
