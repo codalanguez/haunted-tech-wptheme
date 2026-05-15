@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Haunted Tech — theme bootstrap (FSE block-theme edition).
  *
@@ -400,6 +400,7 @@ require_once HAUNTED_TECH_DIR . '/inc/render-callbacks.php';
 require_once HAUNTED_TECH_DIR . '/inc/blocks.php';
 require_once HAUNTED_TECH_DIR . '/inc/patterns.php';
 require_once HAUNTED_TECH_DIR . '/inc/rest.php';
+require_once HAUNTED_TECH_DIR . '/inc/commission-forms.php';
 if (is_admin()) {
     require_once HAUNTED_TECH_DIR . '/inc/onboarding.php';
 }
