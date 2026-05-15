@@ -308,7 +308,10 @@ function ht_render_services($attributes = []) {
             <div class="service-eyebrow">Bespoke</div>
             <div class="service-title">Art Commissions</div>
             <div class="service-desc">Original character art, cyber-gothic portraits, and scene illustrations. Hand-drawn with neon-glitch finish. Personal or commercial licenses available.</div>
-            <a href="#gallery-art" class="service-btn">View Portfolio</a>
+            <div class="service-actions">
+              <a href="#gallery-art" class="service-btn">View Portfolio</a>
+              <a href="#inquire-art" class="service-btn service-btn-inquire">Inquire &rarr;</a>
+            </div>
           </div>
         </div>
         <div class="service-card" id="service-covers">
@@ -317,7 +320,10 @@ function ht_render_services($attributes = []) {
             <div class="service-eyebrow">Premade &amp; Custom</div>
             <div class="service-title">Book Cover Design</div>
             <div class="service-desc">Full-wrap cover design for dark romance, horror, and cyberpunk fiction. Includes ebook, paperback, hardcover layouts plus branded series styling.</div>
-            <a href="#gallery-covers" class="service-btn">View Portfolio</a>
+            <div class="service-actions">
+              <a href="#gallery-covers" class="service-btn">View Portfolio</a>
+              <a href="#inquire-cover" class="service-btn service-btn-inquire">Inquire &rarr;</a>
+            </div>
           </div>
         </div>
         <div class="service-card" id="service-ai">
@@ -326,8 +332,35 @@ function ht_render_services($attributes = []) {
             <div class="service-eyebrow">AI-Assisted</div>
             <div class="service-title">AI Image Generation</div>
             <div class="service-desc">Custom AI-generated character art, mood boards, and chapter banners. Flux + SDXL workflows. Final pieces are post-processed and finished by hand.</div>
-            <a href="#gallery-ai" class="service-btn">View Portfolio</a>
+            <div class="service-actions">
+              <a href="#gallery-ai" class="service-btn">View Portfolio</a>
+              <a href="#inquire-ai" class="service-btn service-btn-inquire">Inquire &rarr;</a>
+            </div>
           </div>
+        </div>
+      </div>
+
+      <div class="services-forms" id="commission-forms">
+        <div class="services-form-panel" id="inquire-art">
+          <div class="services-form-header">
+            <span class="services-form-icon">&#10048;</span>
+            <h3 class="services-form-title">Art Commission Inquiry</h3>
+          </div>
+          <?php echo do_shortcode('[ht_commission_art]'); ?>
+        </div>
+        <div class="services-form-panel" id="inquire-cover">
+          <div class="services-form-header">
+            <span class="services-form-icon">&#10065;</span>
+            <h3 class="services-form-title">Book Cover Design Inquiry</h3>
+          </div>
+          <?php echo do_shortcode('[ht_commission_cover]'); ?>
+        </div>
+        <div class="services-form-panel" id="inquire-ai">
+          <div class="services-form-header">
+            <span class="services-form-icon">&#9635;</span>
+            <h3 class="services-form-title">AI Generation Inquiry</h3>
+          </div>
+          <?php echo do_shortcode('[ht_commission_ai]'); ?>
         </div>
       </div>
     </section>
@@ -398,7 +431,9 @@ function ht_render_gallery($attributes = []) {
         <?php endforeach; ?>
       </div>
 
-      <?php foreach ($tab_labels as $tab => $label):
+      <?php
+      $tab_inquire = ['art' => 'inquire-art', 'covers' => 'inquire-cover', 'ai' => 'inquire-ai'];
+      foreach ($tab_labels as $tab => $label):
           $items       = $grouped[$tab];
           $is_active   = ($tab === $first_active);
           $panel_id    = $tab_targets[$tab];
@@ -473,6 +508,7 @@ function ht_render_gallery($attributes = []) {
               <button class="gallery-arrow prev" aria-label="Previous page" disabled>&larr;</button>
               <div class="gallery-page-indicator">Page <span>1</span> / <?php echo (int)$total_pages; ?></div>
               <button class="gallery-arrow next" aria-label="Next page" <?php echo $total_pages <= 1 ? 'disabled' : ''; ?>>&rarr;</button>
+              <a href="#<?php echo esc_attr($tab_inquire[$tab]); ?>" class="gallery-inquire">Inquire &rarr;</a>
             </div>
 
           <?php else: ?>
@@ -556,7 +592,7 @@ function ht_render_lightbox($attributes = []) {
           <div class="lightbox-title" id="lightbox-title"></div>
           <div class="lightbox-divider"></div>
           <div class="lightbox-desc" id="lightbox-desc"></div>
-          <a href="#" class="lightbox-cta">Inquire</a>
+          <a href="#commission-forms" class="lightbox-cta">Inquire</a>
         </div>
       </div>
     </div>
