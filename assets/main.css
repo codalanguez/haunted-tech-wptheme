@@ -2806,64 +2806,150 @@
 
 /* ==========================================================
  * COMMISSION INQUIRY MODALS (v0.9.1)
+ * Mirrors the About modal: fixed overlay, gold-framed panel
+ * with corner accents, scanline backdrop. Opened/closed via
+ * .active class (inline script in ht_render_services()).
  * ========================================================== */
 .commission-modal {
-  border: 1px solid var(--gold);
-  background: var(--obsidian);
-  padding: 0;
-  max-width: min(700px, 95vw);
-  width: 100%;
-  max-height: 90vh;
-  border-radius: 0;
-  color: var(--bone);
-}
-.commission-modal::backdrop {
-  background: rgba(0, 0, 0, 0.88);
-  backdrop-filter: blur(4px);
-}
-.commission-modal-frame {
-  position: relative;
-  padding: 2.5rem 2rem 2rem;
-  overflow-y: auto;
-  max-height: 90vh;
-}
-.commission-modal-close {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: none;
-  border: none;
-  color: var(--bone-dim);
-  font-size: 1.6rem;
-  cursor: pointer;
-  line-height: 1;
-  padding: 0.2rem 0.5rem;
-  transition: color 0.2s;
-}
-.commission-modal-close:hover { color: var(--gold); }
-.commission-modal-header {
-  display: flex;
+  position: fixed; inset: 0;
+  background: rgba(0, 0, 0, 0.94);
+  z-index: 2100;
+  display: none;
   align-items: center;
-  gap: 0.8rem;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid var(--border-dim);
+  justify-content: center;
+  padding: 2rem;
+  backdrop-filter: blur(10px);
 }
-.commission-modal-icon {
-  font-size: 1.4rem;
+.commission-modal.active { display: flex; animation: lightbox-fade 0.4s ease-out; }
+.commission-modal::before {
+  content: '';
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(0deg, transparent 0, transparent 2px, rgba(255,212,0,0.04) 2px, rgba(255,212,0,0.04) 3px);
+  pointer-events: none;
+  animation: scanline-drift 8s linear infinite;
+}
+.commission-frame {
+  position: relative;
+  max-width: 720px;
+  max-height: 88vh;
+  width: 100%;
+  background: var(--obsidian);
+  border: 1px solid var(--gold);
+  box-shadow:
+    0 0 0 4px var(--void),
+    0 0 0 5px var(--gold),
+    0 40px 80px rgba(229, 9, 20, 0.3);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+@media (max-width: 600px) {
+  .commission-modal { padding: 1rem; }
+  .commission-frame { max-height: 92vh; }
+}
+.commission-frame::before, .commission-frame::after {
+  content: ''; position: absolute; width: 50px; height: 50px;
+  border: 2px solid var(--gold);
+  box-shadow: 0 0 16px rgba(255, 212, 0, 0.4);
+  z-index: 10;
+  pointer-events: none;
+}
+.commission-frame::before { top: 8px; left: 8px; border-right: none; border-bottom: none; }
+.commission-frame::after { bottom: 8px; right: 8px; border-left: none; border-top: none; }
+
+.commission-close {
+  position: absolute; top: -1px; right: -1px;
+  width: 48px; height: 48px;
+  background: var(--void);
+  border: 1px solid var(--gold);
   color: var(--gold);
-}
-.commission-modal-title {
   font-family: 'Forum', serif;
-  font-size: clamp(1.1rem, 3vw, 1.5rem);
+  font-size: 1.4rem;
+  cursor: pointer;
+  z-index: 20;
+  transition: all 0.2s;
+}
+.commission-close:hover {
+  background: var(--red);
+  color: var(--bone);
+  border-color: var(--red);
+  text-shadow: 0 0 8px var(--red);
+}
+
+.commission-meta {
+  padding: 3rem 2.5rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+  position: relative;
+  flex: 1 1 auto;
+}
+@media (max-width: 600px) { .commission-meta { padding: 2.4rem 1.4rem 1.6rem; } }
+.commission-meta-head { flex-shrink: 0; text-align: center; }
+
+.commission-eyebrow {
+  font-family: 'Forum', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.5em;
+  color: var(--red);
+  text-transform: uppercase;
+  margin-bottom: 0.6rem;
+  text-shadow: 0 0 6px rgba(229, 9, 20, 0.4);
+}
+.commission-eyebrow::before, .commission-eyebrow::after {
+  content: '◆'; color: var(--gold); margin: 0 0.5rem;
+  font-size: 0.7em; vertical-align: middle;
+}
+.commission-title {
+  font-family: 'Forum', serif;
+  font-size: clamp(1.5rem, 4vw, 2.2rem);
   color: var(--gold);
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  margin: 0;
+  margin: 0 0 0.4rem;
+  text-shadow: 0 0 24px rgba(255, 212, 0, 0.4);
+  position: relative;
+  display: inline-block;
+}
+.commission-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: 0.4;
+  margin: 1.2rem 0 1.5rem;
 }
 
+.commission-body-wrap {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+}
+.commission-body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  min-height: 0;
+  padding-right: 1rem;
+  margin-right: -0.5rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--gold) rgba(255, 212, 0, 0.04);
+}
+.commission-body::-webkit-scrollbar { width: 6px; }
+.commission-body::-webkit-scrollbar-track { background: rgba(255, 212, 0, 0.04); }
+.commission-body::-webkit-scrollbar-thumb {
+  background: var(--gold);
+  box-shadow: 0 0 6px rgba(255, 212, 0, 0.5);
+}
+.commission-body::-webkit-scrollbar-thumb:hover { background: var(--red); box-shadow: 0 0 8px var(--red); }
+
+/* Tighter form spacing inside the modal so it doesn't feel cramped */
+.commission-body .htf-wrap { max-width: none; padding: 0; }
+.commission-body .htf-form { padding: 0; border: none; background: none; }
+
+body.commission-open { overflow: hidden; }
+
 /* ==========================================================
- * GALLERY INQUIRE LINK (v0.9.1)
+ * GALLERY INQUIRE BUTTON (v0.9.1)
  * ========================================================== */
 .gallery-inquire {
   font-family: 'Forum', serif;
@@ -2871,9 +2957,10 @@
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--gold);
-  text-decoration: none;
+  background: transparent;
   border: 1px solid var(--gold);
   padding: 0.4rem 1rem;
+  cursor: pointer;
   transition: background 0.2s, color 0.2s;
   white-space: nowrap;
 }
