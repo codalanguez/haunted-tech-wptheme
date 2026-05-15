@@ -2781,3 +2781,75 @@
     .htf-form { padding: 1.5rem 1rem; }
     .htf-footer { flex-direction: column; align-items: flex-start; }
   }
+
+/* ==========================================================
+ * SERVICE ACTIONS + INQUIRY BUTTONS (v0.9.1)
+ * ========================================================== */
+.service-actions {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+.service-btn-inquire {
+  background: transparent;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+}
+.service-btn-inquire:hover {
+  background: var(--gold);
+  color: var(--void);
+}
+
+/* ==========================================================
+ * SERVICES COMMISSION FORMS (v0.9.1)
+ * ========================================================== */
+.services-forms {
+  margin-top: 5rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 4rem;
+}
+.services-form-panel {
+  scroll-margin-top: 6rem;
+  border-top: 1px solid var(--border-dim);
+  padding-top: 2.5rem;
+}
+.services-form-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.services-form-icon {
+  font-size: 1.6rem;
+  color: var(--gold);
+}
+.services-form-title {
+  font-family: 'Forum', serif;
+  font-size: clamp(1.2rem, 3vw, 1.6rem);
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 0;
+}
+
+/* ==========================================================
+ * GALLERY INQUIRE LINK (v0.9.1)
+ * ========================================================== */
+.gallery-inquire {
+  font-family: 'Forum', serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  text-decoration: none;
+  border: 1px solid var(--gold);
+  padding: 0.4rem 1rem;
+  transition: background 0.2s, color 0.2s;
+  white-space: nowrap;
+}
+.gallery-inquire:hover {
+  background: var(--gold);
+  color: var(--void);
+}
