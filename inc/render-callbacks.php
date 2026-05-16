@@ -30,8 +30,6 @@ function ht_render_social_bar($attributes = []) {
             ]);
         } else {
             $defaults = [
-                'Patreon'   => ['url' => '#', 'icon' => 'fa-brands fa-patreon'],
-                'Ream'      => ['url' => '#', 'icon' => 'fa-solid fa-book-open-reader'],
                 'Substack'  => ['url' => '#', 'icon' => 'fa-solid fa-envelope-open-text'],
                 'Discord'   => ['url' => '#', 'icon' => 'fa-brands fa-discord'],
                 'Bluesky'   => ['url' => '#', 'icon' => 'fa-brands fa-bluesky'],
@@ -1136,8 +1134,6 @@ function ht_render_single_webnovel($attributes = []) {
     $warnings = get_field('content_warnings', $wn_id);
     $total    = get_field('total_chapters', $wn_id);
     $first_ch = get_field('first_chapter', $wn_id);
-    $patreon  = get_field('patreon_url', $wn_id);
-    $ream     = get_field('ream_url', $wn_id);
     $substack = get_field('substack_url', $wn_id);
 
     $cover_url = '';
@@ -1172,12 +1168,10 @@ function ht_render_single_webnovel($attributes = []) {
     $cw_items = array_filter(array_map('trim', explode(',', (string)$warnings)));
 
     /* Read row mirrors .book-buy-row — primary "Start Reading" filled,
-     * external retailer/platform links use the outlined .buy-btn style. */
+     * Substack link uses the outlined .buy-btn style. */
     $reads = array_filter([
         $first_post ? ['Start Reading', get_permalink($first_post), 'buy-btn buy-btn-download', false] : null,
-        $patreon    ? ['Patreon',  $patreon,  'buy-btn', true] : null,
-        $ream       ? ['Ream',     $ream,     'buy-btn', true] : null,
-        $substack   ? ['Substack', $substack, 'buy-btn', true] : null,
+        $substack   ? ['Substack',      $substack,                  'buy-btn',                   true]  : null,
     ]);
 
     ob_start(); ?>
@@ -1388,7 +1382,7 @@ function ht_render_site_footer($attributes = []) {
                 'depth'          => 1,
             ]);
         } else {
-            echo '<a href="#">Patreon</a><a href="#">Ream</a><a href="#">Substack</a><a href="#">Amazon</a><a href="#newsletter">Newsletter</a>';
+            echo '<a href="#">Substack</a><a href="#">Amazon</a><a href="#newsletter">Newsletter</a>';
         }
         ?>
       </div>
