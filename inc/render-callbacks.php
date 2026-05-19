@@ -13,7 +13,7 @@
 if (!defined('ABSPATH')) { exit; }
 
 /* ============================================================
- * SOCIAL BAR — top of page, icon-only
+ * SOCIAL BAR â€” top of page, icon-only
  * ============================================================ */
 function ht_render_social_bar($attributes = []) {
     ob_start(); ?>
@@ -58,7 +58,7 @@ function ht_render_social_bar($attributes = []) {
 }
 
 /* ============================================================
- * SITE HEADER — logo + nav + subscribe CTA
+ * SITE HEADER â€” logo + nav + subscribe CTA
  * ============================================================ */
 function ht_render_site_header($attributes = []) {
     ob_start(); ?>
@@ -104,7 +104,7 @@ function ht_render_site_header($attributes = []) {
 }
 
 /* ============================================================
- * HERO SLIDER — pulls 3 most-recent hero_update posts
+ * HERO SLIDER â€” pulls 3 most-recent hero_update posts
  * ============================================================ */
 function ht_render_hero_slider($attributes = []) {
     $hero_slides = haunted_tech_get_hero_slides(3);
@@ -173,7 +173,7 @@ function ht_render_hero_slider($attributes = []) {
 }
 
 /* ============================================================
- * BOOKSHELF — pull all published books
+ * BOOKSHELF â€” pull all published books
  * ============================================================ */
 function ht_render_bookshelf($attributes = []) {
     $limit = isset($attributes['limit']) ? (int)$attributes['limit'] : 12;
@@ -221,7 +221,7 @@ function ht_render_bookshelf($attributes = []) {
 }
 
 /* ============================================================
- * CRT MONITOR — list webnovels with status indicators
+ * CRT MONITOR â€” list webnovels with status indicators
  * ============================================================ */
 function ht_render_crt_monitor($attributes = []) {
     $limit = isset($attributes['limit']) ? (int)$attributes['limit'] : 8;
@@ -290,7 +290,7 @@ function ht_render_crt_monitor($attributes = []) {
 }
 
 /* ============================================================
- * SERVICES — three cards (currently static; future: services CPT)
+ * SERVICES â€” three cards (currently static; future: services CPT)
  * ============================================================ */
 function ht_render_services($attributes = []) {
     ob_start(); ?>
@@ -339,7 +339,7 @@ function ht_render_services($attributes = []) {
       </div>
     </section>
 
-    <!-- Commission inquiry modals — match the About modal structure:
+    <!-- Commission inquiry modals â€” match the About modal structure:
          left poster (large icon + tagline) + right meta (eyebrow, title,
          scrolling form body). -->
     <?php foreach ([
@@ -361,7 +361,7 @@ function ht_render_services($attributes = []) {
             'eyebrow'  => 'AI-Assisted',
             'title'    => 'AI Generation',
             'icon'     => '&#9635;',
-            'tagline'  => 'Custom AI-generated character art, mood boards, and chapter banners — finished by hand.',
+            'tagline'  => 'Custom AI-generated character art, mood boards, and chapter banners â€” finished by hand.',
             'shortcode'=> '[ht_commission_ai]',
         ],
     ] as $key => $cfg): ?>
@@ -425,7 +425,7 @@ function ht_render_services($attributes = []) {
 }
 
 /* ============================================================
- * GALLERY — driven by the gallery_item CPT (one post per tile)
+ * GALLERY â€” driven by the gallery_item CPT (one post per tile)
  * ============================================================ */
 function ht_render_gallery($attributes = []) {
     $all_items = get_posts([
@@ -435,7 +435,7 @@ function ht_render_gallery($attributes = []) {
         'orderby'        => ['menu_order' => 'ASC', 'date' => 'DESC'],
     ]);
 
-    /* No items yet → fall back to the static placeholder shipped with the theme. */
+    /* No items yet â†’ fall back to the static placeholder shipped with the theme. */
     if (empty($all_items)) {
         ob_start();
         include HAUNTED_TECH_DIR . '/inc/gallery-static.php';
@@ -488,7 +488,7 @@ function ht_render_gallery($attributes = []) {
       </div>
 
       <?php
-      /* Map gallery tab → commission modal key (covers→cover; art/ai pass-through). */
+      /* Map gallery tab â†’ commission modal key (coversâ†’cover; art/ai pass-through). */
       $tab_to_modal = ['art' => 'art', 'covers' => 'cover', 'ai' => 'ai'];
       foreach ($tab_labels as $tab => $label):
           $items       = $grouped[$tab];
@@ -556,7 +556,7 @@ function ht_render_gallery($attributes = []) {
                   <div class="gallery-meta">
                     <?php if ($card_tag): ?><div class="gallery-tag"><?php echo esc_html($card_tag); ?></div><?php endif; ?>
                     <div class="gallery-title"><?php echo esc_html(get_the_title($item)); ?></div>
-                    <?php if ($desc): ?><div class="gallery-caption"><?php echo esc_html(wp_trim_words($desc, 18, '…')); ?></div><?php endif; ?>
+                    <?php if ($desc): ?><div class="gallery-caption"><?php echo esc_html(wp_trim_words($desc, 18, 'â€¦')); ?></div><?php endif; ?>
                   </div>
                 </a>
               <?php endforeach; ?>
@@ -586,10 +586,10 @@ function ht_render_gallery($attributes = []) {
 }
 
 /* ============================================================
- * NEWSLETTER — placeholder form
+ * NEWSLETTER â€” placeholder form
  * ============================================================ */
 function ht_render_newsletter($attributes = []) {
-    /* If the user has saved an embed in Customizer → Haunted Tech → Newsletter,
+    /* If the user has saved an embed in Customizer â†’ Haunted Tech â†’ Newsletter,
      * inject it inside the callout in place of the placeholder form. */
     $embed = function_exists('haunted_tech_get_newsletter_embed') ? haunted_tech_get_newsletter_embed() : '';
     ob_start(); ?>
@@ -623,7 +623,7 @@ function ht_render_newsletter($attributes = []) {
 }
 
 /* ============================================================
- * GLOBAL OVERLAYS — CRT band + static burst
+ * GLOBAL OVERLAYS â€” CRT band + static burst
  * Inserted once near the top of every page via the header part.
  * ============================================================ */
 function ht_render_overlays($attributes = []) {
@@ -631,7 +631,7 @@ function ht_render_overlays($attributes = []) {
 }
 
 /* ============================================================
- * LIGHTBOX (gallery enlarger) — singleton, included in footer part
+ * LIGHTBOX (gallery enlarger) â€” singleton, included in footer part
  * ============================================================ */
 function ht_render_lightbox($attributes = []) {
     ob_start(); ?>
@@ -658,7 +658,7 @@ function ht_render_lightbox($attributes = []) {
 }
 
 /* ============================================================
- * ABOUT MODAL — singleton, included in footer part
+ * ABOUT MODAL â€” singleton, included in footer part
  * ============================================================ */
 function ht_render_about_modal($attributes = []) {
     $about_page = get_page_by_path('about');
@@ -707,7 +707,7 @@ function ht_render_about_modal($attributes = []) {
 }
 
 /* ============================================================
- * SINGLE BOOK — bespoke book hero matching mockup 14/15/16.
+ * SINGLE BOOK â€” bespoke book hero matching mockup 14/15/16.
  * Every field conditional: empty values collapse out entirely.
  * ============================================================ */
 function ht_render_single_book($attributes = []) {
@@ -781,7 +781,7 @@ function ht_render_single_book($attributes = []) {
 
           <h1 class="book-title" data-text="<?php echo esc_attr(get_the_title($post_id)); ?>"><?php echo esc_html(get_the_title($post_id)); ?></h1>
 
-          <?php /* Author byline — small portrait + name, click → opens About modal */ ?>
+          <?php /* Author byline â€” small portrait + name, click â†’ opens About modal */ ?>
           <a href="#about" data-open-about class="book-byline" aria-label="<?php esc_attr_e('About the author', 'haunted-tech'); ?>">
             <img src="<?php echo esc_url(haunted_tech_logo_url()); ?>" alt="" class="book-byline-portrait">
             <span class="book-byline-text">by <?php bloginfo('name'); ?></span>
@@ -866,7 +866,7 @@ function ht_render_single_book($attributes = []) {
 }
 
 /* ============================================================
- * BOOK EXCERPT — chapter preview with drop-cap
+ * BOOK EXCERPT â€” chapter preview with drop-cap
  * ============================================================ */
 function ht_render_book_excerpt($attributes = []) {
     $post_id = get_the_ID();
@@ -893,7 +893,7 @@ function ht_render_book_excerpt($attributes = []) {
 }
 
 /* ============================================================
- * MORE IN THIS SERIES — mini-shelf of series siblings
+ * MORE IN THIS SERIES â€” mini-shelf of series siblings
  * Returns '' if not part of a series or no siblings exist.
  * ============================================================ */
 function ht_render_book_more_in_series($attributes = []) {
@@ -946,7 +946,7 @@ function ht_render_book_more_in_series($attributes = []) {
 }
 
 /* ============================================================
- * ALSO BY CODA — cross-promo grid of other books
+ * ALSO BY CODA â€” cross-promo grid of other books
  * Excludes current book and same-series siblings.
  * ============================================================ */
 function ht_render_also_by($attributes = []) {
@@ -985,7 +985,7 @@ function ht_render_also_by($attributes = []) {
             $b_series  = get_field('series', $b->ID);
             $b_blurb   = get_field('blurb',  $b->ID);
             $tag       = $b_series ?: 'Standalone';
-            $tagline   = $b_blurb ? wp_trim_words($b_blurb, 18, '…') : '';
+            $tagline   = $b_blurb ? wp_trim_words($b_blurb, 18, 'â€¦') : '';
             $b_cover   = get_field('cover', $b->ID);
             $cover_url = (is_array($b_cover) && !empty($b_cover['url'])) ? $b_cover['url']
                        : (has_post_thumbnail($b->ID) ? get_the_post_thumbnail_url($b->ID, 'medium') : '');
@@ -1012,7 +1012,7 @@ function ht_render_also_by($attributes = []) {
 }
 
 /* ============================================================
- * COMPOSED MODAL CONTENT — used by REST endpoint + single-book template.
+ * COMPOSED MODAL CONTENT â€” used by REST endpoint + single-book template.
  * ============================================================ */
 function ht_render_book_modal_content() {
     return ht_render_single_book()
@@ -1022,7 +1022,7 @@ function ht_render_book_modal_content() {
 }
 
 /* ============================================================
- * BOOK MODAL — singleton shell, populated via REST on click
+ * BOOK MODAL â€” singleton shell, populated via REST on click
  * ============================================================ */
 function ht_render_book_modal_shell($attributes = []) {
     ob_start(); ?>
@@ -1030,7 +1030,7 @@ function ht_render_book_modal_shell($attributes = []) {
       <div class="book-modal-frame">
         <div class="book-modal-topbar">
           <div class="book-modal-breadcrumb">
-            <a href="<?php echo esc_url(home_url('/#books')); ?>">Books</a> <span>&rsaquo;</span> <span id="book-modal-title">…</span>
+            <a href="<?php echo esc_url(home_url('/#books')); ?>">Books</a> <span>&rsaquo;</span> <span id="book-modal-title">â€¦</span>
           </div>
           <button class="book-modal-close" aria-label="Close book">&times;</button>
         </div>
@@ -1042,7 +1042,7 @@ function ht_render_book_modal_shell($attributes = []) {
 }
 
 /* ============================================================
- * WEB NOVEL MODAL — same shell pattern, REST-fetched
+ * WEB NOVEL MODAL â€” same shell pattern, REST-fetched
  * ============================================================ */
 function ht_render_webnovel_modal_shell($attributes = []) {
     ob_start(); ?>
@@ -1050,7 +1050,7 @@ function ht_render_webnovel_modal_shell($attributes = []) {
       <div class="book-modal-frame">
         <div class="book-modal-topbar">
           <div class="book-modal-breadcrumb">
-            <a href="<?php echo esc_url(home_url('/#web-novels')); ?>">Web Novels</a> <span>&rsaquo;</span> <span id="webnovel-modal-title">…</span>
+            <a href="<?php echo esc_url(home_url('/#web-novels')); ?>">Web Novels</a> <span>&rsaquo;</span> <span id="webnovel-modal-title">â€¦</span>
           </div>
           <button class="book-modal-close" data-close-webnovel aria-label="Close web novel">&times;</button>
         </div>
@@ -1062,7 +1062,7 @@ function ht_render_webnovel_modal_shell($attributes = []) {
 }
 
 /**
- * "Also by Coda" for a web novel — pulls 4 other web novels, excludes current.
+ * "Also by Coda" for a web novel â€” pulls 4 other web novels, excludes current.
  */
 function ht_render_also_by_webnovels($attributes = []) {
     $current_id = get_the_ID();
@@ -1109,7 +1109,7 @@ function ht_render_webnovel_modal_content() {
 }
 
 /* ============================================================
- * BACK TO TOP — floating arrow
+ * BACK TO TOP â€” floating arrow
  * ============================================================ */
 function ht_render_back_to_top($attributes = []) {
     return '<a href="#top" class="back-to-top" id="back-to-top" aria-label="Back to top" title="Back to top">&uarr;</a>';
@@ -1117,8 +1117,8 @@ function ht_render_back_to_top($attributes = []) {
 
 /* ============================================================
  * SINGLE WEB NOVEL — mirrors single-book layout exactly so a serial
- * page reads with the same hero / cover / meta structure as a book
- * page. The chapter Table of Contents follows below the hero.
+ * page reads with the same hero / cover / meta structure as a book page.
+ * Chapters are hosted on Substack — the CTA links there directly.
  * ============================================================ */
 function ht_render_single_webnovel($attributes = []) {
     $wn_id = get_the_ID();
@@ -1132,46 +1132,23 @@ function ht_render_single_webnovel($attributes = []) {
     $genre    = get_field('genre', $wn_id);
     $tropes   = get_field('tropes', $wn_id);
     $warnings = get_field('content_warnings', $wn_id);
-    $total    = get_field('total_chapters', $wn_id);
-    $first_ch = get_field('first_chapter', $wn_id);
     $substack = get_field('substack_url', $wn_id);
 
     $cover_url = '';
     if (is_array($cover) && !empty($cover['url'])) $cover_url = $cover['url'];
     elseif (has_post_thumbnail($wn_id)) $cover_url = get_the_post_thumbnail_url($wn_id, 'large');
 
-    $chapters = get_posts([
-        'post_type'      => 'chapter',
-        'posts_per_page' => -1,
-        'post_status'    => 'publish',
-        'meta_query'     => [['key' => 'webnovel', 'value' => $wn_id]],
-        'meta_key'       => 'chapter_number',
-        'orderby'        => 'meta_value_num',
-        'order'          => 'ASC',
-    ]);
-
-    /* Resolve "Start Reading" target — falls back to first chapter in ToC. */
-    $first_post = null;
-    if ($first_ch) {
-        $first_post = is_object($first_ch) ? $first_ch : get_post((int)$first_ch);
-    } elseif (!empty($chapters)) {
-        $first_post = $chapters[0];
-    }
-
     $details = array_filter([
         $genre  ? ['Genre',    esc_html($genre)]  : null,
         $tropes ? ['Tropes',   esc_html($tropes)] : null,
         $sched  ? ['Schedule', esc_html($sched)]  : null,
-        $total  ? ['Length',   (int)$total . ' chapters'] : null,
     ]);
 
     $cw_items = array_filter(array_map('trim', explode(',', (string)$warnings)));
 
-    /* Read row mirrors .book-buy-row — primary "Start Reading" filled,
-     * Substack link uses the outlined .buy-btn style. */
+    /* Substack is the primary (and only) read CTA — filled download-style button. */
     $reads = array_filter([
-        $first_post ? ['Start Reading', get_permalink($first_post), 'buy-btn buy-btn-download', false] : null,
-        $substack   ? ['Substack',      $substack,                  'buy-btn',                   true]  : null,
+        $substack ? ['Read on Substack', $substack, 'buy-btn buy-btn-download', true] : null,
     ]);
 
     ob_start(); ?>
@@ -1240,130 +1217,12 @@ function ht_render_single_webnovel($attributes = []) {
         </div>
       </div>
     </section>
-
-    <?php if (!empty($chapters)): ?>
-    <div class="chapters">
-      <div class="chapters-inner-frame"></div>
-      <h3>Table of Contents</h3>
-      <div class="chapters-sub"><?php echo count($chapters); ?> Chapter<?php echo count($chapters) === 1 ? '' : 's'; ?><?php echo $total ? ' of ' . (int)$total : ''; ?></div>
-      <?php foreach ($chapters as $ch):
-          $ch_num    = get_field('chapter_number', $ch->ID) ?: '?';
-          $ch_wc     = get_field('word_count',     $ch->ID);
-          $ch_acc    = get_field('access_level',   $ch->ID) ?: 'free';
-          $is_patron = !in_array($ch_acc, ['free'], true);
-      ?>
-        <div class="chapter-row">
-          <div class="chapter-num"><?php echo esc_html($ch_num); ?></div>
-          <a class="chapter-title" href="<?php echo esc_url(get_permalink($ch)); ?>"><?php echo esc_html(get_the_title($ch)); ?></a>
-          <div class="chapter-meta"><?php echo esc_html(get_the_date('M j', $ch)); ?><?php if ($ch_wc): ?> &middot; <?php echo number_format((int)$ch_wc); ?> words<?php endif; ?></div>
-          <div class="chapter-access <?php echo $is_patron ? 'access-patron' : 'access-free'; ?>"><?php echo $is_patron ? 'Patron' : 'Free'; ?></div>
-        </div>
-      <?php endforeach; ?>
-    </div>
-    <?php endif; ?>
     <?php
     return ob_get_clean();
 }
 
 /* ============================================================
- * SINGLE CHAPTER — reading view + prev/next
- * ============================================================ */
-function ht_render_single_chapter($attributes = []) {
-    $ch_id = get_the_ID();
-    if (!$ch_id || get_post_type($ch_id) !== 'chapter') return '';
-    $wn_field  = get_field('webnovel', $ch_id);
-    $wn        = is_object($wn_field) ? $wn_field : (is_numeric($wn_field) ? get_post((int)$wn_field) : null);
-    $ch_num    = get_field('chapter_number', $ch_id);
-    $arc       = get_field('arc', $ch_id);
-    $word_ct   = get_field('word_count', $ch_id);
-    $release   = get_field('release_date', $ch_id);
-    $access    = get_field('access_level', $ch_id) ?: 'free';
-    $external  = get_field('external_read_url', $ch_id);
-    $notes     = get_field('authors_note', $ch_id);
-    $warnings  = get_field('chapter_warnings', $ch_id);
-    $manual_prev = get_field('prev_chapter', $ch_id);
-    $manual_next = get_field('next_chapter', $ch_id);
-    $is_patron = !in_array($access, ['free'], true);
-    $prev = $manual_prev ? (is_object($manual_prev) ? $manual_prev : get_post((int)$manual_prev)) : null;
-    $next = $manual_next ? (is_object($manual_next) ? $manual_next : get_post((int)$manual_next)) : null;
-    if ((!$prev || !$next) && $wn) {
-        $siblings = get_posts([
-            'post_type'      => 'chapter',
-            'posts_per_page' => -1,
-            'post_status'    => 'publish',
-            'meta_query'     => [['key'=>'webnovel', 'value'=>$wn->ID]],
-            'meta_key'       => 'chapter_number',
-            'orderby'        => 'meta_value_num',
-            'order'          => 'ASC',
-        ]);
-        $ids = array_map(function($p){ return $p->ID; }, $siblings);
-        $idx = array_search($ch_id, $ids, true);
-        if ($idx !== false) {
-            if (!$prev && $idx > 0)                    $prev = $siblings[$idx - 1];
-            if (!$next && $idx < count($siblings) - 1) $next = $siblings[$idx + 1];
-        }
-    }
-    ob_start(); ?>
-    <article id="post-<?php echo (int)$ch_id; ?>" class="ht-chapter">
-      <header style="text-align:center;margin-bottom:3rem;">
-        <?php if ($wn): ?>
-          <a href="<?php echo esc_url(get_permalink($wn)); ?>" style="font-family:'Forum',serif;font-size:0.75rem;letter-spacing:0.4em;color:var(--red);text-transform:uppercase;text-decoration:none;display:inline-block;margin-bottom:1rem;">&#9670; <?php echo esc_html(get_the_title($wn)); ?></a>
-        <?php endif; ?>
-        <?php if ($arc): ?><div style="font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--bone-dim);margin-bottom:0.6rem;letter-spacing:0.2em;text-transform:uppercase;font-size:0.85rem;"><?php echo esc_html($arc); ?></div><?php endif; ?>
-        <?php if ($ch_num !== null && $ch_num !== ''): ?><div style="font-family:'Forum',serif;font-size:1rem;color:var(--gold);letter-spacing:0.5em;text-transform:uppercase;margin-bottom:0.4rem;">Chapter <?php echo esc_html($ch_num); ?></div><?php endif; ?>
-        <h1 data-text="<?php echo esc_attr(get_the_title($ch_id)); ?>" style="font-family:'Forum',serif;font-size:clamp(1.8rem,4vw,2.8rem);color:var(--gold);text-transform:uppercase;letter-spacing:0.06em;text-shadow:0 0 16px rgba(255,212,0,0.3);"><?php echo esc_html(get_the_title($ch_id)); ?></h1>
-        <div style="font-family:'Inter',sans-serif;font-size:0.75rem;letter-spacing:0.2em;color:var(--bone-dim);text-transform:uppercase;margin-top:1.2rem;">
-          <?php echo esc_html($release ?: get_the_date('M j, Y')); ?>
-          <?php if ($word_ct): ?> &middot; <?php echo number_format((int)$word_ct); ?> words<?php endif; ?>
-          &middot; <span class="<?php echo $is_patron ? 'access-patron' : 'access-free'; ?>" style="padding:0.2rem 0.6rem;border:1px solid;display:inline-block;"><?php echo esc_html(ucwords(str_replace('_', ' ', $access))); ?></span>
-        </div>
-      </header>
-      <?php if ($warnings): ?>
-        <div style="border:1px solid var(--red);padding:1rem 1.2rem;background:rgba(90,10,18,0.2);font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--bone);margin-bottom:2rem;text-align:center;">
-          <strong style="color:var(--red);letter-spacing:0.2em;text-transform:uppercase;font-style:normal;font-size:0.75rem;display:block;margin-bottom:0.4rem;">&#9670; Chapter Content Warnings</strong>
-          <?php echo esc_html($warnings); ?>
-        </div>
-      <?php endif; ?>
-      <?php if ($external): ?>
-        <div style="border:1px solid var(--gold);padding:2rem;text-align:center;background:var(--obsidian);margin-bottom:3rem;">
-          <div style="font-family:'Forum',serif;color:var(--gold);text-transform:uppercase;letter-spacing:0.3em;margin-bottom:1rem;font-size:0.9rem;">This chapter lives off-site</div>
-          <p style="font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--bone);margin-bottom:1.5rem;">Read the full chapter on the linked platform.</p>
-          <a href="<?php echo esc_url($external); ?>" class="cta" target="_blank" rel="noopener">Continue Reading &rarr;</a>
-        </div>
-      <?php endif; ?>
-      <div class="ht-chapter-body" style="font-family:'Cormorant Garamond',serif;font-size:1.18rem;line-height:1.85;color:var(--bone);">
-        <?php
-        $content_post = get_post($ch_id);
-        echo apply_filters('the_content', $content_post->post_content);
-        ?>
-      </div>
-      <?php if ($notes): ?>
-        <aside style="margin-top:4rem;border-top:1px solid var(--border-dim);padding-top:2rem;font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--bone-dim);">
-          <div style="font-family:'Forum',serif;color:var(--gold);text-transform:uppercase;letter-spacing:0.3em;font-size:0.75rem;font-style:normal;margin-bottom:1rem;">&#9670; Author's Note</div>
-          <?php echo wp_kses_post(wpautop($notes)); ?>
-        </aside>
-      <?php endif; ?>
-      <nav style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:5rem;padding-top:2rem;border-top:1px solid var(--border-dim);">
-        <?php if ($prev): ?>
-          <a href="<?php echo esc_url(get_permalink($prev)); ?>" style="display:block;padding:1.5rem;border:1px solid var(--border-dim);text-decoration:none;text-align:left;">
-            <div style="font-family:'Forum',serif;color:var(--red);font-size:0.7rem;letter-spacing:0.3em;text-transform:uppercase;margin-bottom:0.4rem;">&larr; Previous</div>
-            <div style="font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--bone);"><?php echo esc_html(get_the_title($prev)); ?></div>
-          </a>
-        <?php else: ?><span></span><?php endif; ?>
-        <?php if ($next): ?>
-          <a href="<?php echo esc_url(get_permalink($next)); ?>" style="display:block;padding:1.5rem;border:1px solid var(--border-dim);text-decoration:none;text-align:right;">
-            <div style="font-family:'Forum',serif;color:var(--red);font-size:0.7rem;letter-spacing:0.3em;text-transform:uppercase;margin-bottom:0.4rem;">Next &rarr;</div>
-            <div style="font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--bone);"><?php echo esc_html(get_the_title($next)); ?></div>
-          </a>
-        <?php else: ?><span></span><?php endif; ?>
-      </nav>
-    </article>
-    <?php
-    return ob_get_clean();
-}
-
-/* ============================================================
- * SITE FOOTER — bottom of every page
+ * SITE FOOTER â€” bottom of every page
  * ============================================================ */
 function ht_render_site_footer($attributes = []) {
     ob_start(); ?>
@@ -1396,7 +1255,7 @@ function ht_render_site_footer($attributes = []) {
 
 
 /* ============================================================
- * LINKTREE — single-page bio-link layout: avatar + bio + stacked
+ * LINKTREE â€” single-page bio-link layout: avatar + bio + stacked
  * link cards for every published Book, Web Novel, and a social-bar
  * footer. Drop the haunted-tech/linktree block on any WP page.
  * ============================================================ */
