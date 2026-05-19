@@ -13,7 +13,7 @@
 if (!defined('ABSPATH')) { exit; }
 
 /* ============================================================
- * SOCIAL BAR â€” top of page, icon-only
+ * SOCIAL BAR – top of page, icon-only
  * ============================================================ */
 function ht_render_social_bar($attributes = []) {
     ob_start(); ?>
@@ -58,7 +58,7 @@ function ht_render_social_bar($attributes = []) {
 }
 
 /* ============================================================
- * SITE HEADER â€” logo + nav + subscribe CTA
+ * SITE HEADER – logo + nav + subscribe CTA
  * ============================================================ */
 function ht_render_site_header($attributes = []) {
     ob_start(); ?>
@@ -104,7 +104,7 @@ function ht_render_site_header($attributes = []) {
 }
 
 /* ============================================================
- * HERO SLIDER â€” pulls 3 most-recent hero_update posts
+ * HERO SLIDER – pulls 3 most-recent hero_update posts
  * ============================================================ */
 function ht_render_hero_slider($attributes = []) {
     $hero_slides = haunted_tech_get_hero_slides(3);
@@ -173,7 +173,7 @@ function ht_render_hero_slider($attributes = []) {
 }
 
 /* ============================================================
- * BOOKSHELF â€” pull all published books
+ * BOOKSHELF – pull all published books
  * ============================================================ */
 function ht_render_bookshelf($attributes = []) {
     $limit = isset($attributes['limit']) ? (int)$attributes['limit'] : 12;
@@ -221,7 +221,7 @@ function ht_render_bookshelf($attributes = []) {
 }
 
 /* ============================================================
- * CRT MONITOR â€” list webnovels with status indicators
+ * CRT MONITOR – list webnovels with status indicators
  * ============================================================ */
 function ht_render_crt_monitor($attributes = []) {
     $limit = isset($attributes['limit']) ? (int)$attributes['limit'] : 8;
@@ -248,13 +248,6 @@ function ht_render_crt_monitor($attributes = []) {
               <?php foreach ($webnovels as $wn):
                   $status = get_field('status', $wn->ID) ?: 'ongoing';
                   $genre  = get_field('genre',  $wn->ID) ?: '';
-                  $total  = get_field('total_chapters', $wn->ID);
-                  $chapter_count = count(get_posts([
-                      'post_type'      => 'chapter',
-                      'posts_per_page' => -1,
-                      'meta_query'     => [['key' => 'webnovel', 'value' => $wn->ID]],
-                      'fields'         => 'ids',
-                  ]));
                   $status_dot   = ['ongoing'=>'&#9679;', 'complete'=>'&#10003;', 'hiatus'=>'&#9711;', 'planned'=>'&#9633;', 'discontinued'=>'&#10007;'][$status] ?? '&#9679;';
                   $status_class = in_array($status, ['ongoing','complete','hiatus'], true) ? $status : 'ongoing';
                   $slug         = sanitize_title(get_the_title($wn)) . '/';
@@ -263,7 +256,6 @@ function ht_render_crt_monitor($attributes = []) {
                 <div class="crt-status <?php echo esc_attr($status_class); ?>"><?php echo $status_dot; ?></div>
                 <a class="crt-title" href="<?php echo esc_url(get_permalink($wn)); ?>" data-open-webnovel="<?php echo esc_attr($wn->post_name); ?>"><?php echo esc_html($slug); ?></a>
                 <div class="crt-tag">[<?php echo esc_html(strtoupper($genre)); ?>]</div>
-                <div class="crt-meta">ch <?php echo (int)$chapter_count; ?> / <?php echo $total ? (int)$total : '??'; ?></div>
                 <div class="crt-state <?php echo esc_attr($status_class); ?>"><?php echo esc_html(strtoupper($status)); ?></div>
               </div>
               <?php endforeach; ?>
@@ -272,7 +264,6 @@ function ht_render_crt_monitor($attributes = []) {
                 <div class="crt-status">&#9679;</div>
                 <div class="crt-title">no_webnovels_yet/</div>
                 <div class="crt-tag">[EMPTY]</div>
-                <div class="crt-meta">ch 0 / 0</div>
                 <div class="crt-state">WAITING</div>
               </div>
             <?php endif; ?>
@@ -290,7 +281,7 @@ function ht_render_crt_monitor($attributes = []) {
 }
 
 /* ============================================================
- * SERVICES â€” three cards (currently static; future: services CPT)
+ * SERVICES – three cards (currently static; future: services CPT)
  * ============================================================ */
 function ht_render_services($attributes = []) {
     ob_start(); ?>
@@ -339,7 +330,7 @@ function ht_render_services($attributes = []) {
       </div>
     </section>
 
-    <!-- Commission inquiry modals â€” match the About modal structure:
+    <!-- Commission inquiry modals – match the About modal structure:
          left poster (large icon + tagline) + right meta (eyebrow, title,
          scrolling form body). -->
     <?php foreach ([
@@ -361,7 +352,7 @@ function ht_render_services($attributes = []) {
             'eyebrow'  => 'AI-Assisted',
             'title'    => 'AI Generation',
             'icon'     => '&#9635;',
-            'tagline'  => 'Custom AI-generated character art, mood boards, and chapter banners â€” finished by hand.',
+            'tagline'  => 'Custom AI-generated character art, mood boards, and chapter banners – finished by hand.',
             'shortcode'=> '[ht_commission_ai]',
         ],
     ] as $key => $cfg): ?>
@@ -425,7 +416,7 @@ function ht_render_services($attributes = []) {
 }
 
 /* ============================================================
- * GALLERY â€” driven by the gallery_item CPT (one post per tile)
+ * GALLERY – driven by the gallery_item CPT (one post per tile)
  * ============================================================ */
 function ht_render_gallery($attributes = []) {
     $all_items = get_posts([
@@ -435,7 +426,7 @@ function ht_render_gallery($attributes = []) {
         'orderby'        => ['menu_order' => 'ASC', 'date' => 'DESC'],
     ]);
 
-    /* No items yet â†’ fall back to the static placeholder shipped with the theme. */
+    /* No items yet → fall back to the static placeholder shipped with the theme. */
     if (empty($all_items)) {
         ob_start();
         include HAUNTED_TECH_DIR . '/inc/gallery-static.php';
@@ -488,7 +479,7 @@ function ht_render_gallery($attributes = []) {
       </div>
 
       <?php
-      /* Map gallery tab â†’ commission modal key (coversâ†’cover; art/ai pass-through). */
+      /* Map gallery tab → commission modal key (covers→cover; art/ai pass-through). */
       $tab_to_modal = ['art' => 'art', 'covers' => 'cover', 'ai' => 'ai'];
       foreach ($tab_labels as $tab => $label):
           $items       = $grouped[$tab];
@@ -556,7 +547,7 @@ function ht_render_gallery($attributes = []) {
                   <div class="gallery-meta">
                     <?php if ($card_tag): ?><div class="gallery-tag"><?php echo esc_html($card_tag); ?></div><?php endif; ?>
                     <div class="gallery-title"><?php echo esc_html(get_the_title($item)); ?></div>
-                    <?php if ($desc): ?><div class="gallery-caption"><?php echo esc_html(wp_trim_words($desc, 18, 'â€¦')); ?></div><?php endif; ?>
+                    <?php if ($desc): ?><div class="gallery-caption"><?php echo esc_html(wp_trim_words($desc, 18, '…')); ?></div><?php endif; ?>
                   </div>
                 </a>
               <?php endforeach; ?>
@@ -586,10 +577,10 @@ function ht_render_gallery($attributes = []) {
 }
 
 /* ============================================================
- * NEWSLETTER â€” placeholder form
+ * NEWSLETTER – placeholder form
  * ============================================================ */
 function ht_render_newsletter($attributes = []) {
-    /* If the user has saved an embed in Customizer â†’ Haunted Tech â†’ Newsletter,
+    /* If the user has saved an embed in Customizer → Haunted Tech → Newsletter,
      * inject it inside the callout in place of the placeholder form. */
     $embed = function_exists('haunted_tech_get_newsletter_embed') ? haunted_tech_get_newsletter_embed() : '';
     ob_start(); ?>
@@ -623,7 +614,7 @@ function ht_render_newsletter($attributes = []) {
 }
 
 /* ============================================================
- * GLOBAL OVERLAYS â€” CRT band + static burst
+ * GLOBAL OVERLAYS – CRT band + static burst
  * Inserted once near the top of every page via the header part.
  * ============================================================ */
 function ht_render_overlays($attributes = []) {
@@ -631,7 +622,7 @@ function ht_render_overlays($attributes = []) {
 }
 
 /* ============================================================
- * LIGHTBOX (gallery enlarger) â€” singleton, included in footer part
+ * LIGHTBOX (gallery enlarger) – singleton, included in footer part
  * ============================================================ */
 function ht_render_lightbox($attributes = []) {
     ob_start(); ?>
@@ -658,7 +649,7 @@ function ht_render_lightbox($attributes = []) {
 }
 
 /* ============================================================
- * ABOUT MODAL â€” singleton, included in footer part
+ * ABOUT MODAL – singleton, included in footer part
  * ============================================================ */
 function ht_render_about_modal($attributes = []) {
     $about_page = get_page_by_path('about');
@@ -707,7 +698,7 @@ function ht_render_about_modal($attributes = []) {
 }
 
 /* ============================================================
- * SINGLE BOOK â€” bespoke book hero matching mockup 14/15/16.
+ * SINGLE BOOK – bespoke book hero matching mockup 14/15/16.
  * Every field conditional: empty values collapse out entirely.
  * ============================================================ */
 function ht_render_single_book($attributes = []) {
@@ -781,7 +772,7 @@ function ht_render_single_book($attributes = []) {
 
           <h1 class="book-title" data-text="<?php echo esc_attr(get_the_title($post_id)); ?>"><?php echo esc_html(get_the_title($post_id)); ?></h1>
 
-          <?php /* Author byline â€” small portrait + name, click â†’ opens About modal */ ?>
+          <?php /* Author byline – small portrait + name, click → opens About modal */ ?>
           <a href="#about" data-open-about class="book-byline" aria-label="<?php esc_attr_e('About the author', 'haunted-tech'); ?>">
             <img src="<?php echo esc_url(haunted_tech_logo_url()); ?>" alt="" class="book-byline-portrait">
             <span class="book-byline-text">by <?php bloginfo('name'); ?></span>
@@ -866,7 +857,7 @@ function ht_render_single_book($attributes = []) {
 }
 
 /* ============================================================
- * BOOK EXCERPT â€” chapter preview with drop-cap
+ * BOOK EXCERPT – chapter preview with drop-cap
  * ============================================================ */
 function ht_render_book_excerpt($attributes = []) {
     $post_id = get_the_ID();
@@ -893,7 +884,7 @@ function ht_render_book_excerpt($attributes = []) {
 }
 
 /* ============================================================
- * MORE IN THIS SERIES â€” mini-shelf of series siblings
+ * MORE IN THIS SERIES – mini-shelf of series siblings
  * Returns '' if not part of a series or no siblings exist.
  * ============================================================ */
 function ht_render_book_more_in_series($attributes = []) {
@@ -946,7 +937,7 @@ function ht_render_book_more_in_series($attributes = []) {
 }
 
 /* ============================================================
- * ALSO BY CODA â€” cross-promo grid of other books
+ * ALSO BY CODA – cross-promo grid of other books
  * Excludes current book and same-series siblings.
  * ============================================================ */
 function ht_render_also_by($attributes = []) {
@@ -985,7 +976,7 @@ function ht_render_also_by($attributes = []) {
             $b_series  = get_field('series', $b->ID);
             $b_blurb   = get_field('blurb',  $b->ID);
             $tag       = $b_series ?: 'Standalone';
-            $tagline   = $b_blurb ? wp_trim_words($b_blurb, 18, 'â€¦') : '';
+            $tagline   = $b_blurb ? wp_trim_words($b_blurb, 18, '…') : '';
             $b_cover   = get_field('cover', $b->ID);
             $cover_url = (is_array($b_cover) && !empty($b_cover['url'])) ? $b_cover['url']
                        : (has_post_thumbnail($b->ID) ? get_the_post_thumbnail_url($b->ID, 'medium') : '');
@@ -1012,7 +1003,7 @@ function ht_render_also_by($attributes = []) {
 }
 
 /* ============================================================
- * COMPOSED MODAL CONTENT â€” used by REST endpoint + single-book template.
+ * COMPOSED MODAL CONTENT – used by REST endpoint + single-book template.
  * ============================================================ */
 function ht_render_book_modal_content() {
     return ht_render_single_book()
@@ -1022,7 +1013,7 @@ function ht_render_book_modal_content() {
 }
 
 /* ============================================================
- * BOOK MODAL â€” singleton shell, populated via REST on click
+ * BOOK MODAL – singleton shell, populated via REST on click
  * ============================================================ */
 function ht_render_book_modal_shell($attributes = []) {
     ob_start(); ?>
@@ -1030,7 +1021,7 @@ function ht_render_book_modal_shell($attributes = []) {
       <div class="book-modal-frame">
         <div class="book-modal-topbar">
           <div class="book-modal-breadcrumb">
-            <a href="<?php echo esc_url(home_url('/#books')); ?>">Books</a> <span>&rsaquo;</span> <span id="book-modal-title">â€¦</span>
+            <a href="<?php echo esc_url(home_url('/#books')); ?>">Books</a> <span>&rsaquo;</span> <span id="book-modal-title">…</span>
           </div>
           <button class="book-modal-close" aria-label="Close book">&times;</button>
         </div>
@@ -1042,7 +1033,7 @@ function ht_render_book_modal_shell($attributes = []) {
 }
 
 /* ============================================================
- * WEB NOVEL MODAL â€” same shell pattern, REST-fetched
+ * WEB NOVEL MODAL – same shell pattern, REST-fetched
  * ============================================================ */
 function ht_render_webnovel_modal_shell($attributes = []) {
     ob_start(); ?>
@@ -1050,7 +1041,7 @@ function ht_render_webnovel_modal_shell($attributes = []) {
       <div class="book-modal-frame">
         <div class="book-modal-topbar">
           <div class="book-modal-breadcrumb">
-            <a href="<?php echo esc_url(home_url('/#web-novels')); ?>">Web Novels</a> <span>&rsaquo;</span> <span id="webnovel-modal-title">â€¦</span>
+            <a href="<?php echo esc_url(home_url('/#web-novels')); ?>">Web Novels</a> <span>&rsaquo;</span> <span id="webnovel-modal-title">…</span>
           </div>
           <button class="book-modal-close" data-close-webnovel aria-label="Close web novel">&times;</button>
         </div>
@@ -1062,7 +1053,7 @@ function ht_render_webnovel_modal_shell($attributes = []) {
 }
 
 /**
- * "Also by Coda" for a web novel â€” pulls 4 other web novels, excludes current.
+ * "Also by Coda" for a web novel – pulls 4 other web novels, excludes current.
  */
 function ht_render_also_by_webnovels($attributes = []) {
     $current_id = get_the_ID();
@@ -1109,7 +1100,7 @@ function ht_render_webnovel_modal_content() {
 }
 
 /* ============================================================
- * BACK TO TOP â€” floating arrow
+ * BACK TO TOP – floating arrow
  * ============================================================ */
 function ht_render_back_to_top($attributes = []) {
     return '<a href="#top" class="back-to-top" id="back-to-top" aria-label="Back to top" title="Back to top">&uarr;</a>';
@@ -1222,7 +1213,7 @@ function ht_render_single_webnovel($attributes = []) {
 }
 
 /* ============================================================
- * SITE FOOTER â€” bottom of every page
+ * SITE FOOTER – bottom of every page
  * ============================================================ */
 function ht_render_site_footer($attributes = []) {
     ob_start(); ?>
@@ -1255,7 +1246,7 @@ function ht_render_site_footer($attributes = []) {
 
 
 /* ============================================================
- * LINKTREE â€” single-page bio-link layout: avatar + bio + stacked
+ * LINKTREE – single-page bio-link layout: avatar + bio + stacked
  * link cards for every published Book, Web Novel, and a social-bar
  * footer. Drop the haunted-tech/linktree block on any WP page.
  * ============================================================ */
