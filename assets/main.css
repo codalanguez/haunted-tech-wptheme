@@ -1,4 +1,4 @@
-  :root {
+:root {
     --void: #000000;
     --onyx: #050403;
     --obsidian: #0F0D0A;
@@ -163,7 +163,7 @@
     animation: red-pulse 6s infinite;
     white-space: nowrap;
   }
-  .header-cta::before { content: 'â—†'; color: var(--red); font-size: 0.6em; vertical-align: middle; text-shadow: 0 0 6px var(--red); }
+  .header-cta::before { content: '\2020'; color: var(--red); font-size: 0.6em; vertical-align: middle; text-shadow: 0 0 6px var(--red); }
   .header-cta:hover {
     background: var(--gold);
     color: var(--void);
@@ -355,7 +355,7 @@
     color: var(--gold); text-transform: uppercase; margin-bottom: 2rem;
     text-shadow: 0 0 12px rgba(255,212,0,0.5);
   }
-  .hero-eyebrow::before, .hero-eyebrow::after { content: 'â—†'; color: var(--red); margin: 0 0.5rem; font-size: 0.7em; vertical-align: middle; text-shadow: 0 0 8px var(--red); }
+  .hero-eyebrow::before, .hero-eyebrow::after { content: '\2020'; color: var(--red); margin: 0 0.5rem; font-size: 0.7em; vertical-align: middle; text-shadow: 0 0 8px var(--red); }
   .hero h1 {
     font-family: 'Forum', serif; font-size: clamp(3rem, 9vw, 7rem);
     line-height: 0.95; color: var(--bone); margin-bottom: 1.8rem;
@@ -388,7 +388,7 @@
     animation: red-pulse 5s infinite;
   }
   .cta:hover { background: var(--gold); color: var(--void); text-shadow: none; letter-spacing: 0.5em; box-shadow: 0 0 0 4px var(--void), 0 0 0 5px var(--red), 0 0 60px rgba(229,9,20,0.5); animation: glitch-shift-fast 0.3s; }
-  .cta::before, .cta::after { content: 'â—†'; color: inherit; font-size: 0.7em; }
+  .cta::before, .cta::after { content: '\2020'; color: inherit; font-size: 0.7em; }
 
   /* ============ BLOCK: ABOUT MODAL (opens from nav) ============ */
   .about-modal {
@@ -500,7 +500,7 @@
     margin-bottom: 0.6rem;
     text-shadow: 0 0 6px rgba(229,9,20,0.4);
   }
-  .about-eyebrow::before, .about-eyebrow::after { content: 'â—†'; color: var(--gold); margin: 0 0.5rem; font-size: 0.7em; vertical-align: middle; }
+  .about-eyebrow::before, .about-eyebrow::after { content: '\2020'; color: var(--gold); margin: 0 0.5rem; font-size: 0.7em; vertical-align: middle; }
 
   .about-name {
     font-family: 'Forum', serif;
@@ -590,7 +590,7 @@
     border-top: 1px solid var(--border-dim);
     text-align: center;
   }
-  .about-handle::before, .about-handle::after { content: 'â—†'; color: var(--red); margin: 0 0.6rem; font-size: 0.7em; vertical-align: middle; }
+  .about-handle::before, .about-handle::after { content: '\2020'; color: var(--red); margin: 0 0.6rem; font-size: 0.7em; vertical-align: middle; }
   .about-close {
     position: absolute; top: -1px; right: -1px;
     width: 48px; height: 48px;
@@ -911,7 +911,7 @@
     opacity: 0.5;
   }
   .shelf-base::after {
-    content: 'â—†        â—†        â—†        â—†        â—†';
+    content: '\2020        \2020        \2020        \2020        \2020';
     position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
     color: var(--gold); font-size: 0.6rem; letter-spacing: 0.4em;
     text-shadow: 0 0 6px rgba(255,212,0,0.5);
@@ -1048,7 +1048,7 @@
     text-shadow: 0 0 8px rgba(255,212,0,0.4);
     opacity: 0.85;
   }
-  .crt-brand::before, .crt-brand::after { content: 'â—†'; color: var(--red); margin: 0 0.5rem; font-size: 0.7em; vertical-align: middle; }
+  .crt-brand::before, .crt-brand::after { content: '\2020'; color: var(--red); margin: 0 0.5rem; font-size: 0.7em; vertical-align: middle; }
 
   /* ============ SERVICES ============ */
   .services-grid {
@@ -1120,7 +1120,7 @@
     margin-bottom: 0.6rem;
     text-shadow: 0 0 6px rgba(229,9,20,0.4);
   }
-  .service-eyebrow::before { content: 'â—† '; }
+  .service-eyebrow::before { content: '\2020 '; }
   .service-title {
     font-family: 'Forum', serif;
     font-size: 1.5rem;
@@ -1153,7 +1153,7 @@
     text-decoration: none;
     transition: all 0.3s;
   }
-  .service-btn::after { content: 'â†’'; }
+  .service-btn::after { content: '\203a'; }
   .service-btn:hover {
     background: var(--red);
     border-color: var(--red);
@@ -1195,7 +1195,7 @@
     margin: 0 -0.5px;
   }
   .gallery-tab::before {
-    content: 'â—†';
+    content: '\2020';
     color: var(--red);
     margin-right: 0.6rem;
     font-size: 0.6em;
@@ -1307,7 +1307,7 @@
     padding: 0.5rem 1rem;
   }
   .gallery-image-label::before, .gallery-image-label::after {
-    content: 'â—†'; color: var(--red); margin: 0 0.4rem; font-size: 0.6em; vertical-align: middle;
+    content: '\2020'; color: var(--red); margin: 0 0.4rem; font-size: 0.6em; vertical-align: middle;
   }
 
   .gallery-meta { padding: 1.2rem 1.4rem; position: relative; z-index: 4; }
@@ -1357,7 +1357,7 @@
     cursor: pointer;
     transition: all 0.2s;
   }
-  .gallery-chip::before { content: 'â—†'; color: var(--red); font-size: 0.5em; vertical-align: middle; margin-right: 0.4rem; opacity: 0.4; transition: opacity 0.2s; }
+  .gallery-chip::before { content: '\2020'; color: var(--red); font-size: 0.5em; vertical-align: middle; margin-right: 0.4rem; opacity: 0.4; transition: opacity 0.2s; }
   .gallery-chip:hover {
     color: var(--gold);
     border-color: var(--gold);
@@ -1433,7 +1433,7 @@
     text-shadow: 0 0 8px rgba(255,212,0,0.3);
     margin-left: 1rem;
   }
-  .gallery-view-all::after { content: 'â†’'; }
+  .gallery-view-all::after { content: '\203a'; }
   .gallery-view-all:hover {
     background: var(--red);
     color: var(--bone);
@@ -1527,7 +1527,7 @@
     margin-bottom: 0.6rem;
     text-shadow: 0 0 6px rgba(229,9,20,0.4);
   }
-  .lightbox-tag::before { content: 'â—† '; color: var(--gold); }
+  .lightbox-tag::before { content: '\2020 '; color: var(--gold); }
   .lightbox-title {
     font-family: 'Forum', serif;
     font-size: 1.6rem;
@@ -1566,7 +1566,7 @@
     transition: all 0.2s;
     align-self: flex-start;
   }
-  .lightbox-cta::after { content: 'â†’'; }
+  .lightbox-cta::after { content: '\203a'; }
   .lightbox-cta:hover {
     background: var(--red); color: var(--bone); border-color: var(--red);
     box-shadow: 0 0 16px rgba(229,9,20,0.4);
@@ -1657,7 +1657,7 @@
     text-shadow: 0 0 8px rgba(229,9,20,0.4);
   }
   .newsletter-eyebrow::before, .newsletter-eyebrow::after {
-    content: 'â—†'; color: var(--gold); margin: 0 0.6rem; font-size: 0.7em; vertical-align: middle;
+    content: '\2020'; color: var(--gold); margin: 0 0.6rem; font-size: 0.7em; vertical-align: middle;
   }
   .newsletter h2 {
     font-family: 'Forum', serif;
@@ -1740,8 +1740,8 @@
     text-transform: uppercase;
     margin-top: 2rem;
   }
-  .newsletter-fine::before { content: 'â—† '; color: var(--red); }
-  .newsletter-fine::after { content: ' â—†'; color: var(--red); }
+  .newsletter-fine::before { content: '\2020 '; color: var(--red); }
+  .newsletter-fine::after { content: ' \2020'; color: var(--red); }
 
   /* ============ FOOTER ============ */
   footer {
@@ -2025,7 +2025,7 @@
     z-index: 11;
     box-shadow: 0 0 14px rgba(255,212,0,0.6);
   }
-  .ku-badge::before { content: 'â—† '; color: var(--red-deep); }
+  .ku-badge::before { content: '\2020 '; color: var(--red-deep); }
 
   .book-meta-col { padding-top: 0.5rem; }
   .book-series-mark {
@@ -2037,7 +2037,7 @@
     margin-bottom: 0.8rem;
     text-shadow: 0 0 6px rgba(229,9,20,0.5);
   }
-  .book-series-mark::before { content: 'â—† '; color: var(--gold); }
+  .book-series-mark::before { content: '\2020 '; color: var(--gold); }
   .book-series-mark a { color: var(--red); text-decoration: none; }
   .book-title {
     font-family: 'Forum', serif;
@@ -2095,7 +2095,7 @@
     transition: all 0.3s;
     text-shadow: 0 0 6px rgba(255,212,0,0.3);
   }
-  .buy-btn::before { content: 'â—†'; color: var(--red); font-size: 0.55em; }
+  .buy-btn::before { content: '\2020'; color: var(--red); font-size: 0.55em; }
   .buy-btn:hover {
     background: var(--gold); color: var(--void); text-shadow: none;
     box-shadow: 0 0 20px rgba(255,212,0,0.5);
@@ -2114,7 +2114,7 @@
     text-shadow: 0 0 8px rgba(255,212,0,0.35);
     box-shadow: 0 0 14px rgba(255,212,0,0.35);
   }
-  .buy-btn-download::before { content: 'â¬‡'; color: var(--red-deep); }
+  .buy-btn-download::before { content: '\2193'; color: var(--red-deep); }
   .buy-btn-download:hover {
     background: var(--gold-bright);
     color: var(--void);
@@ -2141,7 +2141,7 @@
     text-transform: uppercase; text-decoration: none;
     transition: all 0.25s;
   }
-  .find-btn::before { content: 'â—†'; color: var(--red); font-size: 0.55em; }
+  .find-btn::before { content: '\2020'; color: var(--red); font-size: 0.55em; }
   .find-btn:hover {
     color: var(--gold); border-color: var(--gold);
     background: rgba(255,212,0,0.05);
@@ -2173,8 +2173,8 @@
     transition: background 0.2s;
   }
   .content-warnings summary::-webkit-details-marker { display: none; }
-  .content-warnings summary::before { content: 'â—†'; color: var(--red); font-size: 0.65em; text-shadow: 0 0 4px var(--red); }
-  .content-warnings summary::after  { content: 'â–¸'; margin-left: auto; color: var(--gold); font-size: 0.9em; transition: transform 0.25s; }
+  .content-warnings summary::before { content: '\2020'; color: var(--red); font-size: 0.65em; text-shadow: 0 0 4px var(--red); }
+  .content-warnings summary::after  { content: '\25b8'; margin-left: auto; color: var(--gold); font-size: 0.9em; transition: transform 0.25s; }
   .content-warnings[open] summary::after { transform: rotate(90deg); }
   .content-warnings summary:hover { background: rgba(229,9,20,0.08); }
   .cw-count {
@@ -2198,7 +2198,7 @@
     background: rgba(0,0,0,0.4); border: 1px solid var(--red-deep);
     padding: 0.35rem 0.65rem;
   }
-  .cw-list li::before { content: 'â—† '; color: var(--red); font-size: 0.8em; }
+  .cw-list li::before { content: '\2020 '; color: var(--red); font-size: 0.8em; }
   .cw-graphic li { border-color: var(--red); color: var(--red-bright); }
 
   /* Excerpt */
@@ -2214,7 +2214,7 @@
     color: var(--red); text-transform: uppercase;
     margin-bottom: 1rem;
   }
-  .book-excerpt-eyebrow::before, .book-excerpt-eyebrow::after { content: 'â—†'; color: var(--gold); margin: 0 0.6rem; font-size: 0.7em; vertical-align: middle; }
+  .book-excerpt-eyebrow::before, .book-excerpt-eyebrow::after { content: '\2020'; color: var(--gold); margin: 0 0.6rem; font-size: 0.7em; vertical-align: middle; }
   .book-excerpt-title {
     font-family: 'Forum', serif; text-align: center;
     color: var(--gold); font-size: 1.8rem;
@@ -2346,12 +2346,12 @@
     text-shadow: 0 0 14px rgba(255,212,0,0.4);
     position: relative;
   }
-  .also-by-cover::before { content: 'â—† â—†'; font-size: 0.45rem; letter-spacing: 0.5em; color: var(--red); margin-bottom: 0.8rem; }
-  .also-by-cover::after  { content: 'â—† â—†'; font-size: 0.45rem; letter-spacing: 0.5em; color: var(--red); margin-top: 0.8rem; }
+  .also-by-cover::before { content: '\2020 \2020'; font-size: 0.45rem; letter-spacing: 0.5em; color: var(--red); margin-bottom: 0.8rem; }
+  .also-by-cover::after  { content: '\2020 \2020'; font-size: 0.45rem; letter-spacing: 0.5em; color: var(--red); margin-top: 0.8rem; }
   .also-by-cover-title { font-size: 0.95rem; }
   .ab-meta { padding: 1.2rem 1.2rem 1.4rem; position: relative; z-index: 4; }
   .ab-tag { font-family: 'Forum', serif; font-size: 0.6rem; letter-spacing: 0.35em; color: var(--red); text-transform: uppercase; margin-bottom: 0.4rem; }
-  .ab-tag::before { content: 'â—† '; color: var(--gold); }
+  .ab-tag::before { content: '\2020 '; color: var(--gold); }
   .ab-title { font-family: 'Forum', serif; font-size: 1rem; color: var(--gold); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.35rem; transition: text-shadow 0.3s; }
   .ab-tagline { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 0.9rem; color: var(--bone-dim); line-height: 1.5; }
 
@@ -2449,7 +2449,7 @@
   /* =========================================================
    * v0.9.1 â€” LINKTREE PAGE
    * Single-column bio-link layout for /links page.
-   * Avatar + name + bio â†’ stacked Books / Web Novels / Follow.
+   * Avatar + name + bio \203a stacked Books / Web Novels / Follow.
    * ========================================================= */
   .block-linktree {
     max-width: 640px;
@@ -2940,7 +2940,7 @@
   text-shadow: 0 0 6px rgba(229, 9, 20, 0.4);
 }
 .commission-eyebrow::before, .commission-eyebrow::after {
-  content: 'â—†'; color: var(--gold); margin: 0 0.5rem;
+  content: '\2020'; color: var(--gold); margin: 0 0.5rem;
   font-size: 0.7em; vertical-align: middle;
 }
 .commission-title {
