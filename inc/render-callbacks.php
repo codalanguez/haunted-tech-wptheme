@@ -1184,7 +1184,7 @@ function ht_render_single_webnovel($attributes = []) {
             <?php endif; endif; ?>
             <?php if ($patreon):  ?><a href="<?php echo esc_url($patreon);  ?>" class="cta" style="padding:0.9rem 1.6rem;font-size:0.8rem;">Patreon</a><?php endif; ?>
             <?php if ($ream):     ?><a href="<?php echo esc_url($ream);     ?>" class="cta" style="padding:0.9rem 1.6rem;font-size:0.8rem;">Ream</a><?php endif; ?>
-            <?php if ($substack): ?><a href="<?php echo esc_url($substack); ?>" class="cta" style="padding:0.9rem 1.6rem;font-size:0.8rem;">Substack</a><?php endif; ?>
+            <?php if ($substack): ?><a href="<?php echo esc_url($substack); ?>" class="cta" style="padding:0.9rem 1.6rem;font-size:0.8rem;" target="_blank" rel="noopener">Read on Substack</a><?php endif; ?>
           </div>
         </div>
       </div>
