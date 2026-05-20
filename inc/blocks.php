@@ -1,1 +1,70 @@
-PD9waHAKLyoqCiAqIFJlZ2lzdGVyIEhhdW50ZWQgVGVjaCBkeW5hbWljIGJsb2Nrcy4KICoKICogRWFjaCBibG9jayBoYXMgYSBzZXJ2ZXItc2lkZSByZW5kZXIgY2FsbGJhY2sgKGluIGluYy9yZW5kZXItY2FsbGJhY2tzLnBocCkuCiAqIFRoZXkgYXBwZWFyIHVuZGVyIHRoZWlyIG93biBibG9jayBjYXRlZ29yeSBpbiB0aGUgZWRpdG9yIGFuZCBjYW4gYmUgaW5zZXJ0ZWQKICogaW50byBhbnkgcG9zdCwgcGFnZSwgdGVtcGxhdGUsIG9yIHRlbXBsYXRlIHBhcnQuCiAqCiAqIEBwYWNrYWdlIEhhdW50ZWRUZWNoCiAqLwoKaWYgKCFkZWZpbmVkKCdBQlNQQVRIJykpIHsgZXhpdDsgfQoKLyogQWRkIGEgY3VzdG9tIGJsb2NrIGNhdGVnb3J5IHNvIG91ciBibG9ja3MgZ3JvdXAgdG9nZXRoZXIgaW4gdGhlIGluc2VydGVyLiAqLwphZGRfZmlsdGVyKCdibG9ja19jYXRlZ29yaWVzX2FsbCcsIGZ1bmN0aW9uICgkY2F0ZWdvcmllcykgewogICAgYXJyYXlfdW5zaGlmdCgkY2F0ZWdvcmllcywgWwogICAgICAgICdzbHVnJyAgPT4gJ2hhdW50ZWQtdGVjaCcsCiAgICAgICAgJ3RpdGxlJyA9PiBfXygnSGF1bnRlZCBUZWNoJywgJ2hhdW50ZWQtdGVjaCcpLAogICAgICAgICdpY29uJyAgPT4gbnVsbCwKICAgIF0pOwogICAgcmV0dXJuICRjYXRlZ29yaWVzOwp9KTsKCi8qIFJlZ2lzdGVyIGFsbCBibG9ja3MuIEVhY2ggYmxvY2sgaXMgc2VydmVyLXJlbmRlcmVkIOKAlCBpdCBoYXMgbm8gZnJvbnQtZW5kCiAqIGVkaXRvciBzYXZlKCkgZnVuY3Rpb24sIGp1c3QgYSByZW5kZXJfY2FsbGJhY2sgcmV0dXJuaW5nIEhUTUwuICovCmFkZF9hY3Rpb24oJ2luaXQnLCBmdW5jdGlvbiAoKSB7CiAgICAkYmxvY2tzID0gWwogICAgICAgIFsnc2x1ZycgPT4gJ3NvY2lhbC1iYXInLCAgICd0aXRsZScgPT4gJ1NvY2lhbCBCYXInLCAgICAgJ3JlbmRlcicgPT4gJ2h0X3JlbmRlcl9zb2NpYWxfYmFyJywgICAnaWNvbicgPT4gJ3NoYXJlJ10sCiAgICAgICAgWydzbHVnJyA9PiAnc2l0ZS1oZWFkZXInLCAgJ3RpdGxlJyA9PiAnU2l0ZSBIZWFkZXInLCAgICAncmVuZGVyJyA9PiAnaHRfcmVuZGVyX3NpdGVfaGVhZGVyJywgICdpY29uJyA9PiAnbWVudSddLAogICAgICAgIFsnc2x1ZycgPT4gJ3NpdGUtZm9vdGVyJywgICd0aXRsZScgPT4gJ1NpdGUgRm9vdGVyJywgICAgJ3JlbmRlcicgPT4gJ2h0X3JlbmRlcl9zaXRlX2Zvb3RlcicsICAnaWNvbicgPT4gJ2Fycm93LWRvd24nXSwKICAgICAgICBbJ3NsdWcnID0+ICdvdmVybGF5cycsICAgICAndGl0bGUnID0+ICdDUlQgT3ZlcmxheXMnLCAgICdyZW5kZXInID0+ICdodF9yZW5kZXJfb3ZlcmxheXMnLCAgICAgJ2ljb24nID0+ICd0YWJsZXQnXSwKICAgICAgICBbJ3NsdWcnID0+ICdoZXJvLXNsaWRlcicsICAndGl0bGUnID0+ICdIZXJvIFNsaWRlcicsICAgICdyZW5kZXInID0+ICdodF9yZW5kZXJfaGVyb19zbGlkZXInLCAgJ2ljb24nID0+ICdzbGlkZXMnXSwKICAgICAgICBbJ3NsdWcnID0+ICdib29rc2hlbGYnLCAgICAndGl0bGUnID0+ICdCb29rc2hlbGYnLCAgICAgICdyZW5kZXInID0+ICdodF9yZW5kZXJfYm9va3NoZWxmJywgICAgJ2ljb24nID0+ICdib29rJ10sCiAgICAgICAgWydzbHVnJyA9PiAnY3J0LW1vbml0b3InLCAgJ3RpdGxlJyA9PiAnQ1JUIE1vbml0b3InLCAgICAncmVuZGVyJyA9PiAnaHRfcmVuZGVyX2NydF9tb25pdG9yJywgICdpY29uJyA9PiAnZGVza3RvcCddLAogICAgICAgIFsnc2x1ZycgPT4gJ3NlcnZpY2VzJywgICAgICd0aXRsZScgPT4gJ1NlcnZpY2VzJywgICAgICAgJ3JlbmRlcicgPT4gJ2h0X3JlbmRlcl9zZXJ2aWNlcycsICAgICAnaWNvbicgPT4gJ2F3YXJkcyddLAogICAgICAgIFsnc2x1ZycgPT4gJ2dhbGxlcnknLCAgICAgICd0aXRsZScgPT4gJ0dhbGxlcnknLCAgICAgICAgJ3JlbmRlcicgPT4gJ2h0X3JlbmRlcl9nYWxsZXJ5JywgICAgICAnaWNvbicgPT4gJ2Zvcm1hdC1nYWxsZXJ5J10sCiAgICAgICAgWydzbHVnJyA9PiAnbmV3c2xldHRlcicsICAgJ3RpdGxlJyA9PiAnTmV3c2xldHRlcicsICAgICAncmVuZGVyJyA9PiAnaHRfcmVuZGVyX25ld3NsZXR0ZXInLCAgICdpY29uJyA9PiAnZW1haWwtYWx0J10sCiAgICAgICAgWydzbHVnJyA9PiAnbGlnaHRib3gnLCAgICAgJ3RpdGxlJyA9PiAnTGlnaHRib3gnLCAgICAgICAncmVuZGVyJyA9PiAnaHRfcmVuZGVyX2xpZ2h0Ym94JywgICAgICdpY29uJyA9PiAnZnVsbHNjcmVlbi1hbHQnXSwKICAgICAgICBbJ3NsdWcnID0+ICdhYm91dC1tb2RhbCcsICAndGl0bGUnID0+ICdBYm91dCBNb2RhbCcsICAgICdyZW5kZXInID0+ICdodF9yZW5kZXJfYWJvdXRfbW9kYWwnLCAgJ2ljb24nID0+ICdhZG1pbi11c2VycyddLAogICAgICAgIFsnc2x1ZycgPT4gJ3NpbmdsZS1ib29rJywgICAgICAgICAndGl0bGUnID0+ICdTaW5nbGUgQm9vayBMYXlvdXQnLCAgICAgICdyZW5kZXInID0+ICdodF9yZW5kZXJfc2luZ2xlX2Jvb2snLCAgICAgICAgICdpY29uJyA9PiAnYm9vay1hbHQnXSwKICAgICAgICBbJ3NsdWcnID0+ICdzaW5nbGUtd2Vibm92ZWwnLCAgICAgJ3RpdGxlJyA9PiAnU2luZ2xlIFdlYiBOb3ZlbCBMYXlvdXQnLCAncmVuZGVyJyA9PiAnaHRfcmVuZGVyX3NpbmdsZV93ZWJub3ZlbCcsICAgICAnaWNvbicgPT4gJ3dlbGNvbWUtd3JpdGUtYmxvZyddLAogICAgICAgIC8qIHYwLjggYm9vay1wYWdlIHNlY3Rpb25zICsgZ2xvYmFsIHNpbmdsZXRvbnMgKi8KICAgICAgICBbJ3NsdWcnID0+ICdib29rLWV4Y2VycHQnLCAgICAgICAgJ3RpdGxlJyA9PiAnQm9vayBFeGNlcnB0JywgICAgICAgICAgICAncmVuZGVyJyA9PiAnaHRfcmVuZGVyX2Jvb2tfZXhjZXJwdCcsICAgICAgICAnaWNvbicgPT4gJ2VkaXQtcGFnZSddLAogICAgICAgIFsnc2x1ZycgPT4gJ2Jvb2stbW9yZS1pbi1zZXJpZXMnLCAndGl0bGUnID0+ICdCb29rIOKAlCBNb3JlIGluIFNlcmllcycsICAgJ3JlbmRlcicgPT4gJ2h0X3JlbmRlcl9ib29rX21vcmVfaW5fc2VyaWVzJywgJ2ljb24nID0+ICdib29rJ10sCiAgICAgICAgWydzbHVnJyA9PiAnYWxzby1ieScsICAgICAgICAgICAgICd0aXRsZScgPT4gJ0Fsc28gYnkgKEF1dGhvciknLCAgICAgICAgJ3JlbmRlcicgPT4gJ2h0X3JlbmRlcl9hbHNvX2J5JywgICAgICAgICAgICAgJ2ljb24nID0+ICdzY3JlZW5vcHRpb25zJ10sCiAgICAgICAgWydzbHVnJyA9PiAnYm9vay1tb2RhbCcsICAgICAgICAgICd0aXRsZScgPT4gJ0Jvb2sgTW9kYWwgKHNpbmdsZXRvbiknLCAgJ3JlbmRlcicgPT4gJ2h0X3JlbmRlcl9ib29rX21vZGFsX3NoZWxsJywgICAgJ2ljb24nID0+ICdmdWxsc2NyZWVuLWFsdCddLAogICAgICAgIFsnc2x1ZycgPT4gJ3dlYm5vdmVsLW1vZGFsJywgICAgICAndGl0bGUnID0+ICdXZWIgTm92ZWwgTW9kYWwgKHNpbmdsZXRvbiknLCdyZW5kZXInID0+ICdodF9yZW5kZXJfd2Vibm92ZWxfbW9kYWxfc2hlbGwnLCdpY29uJyA9PiAnZnVsbHNjcmVlbi1hbHQnXSwKICAgICAgICBbJ3NsdWcnID0+ICdhbHNvLWJ5LXdlYm5vdmVscycsICAgJ3RpdGxlJyA9PiAnQWxzbyBieSAoV2ViIE5vdmVscyknLCAgICAncmVuZGVyJyA9PiAnaHRfcmVuZGVyX2Fsc29fYnlfd2Vibm92ZWxzJywgICAnaWNvbicgPT4gJ2FkbWluLXBhZ2UnXSwKICAgICAgICBbJ3NsdWcnID0+ICdsaW5rdHJlZScsICAgICAgICAgICAgJ3RpdGxlJyA9PiAnTGlua3RyZWUgUGFnZScsICAgICAgICAgICAncmVuZGVyJyA9PiAnaHRfcmVuZGVyX2xpbmt0cmVlJywgICAgICAgICAgICAnaWNvbicgPT4gJ2FkbWluLWxpbmtzJ10sCiAgICAgICAgWydzbHVnJyA9PiAnYmFjay10by10b3AnLCAgICAgICAgICd0aXRsZScgPT4gJ0JhY2stdG8tVG9wIEFycm93JywgICAgICAgJ3JlbmRlcicgPT4gJ2h0X3JlbmRlcl9iYWNrX3RvX3RvcCcsICAgICAgICAgJ2ljb24nID0+ICdhcnJvdy11cC1hbHQnXSwKICAgIF07CgogICAgZm9yZWFjaCAoJGJsb2NrcyBhcyAkYikgewogICAgICAgIHJlZ2lzdGVyX2Jsb2NrX3R5cGUoJ2hhdW50ZWQtdGVjaC8nIC4gJGJbJ3NsdWcnXSwgWwogICAgICAgICAgICAnYXBpX3ZlcnNpb24nICAgICA9PiAzLAogICAgICAgICAgICAndGl0bGUnICAgICAgICAgICA9PiAkYlsndGl0bGUnXSwKICAgICAgICAgICAgJ2NhdGVnb3J5JyAgICAgICAgPT4gJ2hhdW50ZWQtdGVjaCcsCiAgICAgICAgICAgICdpY29uJyAgICAgICAgICAgID0+ICRiWydpY29uJ10sCiAgICAgICAgICAgICdkZXNjcmlwdGlvbicgICAgID0+ICdIYXVudGVkIFRlY2g6ICcgLiAkYlsndGl0bGUnXSwKICAgICAgICAgICAgJ3N1cHBvcnRzJyAgICAgICAgPT4gWwogICAgICAgICAgICAgICAgJ2h0bWwnICAgICAgPT4gZmFsc2UsCiAgICAgICAgICAgICAgICAncmV1c2FibGUnICA9PiBmYWxzZSwKICAgICAgICAgICAgICAgICdpbnNlcnRlcicgID0+IHRydWUsCiAgICAgICAgICAgIF0sCiAgICAgICAgICAgICdyZW5kZXJfY2FsbGJhY2snID0+ICRiWydyZW5kZXInXSwKICAgICAgICAgICAgJ2F0dHJpYnV0ZXMnICAgICAgPT4gWwogICAgICAgICAgICAgICAgJ2xpbWl0JyA9PiBbJ3R5cGUnID0+ICdudW1iZXInXSwKICAgICAgICAgICAgXSwKICAgICAgICBdKTsKICAgIH0KfSk7Cg==
+<?php
+/**
+ * Register Haunted Tech dynamic blocks.
+ *
+ * Each block has a server-side render callback (in inc/render-callbacks.php).
+ * They appear under their own block category in the editor and can be inserted
+ * into any post, page, template, or template part.
+ *
+ * @package HauntedTech
+ */
+
+if (!defined('ABSPATH')) { exit; }
+
+/* Add a custom block category so our blocks group together in the inserter. */
+add_filter('block_categories_all', function ($categories) {
+    array_unshift($categories, [
+        'slug'  => 'haunted-tech',
+        'title' => __('Haunted Tech', 'haunted-tech'),
+        'icon'  => null,
+    ]);
+    return $categories;
+});
+
+/* Register all blocks. Each block is server-rendered — it has no front-end
+ * editor save() function, just a render_callback returning HTML. */
+add_action('init', function () {
+    $blocks = [
+        ['slug' => 'social-bar',    'title' => 'Social Bar',     'render' => 'ht_render_social_bar',   'icon' => 'share'],
+        ['slug' => 'site-header',   'title' => 'Site Header',    'render' => 'ht_render_site_header',  'icon' => 'menu'],
+        ['slug' => 'site-footer',   'title' => 'Site Footer',    'render' => 'ht_render_site_footer',  'icon' => 'arrow-down'],
+        ['slug' => 'overlays',      'title' => 'CRT Overlays',   'render' => 'ht_render_overlays',     'icon' => 'tablet'],
+        ['slug' => 'hero-slider',   'title' => 'Hero Slider',    'render' => 'ht_render_hero_slider',  'icon' => 'slides'],
+        ['slug' => 'bookshelf',     'title' => 'Bookshelf',      'render' => 'ht_render_bookshelf',    'icon' => 'book'],
+        ['slug' => 'crt-monitor',   'title' => 'CRT Monitor',    'render' => 'ht_render_crt_monitor',  'icon' => 'desktop'],
+        ['slug' => 'services',      'title' => 'Services',       'render' => 'ht_render_services',     'icon' => 'awards'],
+        ['slug' => 'gallery',       'title' => 'Gallery',        'render' => 'ht_render_gallery',      'icon' => 'format-gallery'],
+        ['slug' => 'newsletter',    'title' => 'Newsletter',     'render' => 'ht_render_newsletter',   'icon' => 'email-alt'],
+        ['slug' => 'lightbox',      'title' => 'Lightbox',       'render' => 'ht_render_lightbox',     'icon' => 'fullscreen-alt'],
+        ['slug' => 'about-modal',   'title' => 'About Modal',    'render' => 'ht_render_about_modal',  'icon' => 'admin-users'],
+        ['slug' => 'single-book',           'title' => 'Single Book Layout',          'render' => 'ht_render_single_book',          'icon' => 'book-alt'],
+        ['slug' => 'single-webnovel',       'title' => 'Single Web Novel Layout',     'render' => 'ht_render_single_webnovel',      'icon' => 'welcome-write-blog'],
+        ['slug' => 'book-excerpt',          'title' => 'Book Excerpt',                'render' => 'ht_render_book_excerpt',          'icon' => 'edit-page'],
+        ['slug' => 'book-more-in-series',   'title' => 'Book — More in Series',       'render' => 'ht_render_book_more_in_series',   'icon' => 'book'],
+        ['slug' => 'also-by',               'title' => 'Also by (Author)',             'render' => 'ht_render_also_by',               'icon' => 'screenoptions'],
+        ['slug' => 'book-modal',            'title' => 'Book Modal (singleton)',       'render' => 'ht_render_book_modal_shell',      'icon' => 'fullscreen-alt'],
+        ['slug' => 'webnovel-modal',        'title' => 'Web Novel Modal (singleton)', 'render' => 'ht_render_webnovel_modal_shell',  'icon' => 'fullscreen-alt'],
+        ['slug' => 'also-by-webnovels',     'title' => 'Also by (Web Novels)',         'render' => 'ht_render_also_by_webnovels',     'icon' => 'admin-page'],
+        ['slug' => 'linktree',              'title' => 'Linktree Page',               'render' => 'ht_render_linktree',              'icon' => 'admin-links'],
+        ['slug' => 'back-to-top',           'title' => 'Back-to-Top Arrow',            'render' => 'ht_render_back_to_top',           'icon' => 'arrow-up-alt'],
+    ];
+
+    foreach ($blocks as $b) {
+        register_block_type('haunted-tech/' . $b['slug'], [
+            'api_version'     => 3,
+            'title'           => $b['title'],
+            'category'        => 'haunted-tech',
+            'icon'            => $b['icon'],
+            'description'     => 'Haunted Tech: ' . $b['title'],
+            'supports'        => [
+                'html'      => false,
+                'reusable'  => false,
+                'inserter'  => true,
+            ],
+            'render_callback' => $b['render'],
+            'attributes'      => [
+                'limit' => ['type' => 'number'],
+            ],
+        ]);
+    }
+});
