@@ -23,7 +23,7 @@ jobs:
 
       - name: Deploy via rsync
         run: |
-          rsync -az --delete \
+          rsync -az --delete --chmod=D755,F644 \
             --exclude='.git/' \
             --exclude='.github/' \
             --exclude='node_modules/' \
