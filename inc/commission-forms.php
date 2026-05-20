@@ -76,6 +76,14 @@ function ht_commission_process($form_id, $subject_prefix, $fields) {
 function ht_commission_field($f) {
     $id       = esc_attr($f['id']);
     $type     = $f['type'] ?? 'text';
+
+    if ($type === 'hint') {
+        echo '<div class="htf-field htf-field--hint">';
+        echo '<p class="htf-hint">' . wp_kses_post($f['text']) . '</p>';
+        echo '</div>';
+        return;
+    }
+
     $req      = !empty($f['required']);
     $req_attr = $req ? ' required' : '';
     $posted   = isset($_POST[$f['id']]) ? wp_unslash($_POST[$f['id']]) : '';
@@ -218,6 +226,13 @@ add_shortcode('ht_commission_ai', function () {
         ['id' => 'email',       'label' => 'Email Address',                          'type' => 'email',    'required' => true],
         ['id' => 'use_case',    'label' => 'Use Case',                               'type' => 'select',   'required' => true,
          'options' => ['Character art', 'Mood board', 'Chapter / scene banner', 'Social media assets', 'Book cover (AI-assisted)', 'Other']],
+        ['id' => 'lora_interest', 'label' => 'LoRA Model Training',                  'type' => 'select',   'required' => false,
+         'options' => ['Not interested — images only', 'Yes — I want a LoRA trained']],
+        ['id' => 'lora_hint',   'type' => 'hint', 'text' => 'A LoRA (Low-Rank Adaptation) is a small fine-tuned model layer trained on your specific character, concept, or object. Once trained, it lets any compatible image-generation model produce consistent depictions of that subject across scenes and prompts — without re-describing it every time. LoRAs are trained to a specific base model. Note: style LoRAs are not offered.'],
+        ['id' => 'lora_type',   'label' => 'LoRA Type (if applicable)',              'type' => 'select',   'required' => false,
+         'options' => ['Character (person, OC, face)', 'Concept (item, theme, motif)', 'Object (prop, vehicle, location)']],
+        ['id' => 'lora_model',  'label' => 'Target Base Model (if applicable)',      'type' => 'select',   'required' => false,
+         'options' => ['SDXL', 'Illustrious', 'Anima', 'Z']],
         ['id' => 'style_ref',   'label' => 'Style Reference (URLs or describe)',     'type' => 'textarea', 'required' => false],
         ['id' => 'dimensions',  'label' => 'Aspect Ratio / Dimensions',              'type' => 'select',   'required' => false,
          'options' => ['Square (1:1)', 'Portrait (2:3)', 'Landscape (16:9)', 'Wide banner (3:1)', 'Multiple / mix']],
