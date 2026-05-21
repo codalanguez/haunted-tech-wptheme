@@ -97,6 +97,32 @@
       if (e.key === 'ArrowRight') go(index + 1);
     });
     tick();
+
+    // ── Mobile / battery optimisations ────────────────────────────────────────
+    // Cancel the RAF loop when the hero is scrolled off-screen. Without this
+    // the progress bar updates at 60fps for the entire lifetime of the page
+    // even when the user is at the bottom of a long page. Restores on scroll
+    // back up. Saves ~60 layout checks/sec on mobile while browsing.
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (entries) {
+        if (entries[0].isIntersecting) {
+          if (!rafId) { progressStart = Date.now(); rafId = requestAnimationFrame(tick); }
+        } else {
+          cancelAnimationFrame(rafId); rafId = null;
+        }
+      }, { threshold: 0 }).observe(hero);
+    }
+
+    // Cancel when the tab is hidden (app-switch on mobile, background tab on
+    // desktop). Significant battery saving — RAF ordinarily runs at 1fps when
+    // hidden but some browsers throttle inconsistently.
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) {
+        cancelAnimationFrame(rafId); rafId = null;
+      } else if (!rafId) {
+        progressStart = Date.now(); rafId = requestAnimationFrame(tick);
+      }
+    });
   })();
 
   // ===== Gallery: tabs + filter chips + pagination + lightbox =====

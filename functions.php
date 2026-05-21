@@ -95,6 +95,17 @@ add_action('wp_enqueue_scripts', function () {
         HAUNTED_TECH_VERSION
     );
 
+    // Mobile & accessibility performance overrides:
+    // - will-change hints for GPU-composited animated overlays
+    // - prefers-reduced-motion: kill all decorative animations
+    // - max-width:700px: no backdrop-filter, slower animation durations
+    wp_enqueue_style(
+        'haunted-tech-mobile-perf',
+        HAUNTED_TECH_URI . '/assets/mobile-perf.css',
+        ['haunted-tech-main'],
+        HAUNTED_TECH_VERSION
+    );
+
     // overflow-x:clip has the same visual effect as hidden (no horizontal
     // overflow shown) but does NOT create a scroll container, so the header's
     // `position:sticky;top:0` works correctly in all browsers including Safari.

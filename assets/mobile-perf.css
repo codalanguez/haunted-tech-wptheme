@@ -1,0 +1,101 @@
+/*!
+ * Haunted Tech — mobile & accessibility performance overrides
+ *
+ * Loaded after main.css so specificity is equal and order wins.
+ *
+ * 1. GPU compositing hints for always-on animated overlays
+ * 2. prefers-reduced-motion: kill all decorative animations
+ * 3. Mobile ≤700px: simplify backdrop-filter, halve animation budgets
+ */
+
+/* ---------------------------------------------------------------------------
+ * 1. GPU promotion hints
+ *    Tell the compositor to hoist these 4 fixed-position animated overlays
+ *    onto their own GPU layers. Without this, every animation frame
+ *    invalidates the main-thread paint for the entire viewport.
+ * ------------------------------------------------------------------------- */
+body::before,
+body::after {
+  will-change: transform;
+}
+.crt-band,
+.static-burst {
+  will-change: transform;
+}
+
+/* ---------------------------------------------------------------------------
+ * 2. Respect OS / browser “reduce motion” preference.
+ *    Cuts all animation to 0.01ms (effectively off) and transitions to
+ *    50ms so state changes (active, hover, modal open) still feel instant.
+ *    Covers accessibility users AND battery-saver mode on Android/iOS.
+ * ------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration:        0.01ms !important;
+    animation-iteration-count: 1      !important;
+    transition-duration:       0.05ms !important;
+    scroll-behavior:           auto   !important;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * 3. Mobile (≤700px) — reduce expensive effects on low-power devices
+ *
+ *    backdrop-filter: blur() is the single most expensive CSS property
+ *    on mobile GPUs (triggers a separate compositing pass for every
+ *    repaint). Replace with a near-opaque solid background instead.
+ *
+ *    Animation durations: doubling them halves the repaint frequency
+ *    while keeping the visual effect intact.
+ * ------------------------------------------------------------------------- */
+@media (max-width: 700px) {
+
+  /* Header: swap frosted-glass blur for solid dark background */
+  header {
+    backdrop-filter:         none;
+    -webkit-backdrop-filter: none;
+    background:              rgba(10, 8, 16, 0.97);
+  }
+
+  /* About modal: same swap */
+  .about-modal {
+    backdrop-filter:         none;
+    -webkit-backdrop-filter: none;
+  }
+  /* Give the modal a solid dark backing now that blur is gone */
+  .about-frame {
+    background: rgba(10, 8, 16, 0.98);
+  }
+
+  /* Scanline overlays: 2× slower → half the repaint frequency */
+  body::before {
+    animation-duration: 16s;
+  }
+  body::after {
+    animation-duration: 28s;
+  }
+
+  /* CRT rolling band: 2× slower */
+  .crt-band {
+    animation-duration: 20s;
+  }
+
+  /* Static burst: 2× slower + halved opacity (halves paint cost) */
+  .static-burst {
+    animation-duration: 14s;
+    opacity:            0.5;
+  }
+
+  /* Hero glitch: 2× longer cycle → same visual drama, half the GPU work */
+  .hero h1 {
+    animation-duration: 6s;
+  }
+  .hero h1::before {
+    animation-duration: 4.8s;
+  }
+  .hero h1::after {
+    animation-duration: 4.8s;
+  }
+}
