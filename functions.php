@@ -111,6 +111,21 @@ add_action('wp_enqueue_scripts', function () {
 });
 
 /* ---------------------------------------------------------------------------
+ * 2b. Defer jQuery — eliminate render-blocking <head> script requests
+ * ------------------------------------------------------------------------- */
+add_filter('script_loader_tag', function ($tag, $handle) {
+    // jQuery core (29.4 KiB) and jQuery Migrate (5.0 KiB) load in <head> by
+    // default, blocking FCP/LCP by ~250 ms (PageSpeed). Adding defer lets the
+    // browser continue parsing HTML while fetching them; they execute after
+    // parsing in document order, so jquery-core always runs before jquery-migrate.
+    // Safe for FSE block themes: no synchronous inline jQuery on the frontend.
+    if (in_array($handle, ['jquery-core', 'jquery-migrate'], true)) {
+        return str_replace(' src=', ' defer src=', $tag);
+    }
+    return $tag;
+}, 10, 2);
+
+/* ---------------------------------------------------------------------------
  * 3. Custom post type: hero_update  (data source for the homepage hero slider)
  * ------------------------------------------------------------------------- */
 add_action('init', function () {
