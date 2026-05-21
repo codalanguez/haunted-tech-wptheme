@@ -126,6 +126,35 @@ add_filter('script_loader_tag', function ($tag, $handle) {
 }, 10, 2);
 
 /* ---------------------------------------------------------------------------
+ * 2c. LCP optimisation — hero watermark (site logo)
+ * ------------------------------------------------------------------------- */
+
+// 1. Output a <link rel="preload"> for the logo in <head> (priority 1 = before
+//    anything else). This makes the LCP image discoverable by the browser's
+//    preload scanner immediately, before any JS or lazy-load plugin runs.
+add_action('wp_head', function () {
+    if (!is_front_page()) return;
+    $logo_id = get_theme_mod('custom_logo');
+    if (!$logo_id) return;
+    $src = wp_get_attachment_image_src($logo_id, 'medium');
+    if (!$src) return;
+    echo '<link rel="preload" as="image" href="' . esc_url($src[0]) . '" fetchpriority="high">' . "\n";
+}, 1);
+
+// 2. Add fetchpriority="high" and class="no-lazy" to the logo attachment image
+//    wherever wp_get_attachment_image() renders it (the hero watermark callback
+//    uses this function). "no-lazy" is the standard skip signal for WP Rocket
+//    LazyLoad, 10Web Booster, a3 Lazy Load, and most other plugins.
+add_filter('wp_get_attachment_image_attributes', function ($attr, $attachment) {
+    if (!is_front_page()) return $attr;
+    $logo_id = get_theme_mod('custom_logo');
+    if (!$logo_id || (int) $attachment->ID !== (int) $logo_id) return $attr;
+    $attr['fetchpriority'] = 'high';
+    $attr['class']         = trim(($attr['class'] ?? '') . ' no-lazy');
+    return $attr;
+}, 10, 2);
+
+/* ---------------------------------------------------------------------------
  * 3. Custom post type: hero_update  (data source for the homepage hero slider)
  * ------------------------------------------------------------------------- */
 add_action('init', function () {
@@ -241,8 +270,8 @@ add_action('acf/init', function () {
                 '3/4'   => '3:4 (portrait)',
                 '4/5'   => '4:5 (tall portrait)',
                 '2/3'   => '2:3 (book cover)',
-                '16/10' => '16:10 (landscape)',
                 '16/9'  => '16:9 (wide)',
+                '16/10' => '16:10 (landscape)',
              ],
              'default_value'=>'3/4', 'show_in_rest'=>1],
         ],
