@@ -521,10 +521,12 @@ function ht_render_gallery($attributes = []) {
                   $variant    = 'v' . ((($idx % 8) + 1));
                   $image      = get_field('image', $item->ID);
                   $image_url  = '';
+                  $image_w    = 0;
+                  $image_h    = 0;
                   if (is_array($image) && !empty($image['url'])) {
                       $image_url = $image['url'];
-                  } elseif (has_post_thumbnail($item->ID)) {
-                      $image_url = get_the_post_thumbnail_url($item->ID, 'large');
+                      $image_w   = !empty($image['width'])  ? (int)$image['width']  : 0;
+                      $image_h   = !empty($image['height']) ? (int)$image['height'] : 0;
                   }
                   $alt = is_array($image) && !empty($image['alt']) ? $image['alt'] : get_the_title($item);
                   $page_class = $page_num > 1 ? ' page-hidden' : '';
@@ -539,7 +541,11 @@ function ht_render_gallery($attributes = []) {
                    data-image-class="<?php echo esc_attr($variant); ?>">
                   <div class="gallery-image <?php echo esc_attr($variant); ?>" style="--ratio: <?php echo esc_attr($ratio); ?>; position:relative;">
                     <?php if ($image_url): ?>
-                      <img src="<?php echo esc_url($image_url); ?>" alt="<?php echo esc_attr($alt); ?>" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;z-index:1;">
+                      <?php if ($image_w && $image_h): ?>
+                        <img src="<?php echo esc_url($image_url); ?>" alt="<?php echo esc_attr($alt); ?>" width="<?php echo (int)$image_w; ?>" height="<?php echo (int)$image_h; ?>" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;z-index:1;">
+                      <?php else: ?>
+                        <?php echo wp_get_attachment_image(get_post_thumbnail_id($item->ID), 'large', false, ['alt' => esc_attr($alt), 'loading' => 'lazy', 'style' => 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;z-index:1;']); ?>
+                      <?php endif; ?>
                     <?php else: ?>
                       <span class="gallery-image-label"><?php echo esc_html(get_the_title($item)); ?></span>
                     <?php endif; ?>
@@ -774,7 +780,7 @@ function ht_render_single_book($attributes = []) {
 
           <?php /* Author byline – small portrait + name, click → opens About modal */ ?>
           <a href="#about" data-open-about class="book-byline" aria-label="<?php esc_attr_e('About the author', 'haunted-tech'); ?>">
-            <img src="<?php echo esc_url(haunted_tech_logo_url()); ?>" alt="" class="book-byline-portrait">
+            <?php echo wp_get_attachment_image(get_theme_mod("custom_logo"), [32, 32], false, ["class" => "book-byline-portrait", "alt" => ""]); ?>
             <span class="book-byline-text">by <?php bloginfo('name'); ?></span>
           </a>
 
@@ -984,7 +990,11 @@ function ht_render_also_by($attributes = []) {
           <a href="<?php echo esc_url(get_permalink($b)); ?>" data-open-book="<?php echo esc_attr($b->post_name); ?>" class="also-by-card">
             <div class="also-by-cover" style="<?php echo $cover_url ? 'padding:0;' : ''; ?>">
               <?php if ($cover_url): ?>
-                <img src="<?php echo esc_url($cover_url); ?>" alt="<?php echo esc_attr(get_the_title($b)); ?>" style="display:block;width:100%;height:100%;object-fit:cover;">
+                <?php if (is_array($b_cover) && !empty($b_cover['width'])): ?>
+                  <img src="<?php echo esc_url($cover_url); ?>" alt="<?php echo esc_attr(get_the_title($b)); ?>" width="<?php echo (int)$b_cover['width']; ?>" height="<?php echo (int)$b_cover['height']; ?>" style="display:block;width:100%;height:100%;object-fit:cover;">
+                <?php else: ?>
+                  <?php echo wp_get_attachment_image(get_post_thumbnail_id($b->ID), 'medium', false, ['alt' => esc_attr(get_the_title($b)), 'style' => 'display:block;width:100%;height:100%;object-fit:cover;']); ?>
+                <?php endif; ?>
               <?php else: ?>
                 <div class="also-by-cover-title"><?php echo esc_html(get_the_title($b)); ?></div>
               <?php endif; ?>
@@ -1166,7 +1176,7 @@ function ht_render_single_webnovel($attributes = []) {
           <h1 class="book-title" data-text="<?php echo esc_attr(get_the_title($wn_id)); ?>"><?php echo esc_html(get_the_title($wn_id)); ?></h1>
 
           <a href="#about" data-open-about class="book-byline" aria-label="<?php esc_attr_e('About the author', 'haunted-tech'); ?>">
-            <img src="<?php echo esc_url(haunted_tech_logo_url()); ?>" alt="" class="book-byline-portrait">
+            <?php echo wp_get_attachment_image(get_theme_mod("custom_logo"), [32, 32], false, ["class" => "book-byline-portrait", "alt" => ""]); ?>
             <span class="book-byline-text">by <?php bloginfo('name'); ?></span>
           </a>
 
@@ -1219,7 +1229,7 @@ function ht_render_site_footer($attributes = []) {
     ob_start(); ?>
     <footer class="block-footer" id="footer">
       <a href="<?php echo esc_url(home_url('/')); ?>" class="footer-logo" aria-label="<?php bloginfo('name'); ?>">
-        <img src="<?php echo esc_url(haunted_tech_logo_url()); ?>" alt="<?php echo esc_attr(get_bloginfo('name')); ?> logo">
+        <?php echo wp_get_attachment_image(get_theme_mod('custom_logo'), [80, 80], false, ['alt' => esc_attr(get_bloginfo('name')) . ' logo']); ?>
       </a>
       <div class="ornament"><span>&#9670;</span> <span>&#9670;</span> <span>&#9670;</span></div>
       <div class="links">
@@ -1271,7 +1281,7 @@ function ht_render_linktree($attributes = []) {
       <div class="linktree-card">
 
         <div class="linktree-header">
-          <img class="linktree-avatar" src="<?php echo esc_url(haunted_tech_logo_url()); ?>" alt="<?php echo esc_attr(get_bloginfo('name')); ?>">
+          <?php echo wp_get_attachment_image(get_theme_mod('custom_logo'), [120, 120], false, ['class' => 'linktree-avatar', 'alt' => esc_attr(get_bloginfo('name'))]); ?>
           <h1 class="linktree-name" data-text="<?php echo esc_attr(get_bloginfo('name')); ?>"><?php bloginfo('name'); ?></h1>
           <?php if ($bio): ?><p class="linktree-bio"><?php echo esc_html($bio); ?></p><?php endif; ?>
         </div>
@@ -1292,7 +1302,11 @@ function ht_render_linktree($attributes = []) {
                 <a href="<?php echo esc_url(get_permalink($b)); ?>" class="linktree-tile linktree-tile--book<?php echo $is_free ? ' linktree-tile--free' : ''; ?>">
                   <div class="linktree-tile-cover">
                     <?php if ($cover_url): ?>
-                      <img src="<?php echo esc_url($cover_url); ?>" alt="" loading="lazy">
+                      <?php if (is_array($cover) && !empty($cover['width'])): ?>
+                        <img src="<?php echo esc_url($cover_url); ?>" alt="" width="<?php echo (int)$cover['width']; ?>" height="<?php echo (int)$cover['height']; ?>" loading="lazy">
+                      <?php else: ?>
+                        <?php echo wp_get_attachment_image(get_post_thumbnail_id($b->ID), 'medium', false, ['alt' => '', 'loading' => 'lazy']); ?>
+                      <?php endif; ?>
                     <?php else: ?>
                       <span>&#9670;</span>
                     <?php endif; ?>
@@ -1325,7 +1339,11 @@ function ht_render_linktree($attributes = []) {
                 <a href="<?php echo esc_url(get_permalink($wn)); ?>" class="linktree-tile linktree-tile--webnovel">
                   <div class="linktree-tile-cover">
                     <?php if ($cover_url): ?>
-                      <img src="<?php echo esc_url($cover_url); ?>" alt="" loading="lazy">
+                      <?php if (is_array($cover) && !empty($cover['width'])): ?>
+                        <img src="<?php echo esc_url($cover_url); ?>" alt="" width="<?php echo (int)$cover['width']; ?>" height="<?php echo (int)$cover['height']; ?>" loading="lazy">
+                      <?php else: ?>
+                        <?php echo wp_get_attachment_image(get_post_thumbnail_id($wn->ID), 'medium', false, ['alt' => '', 'loading' => 'lazy']); ?>
+                      <?php endif; ?>
                     <?php else: ?>
                       <span>&#9998;</span>
                     <?php endif; ?>
