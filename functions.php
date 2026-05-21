@@ -70,13 +70,13 @@ add_action('wp_enqueue_scripts', function () {
         HAUNTED_TECH_VERSION
     );
 
-    // Self-hosted Font Awesome 6.5.1 (Free). 1 css + 8 webfont files in
-    // assets/fontawesome/. ttf files are leftover fallbacks; browsers prefer
-    // woff2. Total bundle ~1 MB, but unicode-range gating + browser cache
-    // means a typical page costs ~150 KB on first load and ~0 KB thereafter.
+    // Self-hosted Font Awesome 6.5.1 (Free) — minimal subset.
+    // Only the 11 brand + 6 solid icons used by Haunted_Tech_Social_Walker
+    // are defined in fa-used.css. Drops regular/light/thin/duotone @font-face
+    // rules + ~7 000 unused class definitions. Saves ~900 KB vs all.min.css.
     wp_enqueue_style(
         'font-awesome',
-        HAUNTED_TECH_URI . '/assets/fontawesome/all.min.css',
+        HAUNTED_TECH_URI . '/assets/fontawesome/fa-used.css',
         [],
         '6.5.1'
     );

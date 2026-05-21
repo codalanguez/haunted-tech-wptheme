@@ -1,0 +1,68 @@
+/*!
+ * Font Awesome 6.5.1 — minimal subset for codalanguez.com
+ * 11 brand icons + 6 solid icons (17 total).
+ * Omits regular, light, thin, and duotone @font-face rules and all
+ * unused class definitions. Saves ~900 KB vs loading all.min.css.
+ *
+ * Brands : patreon, discord, bluesky, instagram, tiktok, goodreads-g,
+ *          amazon, threads, x-twitter, youtube, facebook
+ * Solid  : book-open-reader, envelope-open-text, book-bookmark,
+ *          palette, shirt, link
+ */
+
+@font-face {
+  font-family: "Font Awesome 6 Brands";
+  font-style:  normal;
+  font-weight: 400;
+  font-display: block;
+  src: url("webfonts/fa-brands-400.woff2") format("woff2"),
+       url("webfonts/fa-brands-400.ttf")   format("truetype");
+}
+
+@font-face {
+  font-family: "Font Awesome 6 Free";
+  font-style:  normal;
+  font-weight: 900;
+  font-display: block;
+  src: url("webfonts/fa-solid-900.woff2") format("woff2"),
+       url("webfonts/fa-solid-900.ttf")   format("truetype");
+}
+
+.fa-brands,
+.fa-solid {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  display: var(--fa-display, inline-block);
+  font-style:   normal;
+  font-variant: normal;
+  line-height:  1;
+  text-rendering: auto;
+}
+
+.fa-brands { font-family: "Font Awesome 6 Brands"; font-weight: 400; }
+.fa-solid  { font-family: "Font Awesome 6 Free";   font-weight: 900; }
+
+/* ---------------------------------------------------------------------------
+ * Brand icons
+ * ------------------------------------------------------------------------- */
+.fa-patreon::before     { content: "\f3d9"; }
+.fa-discord::before     { content: "\f392"; }
+.fa-bluesky::before     { content: "\e671"; }
+.fa-instagram::before   { content: "\f16d"; }
+.fa-tiktok::before      { content: "\e07b"; }
+.fa-goodreads-g::before { content: "\f3a9"; }
+.fa-amazon::before      { content: "\f270"; }
+.fa-threads::before     { content: "\e618"; }
+.fa-x-twitter::before   { content: "\e61b"; }
+.fa-youtube::before     { content: "\f167"; }
+.fa-facebook::before    { content: "\f09a"; }
+
+/* ---------------------------------------------------------------------------
+ * Solid icons
+ * ------------------------------------------------------------------------- */
+.fa-book-open-reader::before   { content: "\f5da"; }
+.fa-envelope-open-text::before { content: "\f658"; }
+.fa-book-bookmark::before      { content: "\e0bb"; }
+.fa-palette::before            { content: "\f53f"; }
+.fa-shirt::before              { content: "\f553"; }
+.fa-link::before               { content: "\f0c1"; }
