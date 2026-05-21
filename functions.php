@@ -126,25 +126,50 @@ add_filter('script_loader_tag', function ($tag, $handle) {
 }, 10, 2);
 
 /* ---------------------------------------------------------------------------
- * 2c. LCP optimisation — hero watermark (site logo)
+ * 2c. Critical resource hints — fonts + LCP image
  * ------------------------------------------------------------------------- */
-
-// 1. Output a <link rel="preload"> for the logo in <head> (priority 1 = before
-//    anything else). This makes the LCP image discoverable by the browser's
-//    preload scanner immediately, before any JS or lazy-load plugin runs.
 add_action('wp_head', function () {
+    $uri = HAUNTED_TECH_URI;
+
+    // ── Font preloads ───────────────────────────────────────────────────────────
+    // Break the fonts.css → woff2 two-hop dependency chain. Preloading the
+    // latin subsets of the 3 most-used above-the-fold faces lets the browser
+    // fetch them in parallel with fonts.css rather than waiting for CSS to
+    // be fully parsed first (saves ~one RTT per font). crossorigin is required
+    // for fonts even when same-origin.
+    $font_preloads = [
+        // Inter (body text) — latin, any weight (UcC73…SjIa1ZL7 is latin)
+        'UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2',
+        // Forum (heading / display font) — latin
+        '6aey4Ky-Vb8Ew8IROpI.woff2',
+        // VT323 (CRT terminal labels in social bar / overlays) — latin
+        'pxiKyp0ihIEF2isfFJU.woff2',
+    ];
+    foreach ($font_preloads as $file) {
+        printf(
+            '<link rel="preload" as="font" type="font/woff2" href="%s" crossorigin>' . "\n",
+            esc_url($uri . '/assets/fonts/' . $file)
+        );
+    }
+
+    // ── LCP image preload (front page only) ──────────────────────────────
+    // The hero watermark (site logo) is the LCP element. Preloading it makes
+    // the URL discoverable before any lazy-load plugin can rewrite data-src.
     if (!is_front_page()) return;
     $logo_id = get_theme_mod('custom_logo');
     if (!$logo_id) return;
     $src = wp_get_attachment_image_src($logo_id, 'medium');
     if (!$src) return;
-    echo '<link rel="preload" as="image" href="' . esc_url($src[0]) . '" fetchpriority="high">' . "\n";
-}, 1);
+    printf(
+        '<link rel="preload" as="image" href="%s" fetchpriority="high">' . "\n",
+        esc_url($src[0])
+    );
+}, 1); // priority 1 = very early in <head>, before plugin hooks
 
-// 2. Add fetchpriority="high" and class="no-lazy" to the logo attachment image
-//    wherever wp_get_attachment_image() renders it (the hero watermark callback
-//    uses this function). "no-lazy" is the standard skip signal for WP Rocket
-//    LazyLoad, 10Web Booster, a3 Lazy Load, and most other plugins.
+// Add fetchpriority="high" and class="no-lazy" to the logo attachment image
+// wherever wp_get_attachment_image() renders it (hero watermark callback).
+// "no-lazy" is the standard skip signal for WP Rocket LazyLoad, 10Web
+// Booster, a3 Lazy Load, and most other lazy-loading plugins.
 add_filter('wp_get_attachment_image_attributes', function ($attr, $attachment) {
     if (!is_front_page()) return $attr;
     $logo_id = get_theme_mod('custom_logo');
