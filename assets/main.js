@@ -205,16 +205,20 @@
     function renderLightbox() {
       const item = currentItems[currentIndex];
       if (!item) return;
-      const cls = item.dataset.imageClass || 'v1';
-      lbImage.className = 'lightbox-image ' + cls;
-      // Match aspect ratio of the source for visual continuity
+      // ── batch all reads first ──────────────────────────────────────────────────────
+      // Reading getComputedStyle after a DOM write (e.g. className change)
+      // forces a synchronous style recalc (forced reflow). By collecting all
+      // reads here — before any writes — we keep the layout clean.
+      const cls       = item.dataset.imageClass || 'v1';
       const innerImage = item.querySelector('.gallery-image');
-      const ratio = innerImage ? getComputedStyle(innerImage).aspectRatio : 'auto';
+      const ratio     = innerImage ? getComputedStyle(innerImage).aspectRatio : 'auto';
+      // ── then all writes ─────────────────────────────────────────────────────
+      lbImage.className   = 'lightbox-image ' + cls;
       lbImage.style.aspectRatio = ratio !== 'auto' ? ratio : '';
       lbLabel.textContent = item.dataset.title || '';
-      lbTag.textContent = item.dataset.tag || '';
+      lbTag.textContent   = item.dataset.tag   || '';
       lbTitle.textContent = item.dataset.title || '';
-      lbDesc.textContent = item.dataset.desc || '';
+      lbDesc.textContent  = item.dataset.desc  || '';
       lbPrev.style.visibility = currentIndex > 0 ? 'visible' : 'hidden';
       lbNext.style.visibility = currentIndex < currentItems.length - 1 ? 'visible' : 'hidden';
     }
