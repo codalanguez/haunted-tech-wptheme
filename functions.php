@@ -191,6 +191,36 @@ add_filter('wp_get_attachment_image_attributes', function ($attr, $attachment) {
 }, 10, 2);
 
 /* ---------------------------------------------------------------------------
+ * 2d. Dequeue Photo Gallery plugin assets on pages that don't use it
+ * ------------------------------------------------------------------------- */
+add_action('wp_enqueue_scripts', function () {
+    // The Photo Gallery plugin (10Web/BWG) enqueues its full CSS+JS bundle on
+    // every page regardless of whether a [Best_Wordpress_Gallery] shortcode is
+    // present. The front page uses the theme's native ACF gallery—not the
+    // plugin—so all Photo Gallery assets there are wasted bytes that inflate
+    // PageSpeed's "Reduce unused CSS" and "Reduce unused JavaScript" diagnostics.
+    //
+    // We match by plugin directory path (/photo-gallery/) rather than by handle
+    // name so this stays correct across plugin updates that rename handles.
+    // Priority 9999 ensures all plugin wp_enqueue_scripts hooks have fired first.
+    if (!is_front_page()) return;
+
+    global $wp_styles, $wp_scripts;
+    foreach ((array) $wp_styles->registered as $handle => $obj) {
+        if (!empty($obj->src) && strpos($obj->src, '/photo-gallery/') !== false) {
+            wp_dequeue_style($handle);
+            wp_deregister_style($handle);
+        }
+    }
+    foreach ((array) $wp_scripts->registered as $handle => $obj) {
+        if (!empty($obj->src) && strpos($obj->src, '/photo-gallery/') !== false) {
+            wp_dequeue_script($handle);
+            wp_deregister_script($handle);
+        }
+    }
+}, 9999);
+
+/* ---------------------------------------------------------------------------
  * 3. Custom post type: hero_update  (data source for the homepage hero slider)
  * ------------------------------------------------------------------------- */
 add_action('init', function () {
