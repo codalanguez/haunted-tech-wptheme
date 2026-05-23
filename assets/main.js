@@ -89,7 +89,7 @@
     hero.addEventListener('mouseleave', () => {
       paused = false;
       hero.classList.remove('paused');
-      progressStart = Date.now() - ((parseFloat(progressFill.style.width)/100) * DURATION || 0);
+      progressStart = progressFill ? Date.now() - ((parseFloat(progressFill.style.width)/100) * DURATION || 0) : Date.now();
     });
     // Keyboard arrows when hero in focus
     hero.addEventListener('keydown', e => {
@@ -206,6 +206,7 @@
 
     // ---------- Lightbox ----------
     const lightbox = document.getElementById('lightbox');
+    if (!lightbox) return;
     const lbImage = document.getElementById('lightbox-image');
     const lbLabel = document.getElementById('lightbox-image-label');
     const lbTag = document.getElementById('lightbox-tag');
