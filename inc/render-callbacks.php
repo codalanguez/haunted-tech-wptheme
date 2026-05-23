@@ -780,7 +780,14 @@ function ht_render_single_book($attributes = []) {
 
           <?php /* Author byline – small portrait + name, click → opens About modal */ ?>
           <a href="#about" data-open-about class="book-byline" aria-label="<?php esc_attr_e('About the author', 'haunted-tech'); ?>">
-            <?php echo wp_get_attachment_image(get_theme_mod("custom_logo"), [32, 32], false, ["class" => "book-byline-portrait", "alt" => ""]); ?>
+            <?php
+            $_byline_logo_id = get_theme_mod('custom_logo');
+            if ($_byline_logo_id) {
+                echo wp_get_attachment_image($_byline_logo_id, [32, 32], false, ['class' => 'book-byline-portrait', 'alt' => '']);
+            } else {
+                echo '<img src="' . esc_url(haunted_tech_logo_url()) . '" alt="" class="book-byline-portrait" width="32" height="32">';
+            }
+            ?>
             <span class="book-byline-text">by <?php bloginfo('name'); ?></span>
           </a>
 
@@ -1176,7 +1183,14 @@ function ht_render_single_webnovel($attributes = []) {
           <h1 class="book-title" data-text="<?php echo esc_attr(get_the_title($wn_id)); ?>"><?php echo esc_html(get_the_title($wn_id)); ?></h1>
 
           <a href="#about" data-open-about class="book-byline" aria-label="<?php esc_attr_e('About the author', 'haunted-tech'); ?>">
-            <?php echo wp_get_attachment_image(get_theme_mod("custom_logo"), [32, 32], false, ["class" => "book-byline-portrait", "alt" => ""]); ?>
+            <?php
+            $_byline_logo_id = get_theme_mod('custom_logo');
+            if ($_byline_logo_id) {
+                echo wp_get_attachment_image($_byline_logo_id, [32, 32], false, ['class' => 'book-byline-portrait', 'alt' => '']);
+            } else {
+                echo '<img src="' . esc_url(haunted_tech_logo_url()) . '" alt="" class="book-byline-portrait" width="32" height="32">';
+            }
+            ?>
             <span class="book-byline-text">by <?php bloginfo('name'); ?></span>
           </a>
 
@@ -1229,7 +1243,14 @@ function ht_render_site_footer($attributes = []) {
     ob_start(); ?>
     <footer class="block-footer" id="footer">
       <a href="<?php echo esc_url(home_url('/')); ?>" class="footer-logo" aria-label="<?php bloginfo('name'); ?>">
-        <?php echo wp_get_attachment_image(get_theme_mod('custom_logo'), [80, 80], false, ['alt' => esc_attr(get_bloginfo('name')) . ' logo']); ?>
+        <?php
+        $_footer_logo_id = get_theme_mod('custom_logo');
+        if ($_footer_logo_id) {
+            echo wp_get_attachment_image($_footer_logo_id, [80, 80], false, ['alt' => esc_attr(get_bloginfo('name')) . ' logo']);
+        } else {
+            echo '<img src="' . esc_url(haunted_tech_logo_url()) . '" alt="' . esc_attr(get_bloginfo('name')) . ' logo" width="80" height="80">';
+        }
+        ?>
       </a>
       <div class="ornament"><span>&#9670;</span> <span>&#9670;</span> <span>&#9670;</span></div>
       <div class="links">
@@ -1281,7 +1302,14 @@ function ht_render_linktree($attributes = []) {
       <div class="linktree-card">
 
         <div class="linktree-header">
-          <?php echo wp_get_attachment_image(get_theme_mod('custom_logo'), [120, 120], false, ['class' => 'linktree-avatar', 'alt' => esc_attr(get_bloginfo('name'))]); ?>
+          <?php
+          $_lt_logo_id = get_theme_mod('custom_logo');
+          if ($_lt_logo_id) {
+              echo wp_get_attachment_image($_lt_logo_id, [120, 120], false, ['class' => 'linktree-avatar', 'alt' => esc_attr(get_bloginfo('name'))]);
+          } else {
+              echo '<img src="' . esc_url(haunted_tech_logo_url()) . '" alt="' . esc_attr(get_bloginfo('name')) . '" class="linktree-avatar" width="120" height="120">';
+          }
+          ?>
           <h1 class="linktree-name" data-text="<?php echo esc_attr(get_bloginfo('name')); ?>"><?php bloginfo('name'); ?></h1>
           <?php if ($bio): ?><p class="linktree-bio"><?php echo esc_html($bio); ?></p><?php endif; ?>
         </div>
