@@ -60,9 +60,6 @@ add_action('after_setup_theme', function () {
  * 2. Enqueue styles & scripts
  * ------------------------------------------------------------------------- */
 add_action('wp_enqueue_scripts', function () {
-    // Self-hosted Google Fonts (better performance, no third-party request, GDPR-friendly).
-    // Source files live in assets/fonts/. To swap weights, regenerate via a tool like
-    // google-webfonts-helper or edit assets/fonts/fonts.css directly.
     wp_enqueue_style(
         'haunted-tech-fonts',
         HAUNTED_TECH_URI . '/assets/fonts/fonts.css',
@@ -70,10 +67,6 @@ add_action('wp_enqueue_scripts', function () {
         HAUNTED_TECH_VERSION
     );
 
-    // Self-hosted Font Awesome 6.5.1 (Free) — minimal subset.
-    // Only the 11 brand + 6 solid icons used by Haunted_Tech_Social_Walker
-    // are defined in fa-used.css. Drops regular/light/thin/duotone @font-face
-    // rules + ~7 000 unused class definitions. Saves ~900 KB vs all.min.css.
     wp_enqueue_style(
         'font-awesome',
         HAUNTED_TECH_URI . '/assets/fontawesome/fa-used.css',
@@ -95,10 +88,6 @@ add_action('wp_enqueue_scripts', function () {
         HAUNTED_TECH_VERSION
     );
 
-    // Mobile & accessibility performance overrides:
-    // - will-change hints for GPU-composited animated overlays
-    // - prefers-reduced-motion: kill all decorative animations
-    // - max-width:700px: no backdrop-filter, slower animation durations
     wp_enqueue_style(
         'haunted-tech-mobile-perf',
         HAUNTED_TECH_URI . '/assets/mobile-perf.css',
@@ -106,10 +95,6 @@ add_action('wp_enqueue_scripts', function () {
         HAUNTED_TECH_VERSION
     );
 
-    // overflow-x:clip has the same visual effect as hidden (no horizontal
-    // overflow shown) but does NOT create a scroll container, so the header's
-    // `position:sticky;top:0` works correctly in all browsers including Safari.
-    // TODO: move this into the body rule in assets/main.css directly.
     wp_add_inline_style( 'haunted-tech-main', 'body{overflow-x:clip}' );
 
     wp_enqueue_script(
@@ -125,11 +110,6 @@ add_action('wp_enqueue_scripts', function () {
  * 2b. Defer jQuery — eliminate render-blocking <head> script requests
  * ------------------------------------------------------------------------- */
 add_filter('script_loader_tag', function ($tag, $handle) {
-    // jQuery core (29.4 KiB) and jQuery Migrate (5.0 KiB) load in <head> by
-    // default, blocking FCP/LCP by ~250 ms (PageSpeed). Adding defer lets the
-    // browser continue parsing HTML while fetching them; they execute after
-    // parsing in document order, so jquery-core always runs before jquery-migrate.
-    // Safe for FSE block themes: no synchronous inline jQuery on the frontend.
     if (in_array($handle, ['jquery-core', 'jquery-migrate'], true)) {
         return str_replace(' src=', ' defer src=', $tag);
     }
@@ -142,18 +122,9 @@ add_filter('script_loader_tag', function ($tag, $handle) {
 add_action('wp_head', function () {
     $uri = HAUNTED_TECH_URI;
 
-    // ── Font preloads ───────────────────────────────────────────────────────────
-    // Break the fonts.css → woff2 two-hop dependency chain. Preloading the
-    // latin subsets of the 3 most-used above-the-fold faces lets the browser
-    // fetch them in parallel with fonts.css rather than waiting for CSS to
-    // be fully parsed first (saves ~one RTT per font). crossorigin is required
-    // for fonts even when same-origin.
     $font_preloads = [
-        // Inter (body text) — latin, any weight (UcC73…SjIa1ZL7 is latin)
         'UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2',
-        // Forum (heading / display font) — latin
         '6aey4Ky-Vb8Ew8IROpI.woff2',
-        // VT323 (CRT terminal labels in social bar / overlays) — latin
         'pxiKyp0ihIEF2isfFJU.woff2',
     ];
     foreach ($font_preloads as $file) {
@@ -163,9 +134,6 @@ add_action('wp_head', function () {
         );
     }
 
-    // ── LCP image preload (front page only) ──────────────────────────────
-    // The hero watermark (site logo) is the LCP element. Preloading it makes
-    // the URL discoverable before any lazy-load plugin can rewrite data-src.
     if (!is_front_page()) return;
     $logo_id = get_theme_mod('custom_logo');
     if (!$logo_id) return;
@@ -175,12 +143,8 @@ add_action('wp_head', function () {
         '<link rel="preload" as="image" href="%s" fetchpriority="high">' . "\n",
         esc_url($src[0])
     );
-}, 1); // priority 1 = very early in <head>, before plugin hooks
+}, 1);
 
-// Add fetchpriority="high" and class="no-lazy" to the logo attachment image
-// wherever wp_get_attachment_image() renders it (hero watermark callback).
-// "no-lazy" is the standard skip signal for WP Rocket LazyLoad, 10Web
-// Booster, a3 Lazy Load, and most other lazy-loading plugins.
 add_filter('wp_get_attachment_image_attributes', function ($attr, $attachment) {
     if (!is_front_page()) return $attr;
     $logo_id = get_theme_mod('custom_logo');
@@ -191,40 +155,9 @@ add_filter('wp_get_attachment_image_attributes', function ($attr, $attachment) {
 }, 10, 2);
 
 /* ---------------------------------------------------------------------------
- * 2d. Dequeue Photo Gallery plugin assets on pages that don't use it
- * ------------------------------------------------------------------------- */
-add_action('wp_enqueue_scripts', function () {
-    // The Photo Gallery plugin (10Web/BWG) enqueues its full CSS+JS bundle on
-    // every page regardless of whether a [Best_Wordpress_Gallery] shortcode is
-    // present. The front page uses the theme's native ACF gallery—not the
-    // plugin—so all Photo Gallery assets there are wasted bytes that inflate
-    // PageSpeed's "Reduce unused CSS" and "Reduce unused JavaScript" diagnostics.
-    //
-    // We match by plugin directory path (/photo-gallery/) rather than by handle
-    // name so this stays correct across plugin updates that rename handles.
-    // Priority 9999 ensures all plugin wp_enqueue_scripts hooks have fired first.
-    if (!is_front_page()) return;
-
-    global $wp_styles, $wp_scripts;
-    foreach ((array) $wp_styles->registered as $handle => $obj) {
-        if (!empty($obj->src) && strpos($obj->src, '/photo-gallery/') !== false) {
-            wp_dequeue_style($handle);
-            wp_deregister_style($handle);
-        }
-    }
-    foreach ((array) $wp_scripts->registered as $handle => $obj) {
-        if (!empty($obj->src) && strpos($obj->src, '/photo-gallery/') !== false) {
-            wp_dequeue_script($handle);
-            wp_deregister_script($handle);
-        }
-    }
-}, 9999);
-
-/* ---------------------------------------------------------------------------
  * 3. Custom post type: hero_update  (data source for the homepage hero slider)
  * ------------------------------------------------------------------------- */
 add_action('init', function () {
-    /* hero_update — drives the homepage hero slider */
     register_post_type('hero_update', [
         'label'        => __('Hero Updates', 'haunted-tech'),
         'labels'       => [
@@ -244,7 +177,6 @@ add_action('init', function () {
         'has_archive'  => false,
     ]);
 
-    /* gallery_item — populates the homepage Gallery section's three tabs */
     register_post_type('gallery_item', [
         'label'        => __('Gallery Items', 'haunted-tech'),
         'labels'       => [
@@ -265,15 +197,8 @@ add_action('init', function () {
     ]);
 });
 
-/* Register the ACF field groups for theme-managed CPTs. */
 add_action('acf/init', function () {
     if (!function_exists('acf_add_local_field_group')) { return; }
-    /* ---------- Extra Book fields (v0.8.0) ----------
-     * Augments the existing Book field group (imported from book-fields.json)
-     * with the modal-era fields: content warnings, discovery links, excerpt.
-     * v0.9 adds download_url for reader-magnet titles.
-     * These render conditionally — empty fields collapse out of the layout.
-     */
     acf_add_local_field_group([
         'key'      => 'group_book_extras',
         'title'    => 'Book — Modal & Discovery',
@@ -313,7 +238,6 @@ add_action('acf/init', function () {
         'show_in_rest' => 1,
     ]);
 
-    /* ---------- Gallery item ---------- */
     acf_add_local_field_group([
         'key'      => 'group_gallery_item',
         'title'    => 'Gallery Item',
@@ -349,7 +273,6 @@ add_action('acf/init', function () {
         'show_in_rest' => 1,
     ]);
 
-    /* ---------- Hero update ---------- */
     acf_add_local_field_group([
         'key'      => 'group_hero_update',
         'title'    => 'Hero Update',
@@ -447,7 +370,6 @@ if (!class_exists('Haunted_Tech_Social_Walker')) {
                 'threads.net'    => 'fa-brands fa-threads',
                 'twitter.com'    => 'fa-brands fa-x-twitter',
                 'x.com'          => 'fa-brands fa-x-twitter',
-                /* v0.9 — extra platforms */
                 'youtube.com'    => 'fa-brands fa-youtube',
                 'facebook.com'   => 'fa-brands fa-facebook',
                 'bookbub.com'    => 'fa-solid fa-book-bookmark',
@@ -458,13 +380,6 @@ if (!class_exists('Haunted_Tech_Social_Walker')) {
                 if (strpos($host, $needle) !== false) return $cls;
             }
 
-            /* v0.9.2 — slug/label fallback. Lets Pretty Link URLs
-             * (codalanguez.com/go/<slug>) resolve to brand icons by also
-             * checking the URL path and the menu item label for platform
-             * keywords. Slugs are intentionally shorter than the host keys
-             * (no ".com" suffix) to match path segments. X/Twitter is omitted
-             * from this pass since the single letter "x" is too ambiguous —
-             * use the host map (twitter.com / x.com) instead. */
             $haystack = strtolower(($url ?: '') . ' ' . ($label ?: ''));
             $slug_map = [
                 'patreon'   => 'fa-brands fa-patreon',
