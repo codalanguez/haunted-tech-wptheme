@@ -330,9 +330,7 @@ function ht_render_services($attributes = []) {
       </div>
     </section>
 
-    <!-- Commission inquiry modals – match the About modal structure:
-         left poster (large icon + tagline) + right meta (eyebrow, title,
-         scrolling form body). -->
+    <!-- Commission inquiry modals -->
     <?php foreach ([
         'art'   => [
             'eyebrow'  => 'Bespoke',
@@ -359,12 +357,10 @@ function ht_render_services($attributes = []) {
     <div class="commission-modal" id="commission-modal-<?php echo esc_attr($key); ?>" role="dialog" aria-modal="true" aria-labelledby="cm-title-<?php echo esc_attr($key); ?>" aria-hidden="true">
       <div class="commission-frame">
         <button class="commission-close" aria-label="Close inquiry form">&times;</button>
-
         <div class="commission-poster">
           <div class="commission-poster-icon" aria-hidden="true"><?php echo $cfg['icon']; ?></div>
           <div class="commission-poster-tagline"><?php echo esc_html($cfg['tagline']); ?></div>
         </div>
-
         <div class="commission-meta">
           <div class="commission-meta-head">
             <div class="commission-eyebrow"><?php echo esc_html($cfg['eyebrow']); ?></div>
@@ -426,14 +422,12 @@ function ht_render_gallery($attributes = []) {
         'orderby'        => ['menu_order' => 'ASC', 'date' => 'DESC'],
     ]);
 
-    /* No items yet → fall back to the static placeholder shipped with the theme. */
     if (empty($all_items)) {
         ob_start();
         include HAUNTED_TECH_DIR . '/inc/gallery-static.php';
         return ob_get_clean();
     }
 
-    /* Group items by service tab */
     $grouped = ['art' => [], 'covers' => [], 'ai' => []];
     foreach ($all_items as $item) {
         $tab = get_field('service_tab', $item->ID) ?: 'art';
@@ -456,7 +450,6 @@ function ht_render_gallery($attributes = []) {
         'ai'     => 'All AI Pieces',
     ];
 
-    /* First non-empty tab is active by default */
     $first_active = 'art';
     foreach (array_keys($tab_labels) as $key) {
         if (!empty($grouped[$key])) { $first_active = $key; break; }
@@ -479,7 +472,6 @@ function ht_render_gallery($attributes = []) {
       </div>
 
       <?php
-      /* Map gallery tab → commission modal key (covers→cover; art/ai pass-through). */
       $tab_to_modal = ['art' => 'art', 'covers' => 'cover', 'ai' => 'ai'];
       foreach ($tab_labels as $tab => $label):
           $items       = $grouped[$tab];
@@ -491,7 +483,6 @@ function ht_render_gallery($attributes = []) {
         <div class="gallery-panel<?php echo $is_active ? ' active' : ''; ?>" id="<?php echo esc_attr($panel_id); ?>" role="tabpanel" data-page="1" data-pages="<?php echo (int)$total_pages; ?>">
 
           <?php
-          /* Filter chips only on the Art Commissions tab. Derive unique category labels from this tab's items. */
           if ($tab === 'art' && !empty($items)):
               $cats = [];
               foreach ($items as $i) {
@@ -521,12 +512,10 @@ function ht_render_gallery($attributes = []) {
                   $variant    = 'v' . ((($idx % 8) + 1));
                   $image      = get_field('image', $item->ID);
                   $image_url  = '';
-                  $image_w    = 0;
-                  $image_h    = 0;
                   if (is_array($image) && !empty($image['url'])) {
                       $image_url = $image['url'];
-                      $image_w   = !empty($image['width'])  ? (int)$image['width']  : 0;
-                      $image_h   = !empty($image['height']) ? (int)$image['height'] : 0;
+                  } elseif (has_post_thumbnail($item->ID)) {
+                      $image_url = get_the_post_thumbnail_url($item->ID, 'large');
                   }
                   $alt = is_array($image) && !empty($image['alt']) ? $image['alt'] : get_the_title($item);
                   $page_class = $page_num > 1 ? ' page-hidden' : '';
@@ -541,11 +530,7 @@ function ht_render_gallery($attributes = []) {
                    data-image-class="<?php echo esc_attr($variant); ?>">
                   <div class="gallery-image <?php echo esc_attr($variant); ?>" style="--ratio: <?php echo esc_attr($ratio); ?>; position:relative;">
                     <?php if ($image_url): ?>
-                      <?php if ($image_w && $image_h): ?>
-                        <img src="<?php echo esc_url($image_url); ?>" alt="<?php echo esc_attr($alt); ?>" width="<?php echo (int)$image_w; ?>" height="<?php echo (int)$image_h; ?>" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;z-index:1;">
-                      <?php else: ?>
-                        <?php echo wp_get_attachment_image(get_post_thumbnail_id($item->ID), 'large', false, ['alt' => esc_attr($alt), 'loading' => 'lazy', 'style' => 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;z-index:1;']); ?>
-                      <?php endif; ?>
+                      <img src="<?php echo esc_url($image_url); ?>" alt="<?php echo esc_attr($alt); ?>" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;z-index:1;">
                     <?php else: ?>
                       <span class="gallery-image-label"><?php echo esc_html(get_the_title($item)); ?></span>
                     <?php endif; ?>
@@ -586,8 +571,6 @@ function ht_render_gallery($attributes = []) {
  * NEWSLETTER – placeholder form
  * ============================================================ */
 function ht_render_newsletter($attributes = []) {
-    /* If the user has saved an embed in Customizer → Haunted Tech → Newsletter,
-     * inject it inside the callout in place of the placeholder form. */
     $embed = function_exists('haunted_tech_get_newsletter_embed') ? haunted_tech_get_newsletter_embed() : '';
     ob_start(); ?>
     <section class="newsletter block-newsletter" id="newsletter">
@@ -600,7 +583,7 @@ function ht_render_newsletter($attributes = []) {
         <h2 data-text="JOIN THE SIGNAL">JOIN THE <span class="accent">SIGNAL</span></h2>
         <p>Early chapter drops, free shorts, exclusive art, and the occasional voice memo from the static. No spam, ever &mdash; just signal.</p>
         <?php if (!empty($embed)): ?>
-          <div class="newsletter-embed"><?php echo $embed; /* admin-saved raw HTML/script */ ?></div>
+          <div class="newsletter-embed"><?php echo $embed; ?></div>
         <?php else: ?>
           <form class="newsletter-form" onsubmit="return false;">
             <input type="email" class="newsletter-input" placeholder="your.handle@encrypted.net" required>
@@ -621,7 +604,6 @@ function ht_render_newsletter($attributes = []) {
 
 /* ============================================================
  * GLOBAL OVERLAYS – CRT band + static burst
- * Inserted once near the top of every page via the header part.
  * ============================================================ */
 function ht_render_overlays($attributes = []) {
     return '<div class="crt-band"></div><div class="static-burst"></div>';
@@ -705,7 +687,6 @@ function ht_render_about_modal($attributes = []) {
 
 /* ============================================================
  * SINGLE BOOK – bespoke book hero matching mockup 14/15/16.
- * Every field conditional: empty values collapse out entirely.
  * ============================================================ */
 function ht_render_single_book($attributes = []) {
     $post_id = get_the_ID();
@@ -726,13 +707,11 @@ function ht_render_single_book($attributes = []) {
     $kobo        = get_field('buy_kobo', $post_id);
     $apple       = get_field('buy_apple', $post_id);
     $ku          = get_field('kindle_unlimited', $post_id);
-    /* v0.8 discovery + content-warning fields */
     $goodreads   = get_field('goodreads_url', $post_id);
     $bookbub     = get_field('bookbub_url',   $post_id);
     $storygraph  = get_field('storygraph_url', $post_id);
     $cw_graphic  = get_field('content_warnings_graphic', $post_id);
     $cw_standard = get_field('content_warnings',         $post_id);
-    /* v0.9 reader-magnet field */
     $download    = get_field('download_url', $post_id);
 
     if (!$amazon && $asin) $amazon = 'https://www.amazon.com/dp/' . urlencode($asin);
@@ -778,16 +757,8 @@ function ht_render_single_book($attributes = []) {
 
           <h1 class="book-title" data-text="<?php echo esc_attr(get_the_title($post_id)); ?>"><?php echo esc_html(get_the_title($post_id)); ?></h1>
 
-          <?php /* Author byline – small portrait + name, click → opens About modal */ ?>
           <a href="#about" data-open-about class="book-byline" aria-label="<?php esc_attr_e('About the author', 'haunted-tech'); ?>">
-            <?php
-            $_byline_logo_id = get_theme_mod('custom_logo');
-            if ($_byline_logo_id) {
-                echo wp_get_attachment_image($_byline_logo_id, [32, 32], false, ['class' => 'book-byline-portrait', 'alt' => '']);
-            } else {
-                echo '<img src="' . esc_url(haunted_tech_logo_url()) . '" alt="" class="book-byline-portrait" width="32" height="32">';
-            }
-            ?>
+            <img src="<?php echo esc_url(haunted_tech_logo_url()); ?>" alt="" class="book-byline-portrait">
             <span class="book-byline-text">by <?php bloginfo('name'); ?></span>
           </a>
 
@@ -810,10 +781,6 @@ function ht_render_single_book($attributes = []) {
           <?php endif; ?>
 
           <?php
-          /* Buy / acquire row.
-           * If a download_url is set (reader magnet), "Download Free" leads
-           * the row with a primary-CTA class hook (buy-btn-download). Paid
-           * retailer buttons follow in the standard buy-btn treatment. */
           $buys = array_filter([
               $download ? ['Download Free',  $download, 'buy-btn buy-btn-download'] : null,
               $amazon   ? ['Amazon',         $amazon,   'buy-btn'] : null,
@@ -898,7 +865,6 @@ function ht_render_book_excerpt($attributes = []) {
 
 /* ============================================================
  * MORE IN THIS SERIES – mini-shelf of series siblings
- * Returns '' if not part of a series or no siblings exist.
  * ============================================================ */
 function ht_render_book_more_in_series($attributes = []) {
     $post_id = get_the_ID();
@@ -951,7 +917,6 @@ function ht_render_book_more_in_series($attributes = []) {
 
 /* ============================================================
  * ALSO BY CODA – cross-promo grid of other books
- * Excludes current book and same-series siblings.
  * ============================================================ */
 function ht_render_also_by($attributes = []) {
     $current_id     = get_the_ID();
@@ -997,11 +962,7 @@ function ht_render_also_by($attributes = []) {
           <a href="<?php echo esc_url(get_permalink($b)); ?>" data-open-book="<?php echo esc_attr($b->post_name); ?>" class="also-by-card">
             <div class="also-by-cover" style="<?php echo $cover_url ? 'padding:0;' : ''; ?>">
               <?php if ($cover_url): ?>
-                <?php if (is_array($b_cover) && !empty($b_cover['width'])): ?>
-                  <img src="<?php echo esc_url($cover_url); ?>" alt="<?php echo esc_attr(get_the_title($b)); ?>" width="<?php echo (int)$b_cover['width']; ?>" height="<?php echo (int)$b_cover['height']; ?>" style="display:block;width:100%;height:100%;object-fit:cover;">
-                <?php else: ?>
-                  <?php echo wp_get_attachment_image(get_post_thumbnail_id($b->ID), 'medium', false, ['alt' => esc_attr(get_the_title($b)), 'style' => 'display:block;width:100%;height:100%;object-fit:cover;']); ?>
-                <?php endif; ?>
+                <img src="<?php echo esc_url($cover_url); ?>" alt="<?php echo esc_attr(get_the_title($b)); ?>" style="display:block;width:100%;height:100%;object-fit:cover;">
               <?php else: ?>
                 <div class="also-by-cover-title"><?php echo esc_html(get_the_title($b)); ?></div>
               <?php endif; ?>
@@ -1020,7 +981,7 @@ function ht_render_also_by($attributes = []) {
 }
 
 /* ============================================================
- * COMPOSED MODAL CONTENT – used by REST endpoint + single-book template.
+ * COMPOSED MODAL CONTENT
  * ============================================================ */
 function ht_render_book_modal_content() {
     return ht_render_single_book()
@@ -1070,7 +1031,7 @@ function ht_render_webnovel_modal_shell($attributes = []) {
 }
 
 /**
- * "Also by Coda" for a web novel – pulls 4 other web novels, excludes current.
+ * "Also by Coda" for a web novel
  */
 function ht_render_also_by_webnovels($attributes = []) {
     $current_id = get_the_ID();
@@ -1124,9 +1085,7 @@ function ht_render_back_to_top($attributes = []) {
 }
 
 /* ============================================================
- * SINGLE WEB NOVEL — mirrors single-book layout exactly so a serial
- * page reads with the same hero / cover / meta structure as a book page.
- * Chapters are hosted on Substack — the CTA links there directly.
+ * SINGLE WEB NOVEL
  * ============================================================ */
 function ht_render_single_webnovel($attributes = []) {
     $wn_id = get_the_ID();
@@ -1154,7 +1113,6 @@ function ht_render_single_webnovel($attributes = []) {
 
     $cw_items = array_filter(array_map('trim', explode(',', (string)$warnings)));
 
-    /* Substack is the primary (and only) read CTA — filled download-style button. */
     $reads = array_filter([
         $substack ? ['Read on Substack', $substack, 'buy-btn buy-btn-download', true] : null,
     ]);
@@ -1183,14 +1141,7 @@ function ht_render_single_webnovel($attributes = []) {
           <h1 class="book-title" data-text="<?php echo esc_attr(get_the_title($wn_id)); ?>"><?php echo esc_html(get_the_title($wn_id)); ?></h1>
 
           <a href="#about" data-open-about class="book-byline" aria-label="<?php esc_attr_e('About the author', 'haunted-tech'); ?>">
-            <?php
-            $_byline_logo_id = get_theme_mod('custom_logo');
-            if ($_byline_logo_id) {
-                echo wp_get_attachment_image($_byline_logo_id, [32, 32], false, ['class' => 'book-byline-portrait', 'alt' => '']);
-            } else {
-                echo '<img src="' . esc_url(haunted_tech_logo_url()) . '" alt="" class="book-byline-portrait" width="32" height="32">';
-            }
-            ?>
+            <img src="<?php echo esc_url(haunted_tech_logo_url()); ?>" alt="" class="book-byline-portrait">
             <span class="book-byline-text">by <?php bloginfo('name'); ?></span>
           </a>
 
@@ -1243,14 +1194,7 @@ function ht_render_site_footer($attributes = []) {
     ob_start(); ?>
     <footer class="block-footer" id="footer">
       <a href="<?php echo esc_url(home_url('/')); ?>" class="footer-logo" aria-label="<?php bloginfo('name'); ?>">
-        <?php
-        $_footer_logo_id = get_theme_mod('custom_logo');
-        if ($_footer_logo_id) {
-            echo wp_get_attachment_image($_footer_logo_id, [80, 80], false, ['alt' => esc_attr(get_bloginfo('name')) . ' logo']);
-        } else {
-            echo '<img src="' . esc_url(haunted_tech_logo_url()) . '" alt="' . esc_attr(get_bloginfo('name')) . ' logo" width="80" height="80">';
-        }
-        ?>
+        <img src="<?php echo esc_url(haunted_tech_logo_url()); ?>" alt="<?php echo esc_attr(get_bloginfo('name')); ?> logo">
       </a>
       <div class="ornament"><span>&#9670;</span> <span>&#9670;</span> <span>&#9670;</span></div>
       <div class="links">
@@ -1277,9 +1221,7 @@ function ht_render_site_footer($attributes = []) {
 
 
 /* ============================================================
- * LINKTREE – single-page bio-link layout: avatar + bio + stacked
- * link cards for every published Book, Web Novel, and a social-bar
- * footer. Drop the haunted-tech/linktree block on any WP page.
+ * LINKTREE
  * ============================================================ */
 function ht_render_linktree($attributes = []) {
     $books = get_posts([
@@ -1302,14 +1244,7 @@ function ht_render_linktree($attributes = []) {
       <div class="linktree-card">
 
         <div class="linktree-header">
-          <?php
-          $_lt_logo_id = get_theme_mod('custom_logo');
-          if ($_lt_logo_id) {
-              echo wp_get_attachment_image($_lt_logo_id, [120, 120], false, ['class' => 'linktree-avatar', 'alt' => esc_attr(get_bloginfo('name'))]);
-          } else {
-              echo '<img src="' . esc_url(haunted_tech_logo_url()) . '" alt="' . esc_attr(get_bloginfo('name')) . '" class="linktree-avatar" width="120" height="120">';
-          }
-          ?>
+          <img class="linktree-avatar" src="<?php echo esc_url(haunted_tech_logo_url()); ?>" alt="<?php echo esc_attr(get_bloginfo('name')); ?>">
           <h1 class="linktree-name" data-text="<?php echo esc_attr(get_bloginfo('name')); ?>"><?php bloginfo('name'); ?></h1>
           <?php if ($bio): ?><p class="linktree-bio"><?php echo esc_html($bio); ?></p><?php endif; ?>
         </div>
@@ -1330,11 +1265,7 @@ function ht_render_linktree($attributes = []) {
                 <a href="<?php echo esc_url(get_permalink($b)); ?>" class="linktree-tile linktree-tile--book<?php echo $is_free ? ' linktree-tile--free' : ''; ?>">
                   <div class="linktree-tile-cover">
                     <?php if ($cover_url): ?>
-                      <?php if (is_array($cover) && !empty($cover['width'])): ?>
-                        <img src="<?php echo esc_url($cover_url); ?>" alt="" width="<?php echo (int)$cover['width']; ?>" height="<?php echo (int)$cover['height']; ?>" loading="lazy">
-                      <?php else: ?>
-                        <?php echo wp_get_attachment_image(get_post_thumbnail_id($b->ID), 'medium', false, ['alt' => '', 'loading' => 'lazy']); ?>
-                      <?php endif; ?>
+                      <img src="<?php echo esc_url($cover_url); ?>" alt="" loading="lazy">
                     <?php else: ?>
                       <span>&#9670;</span>
                     <?php endif; ?>
@@ -1367,11 +1298,7 @@ function ht_render_linktree($attributes = []) {
                 <a href="<?php echo esc_url(get_permalink($wn)); ?>" class="linktree-tile linktree-tile--webnovel">
                   <div class="linktree-tile-cover">
                     <?php if ($cover_url): ?>
-                      <?php if (is_array($cover) && !empty($cover['width'])): ?>
-                        <img src="<?php echo esc_url($cover_url); ?>" alt="" width="<?php echo (int)$cover['width']; ?>" height="<?php echo (int)$cover['height']; ?>" loading="lazy">
-                      <?php else: ?>
-                        <?php echo wp_get_attachment_image(get_post_thumbnail_id($wn->ID), 'medium', false, ['alt' => '', 'loading' => 'lazy']); ?>
-                      <?php endif; ?>
+                      <img src="<?php echo esc_url($cover_url); ?>" alt="" loading="lazy">
                     <?php else: ?>
                       <span>&#9998;</span>
                     <?php endif; ?>
