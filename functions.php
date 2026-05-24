@@ -20,7 +20,7 @@
 
 if (!defined('ABSPATH')) { exit; }
 
-define('HAUNTED_TECH_VERSION', '0.9.2');
+define('HAUNTED_TECH_VERSION', '0.9.1');
 define('HAUNTED_TECH_DIR', get_template_directory());
 define('HAUNTED_TECH_URI', get_template_directory_uri());
 
@@ -60,6 +60,9 @@ add_action('after_setup_theme', function () {
  * 2. Enqueue styles & scripts
  * ------------------------------------------------------------------------- */
 add_action('wp_enqueue_scripts', function () {
+    // Self-hosted Google Fonts (better performance, no third-party request, GDPR-friendly).
+    // Source files live in assets/fonts/. To swap weights, regenerate via a tool like
+    // google-webfonts-helper or edit assets/fonts/fonts.css directly.
     wp_enqueue_style(
         'haunted-tech-fonts',
         HAUNTED_TECH_URI . '/assets/fonts/fonts.css',
@@ -67,9 +70,13 @@ add_action('wp_enqueue_scripts', function () {
         HAUNTED_TECH_VERSION
     );
 
+    // Self-hosted Font Awesome 6.5.1 (Free). 1 css + 8 webfont files in
+    // assets/fontawesome/. ttf files are leftover fallbacks; browsers prefer
+    // woff2. Total bundle ~1 MB, but unicode-range gating + browser cache
+    // means a typical page costs ~150 KB on first load and ~0 KB thereafter.
     wp_enqueue_style(
         'font-awesome',
-        HAUNTED_TECH_URI . '/assets/fontawesome/fa-used.css',
+        HAUNTED_TECH_URI . '/assets/fontawesome/all.min.css',
         [],
         '6.5.1'
     );
@@ -88,13 +95,10 @@ add_action('wp_enqueue_scripts', function () {
         HAUNTED_TECH_VERSION
     );
 
-    wp_enqueue_style(
-        'haunted-tech-mobile-perf',
-        HAUNTED_TECH_URI . '/assets/mobile-perf.css',
-        ['haunted-tech-main'],
-        HAUNTED_TECH_VERSION
-    );
-
+    // overflow-x:clip has the same visual effect as hidden (no horizontal
+    // overflow shown) but does NOT create a scroll container, so the header's
+    // `position:sticky;top:0` works correctly in all browsers including Safari.
+    // TODO: move this into the body rule in assets/main.css directly.
     wp_add_inline_style( 'haunted-tech-main', 'body{overflow-x:clip}' );
 
     wp_enqueue_script(
@@ -107,57 +111,10 @@ add_action('wp_enqueue_scripts', function () {
 });
 
 /* ---------------------------------------------------------------------------
- * 2b. Defer jQuery — eliminate render-blocking <head> script requests
- * ------------------------------------------------------------------------- */
-add_filter('script_loader_tag', function ($tag, $handle) {
-    if (in_array($handle, ['jquery-core', 'jquery-migrate'], true)) {
-        return str_replace(' src=', ' defer src=', $tag);
-    }
-    return $tag;
-}, 10, 2);
-
-/* ---------------------------------------------------------------------------
- * 2c. Critical resource hints — fonts + LCP image
- * ------------------------------------------------------------------------- */
-add_action('wp_head', function () {
-    $uri = HAUNTED_TECH_URI;
-
-    $font_preloads = [
-        'UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2',
-        '6aey4Ky-Vb8Ew8IROpI.woff2',
-        'pxiKyp0ihIEF2isfFJU.woff2',
-    ];
-    foreach ($font_preloads as $file) {
-        printf(
-            '<link rel="preload" as="font" type="font/woff2" href="%s" crossorigin>' . "\n",
-            esc_url($uri . '/assets/fonts/' . $file)
-        );
-    }
-
-    if (!is_front_page()) return;
-    $logo_id = get_theme_mod('custom_logo');
-    if (!$logo_id) return;
-    $src = wp_get_attachment_image_src($logo_id, 'medium');
-    if (!$src) return;
-    printf(
-        '<link rel="preload" as="image" href="%s" fetchpriority="high">' . "\n",
-        esc_url($src[0])
-    );
-}, 1);
-
-add_filter('wp_get_attachment_image_attributes', function ($attr, $attachment) {
-    if (!is_front_page()) return $attr;
-    $logo_id = get_theme_mod('custom_logo');
-    if (!$logo_id || (int) $attachment->ID !== (int) $logo_id) return $attr;
-    $attr['fetchpriority'] = 'high';
-    $attr['class']         = trim(($attr['class'] ?? '') . ' no-lazy');
-    return $attr;
-}, 10, 2);
-
-/* ---------------------------------------------------------------------------
  * 3. Custom post type: hero_update  (data source for the homepage hero slider)
  * ------------------------------------------------------------------------- */
 add_action('init', function () {
+    /* hero_update — drives the homepage hero slider */
     register_post_type('hero_update', [
         'label'        => __('Hero Updates', 'haunted-tech'),
         'labels'       => [
@@ -177,6 +134,7 @@ add_action('init', function () {
         'has_archive'  => false,
     ]);
 
+    /* gallery_item — populates the homepage Gallery section's three tabs */
     register_post_type('gallery_item', [
         'label'        => __('Gallery Items', 'haunted-tech'),
         'labels'       => [
@@ -197,8 +155,15 @@ add_action('init', function () {
     ]);
 });
 
+/* Register the ACF field groups for theme-managed CPTs. */
 add_action('acf/init', function () {
     if (!function_exists('acf_add_local_field_group')) { return; }
+    /* ---------- Extra Book fields (v0.8.0) ----------
+     * Augments the existing Book field group (imported from book-fields.json)
+     * with the modal-era fields: content warnings, discovery links, excerpt.
+     * v0.9 adds download_url for reader-magnet titles.
+     * These render conditionally — empty fields collapse out of the layout.
+     */
     acf_add_local_field_group([
         'key'      => 'group_book_extras',
         'title'    => 'Book — Modal & Discovery',
@@ -238,6 +203,7 @@ add_action('acf/init', function () {
         'show_in_rest' => 1,
     ]);
 
+    /* ---------- Gallery item ---------- */
     acf_add_local_field_group([
         'key'      => 'group_gallery_item',
         'title'    => 'Gallery Item',
@@ -260,8 +226,8 @@ add_action('acf/init', function () {
                 '3/4'   => '3:4 (portrait)',
                 '4/5'   => '4:5 (tall portrait)',
                 '2/3'   => '2:3 (book cover)',
-                '16/9'  => '16:9 (wide)',
                 '16/10' => '16:10 (landscape)',
+                '16/9'  => '16:9 (wide)',
              ],
              'default_value'=>'3/4', 'show_in_rest'=>1],
         ],
@@ -273,6 +239,7 @@ add_action('acf/init', function () {
         'show_in_rest' => 1,
     ]);
 
+    /* ---------- Hero update ---------- */
     acf_add_local_field_group([
         'key'      => 'group_hero_update',
         'title'    => 'Hero Update',
@@ -370,6 +337,7 @@ if (!class_exists('Haunted_Tech_Social_Walker')) {
                 'threads.net'    => 'fa-brands fa-threads',
                 'twitter.com'    => 'fa-brands fa-x-twitter',
                 'x.com'          => 'fa-brands fa-x-twitter',
+                /* v0.9 — extra platforms */
                 'youtube.com'    => 'fa-brands fa-youtube',
                 'facebook.com'   => 'fa-brands fa-facebook',
                 'bookbub.com'    => 'fa-solid fa-book-bookmark',
@@ -380,6 +348,13 @@ if (!class_exists('Haunted_Tech_Social_Walker')) {
                 if (strpos($host, $needle) !== false) return $cls;
             }
 
+            /* v0.9.2 — slug/label fallback. Lets Pretty Link URLs
+             * (codalanguez.com/go/<slug>) resolve to brand icons by also
+             * checking the URL path and the menu item label for platform
+             * keywords. Slugs are intentionally shorter than the host keys
+             * (no ".com" suffix) to match path segments. X/Twitter is omitted
+             * from this pass since the single letter "x" is too ambiguous —
+             * use the host map (twitter.com / x.com) instead. */
             $haystack = strtolower(($url ?: '') . ' ' . ($label ?: ''));
             $slug_map = [
                 'patreon'   => 'fa-brands fa-patreon',

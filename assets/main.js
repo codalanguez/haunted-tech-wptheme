@@ -25,7 +25,7 @@
       if (!a) return;
       const isAboutTrigger =
         a.hasAttribute('data-open-about') ||
-        (a.tagName === 'A' && (a.getAttribute('href') || '').match(/(^|\/)#about$/));
+        (a.tagName === 'A' && (a.getAttribute('href') || '').match(/(^\/|\/)#about$/));
       if (!isAboutTrigger) return;
       // Same-page: open the modal without navigating.
       if (a.tagName !== 'A' || a.pathname === location.pathname || a.getAttribute('href').charAt(0) === '#') {
@@ -89,7 +89,7 @@
     hero.addEventListener('mouseleave', () => {
       paused = false;
       hero.classList.remove('paused');
-      progressStart = progressFill ? Date.now() - ((parseFloat(progressFill.style.width)/100) * DURATION || 0) : Date.now();
+      progressStart = Date.now() - ((parseFloat(progressFill.style.width)/100) * DURATION || 0);
     });
     // Keyboard arrows when hero in focus
     hero.addEventListener('keydown', e => {
@@ -97,32 +97,6 @@
       if (e.key === 'ArrowRight') go(index + 1);
     });
     tick();
-
-    // ── Mobile / battery optimisations ────────────────────────────────────────
-    // Cancel the RAF loop when the hero is scrolled off-screen. Without this
-    // the progress bar updates at 60fps for the entire lifetime of the page
-    // even when the user is at the bottom of a long page. Restores on scroll
-    // back up. Saves ~60 layout checks/sec on mobile while browsing.
-    if ('IntersectionObserver' in window) {
-      new IntersectionObserver(function (entries) {
-        if (entries[0].isIntersecting) {
-          if (!rafId) { progressStart = Date.now(); rafId = requestAnimationFrame(tick); }
-        } else {
-          cancelAnimationFrame(rafId); rafId = null;
-        }
-      }, { threshold: 0 }).observe(hero);
-    }
-
-    // Cancel when the tab is hidden (app-switch on mobile, background tab on
-    // desktop). Significant battery saving — RAF ordinarily runs at 1fps when
-    // hidden but some browsers throttle inconsistently.
-    document.addEventListener('visibilitychange', function () {
-      if (document.hidden) {
-        cancelAnimationFrame(rafId); rafId = null;
-      } else if (!rafId) {
-        progressStart = Date.now(); rafId = requestAnimationFrame(tick);
-      }
-    });
   })();
 
   // ===== Gallery: tabs + filter chips + pagination + lightbox =====
@@ -206,7 +180,6 @@
 
     // ---------- Lightbox ----------
     const lightbox = document.getElementById('lightbox');
-    if (!lightbox) return;
     const lbImage = document.getElementById('lightbox-image');
     const lbLabel = document.getElementById('lightbox-image-label');
     const lbTag = document.getElementById('lightbox-tag');
@@ -232,20 +205,16 @@
     function renderLightbox() {
       const item = currentItems[currentIndex];
       if (!item) return;
-      // ── batch all reads first ──────────────────────────────────────────────────────
-      // Reading getComputedStyle after a DOM write (e.g. className change)
-      // forces a synchronous style recalc (forced reflow). By collecting all
-      // reads here — before any writes — we keep the layout clean.
-      const cls       = item.dataset.imageClass || 'v1';
+      const cls = item.dataset.imageClass || 'v1';
+      lbImage.className = 'lightbox-image ' + cls;
+      // Match aspect ratio of the source for visual continuity
       const innerImage = item.querySelector('.gallery-image');
-      const ratio     = innerImage ? getComputedStyle(innerImage).aspectRatio : 'auto';
-      // ── then all writes ─────────────────────────────────────────────────────
-      lbImage.className   = 'lightbox-image ' + cls;
+      const ratio = innerImage ? getComputedStyle(innerImage).aspectRatio : 'auto';
       lbImage.style.aspectRatio = ratio !== 'auto' ? ratio : '';
       lbLabel.textContent = item.dataset.title || '';
-      lbTag.textContent   = item.dataset.tag   || '';
+      lbTag.textContent = item.dataset.tag || '';
       lbTitle.textContent = item.dataset.title || '';
-      lbDesc.textContent  = item.dataset.desc  || '';
+      lbDesc.textContent = item.dataset.desc || '';
       lbPrev.style.visibility = currentIndex > 0 ? 'visible' : 'hidden';
       lbNext.style.visibility = currentIndex < currentItems.length - 1 ? 'visible' : 'hidden';
     }
