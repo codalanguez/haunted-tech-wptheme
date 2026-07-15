@@ -140,7 +140,7 @@
     width: 200px; height: 1px;
     background: linear-gradient(90deg, transparent, var(--red), var(--gold), var(--red), transparent);
   }
-  .header-inner { max-width: 1300px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 2rem; }
+  .header-inner { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 2rem; }
   .header-right { display: flex; align-items: center; gap: 2.5rem; }
 
   /* Header subscribe CTA — prominent, gold-bordered, glitches + glows on hover */
