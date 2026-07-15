@@ -1148,8 +1148,34 @@
   .crt-status.ongoing { color: var(--gold); }
   .crt-status.hiatus { color: var(--red-bright); }
   .crt-status.complete { color: #6ED49A; }
-  .crt-title { color: var(--bone); text-shadow: 0 0 6px rgba(245,239,216,0.4); cursor: pointer; }
+  .crt-title { color: var(--bone); text-shadow: 0 0 6px rgba(245,239,216,0.4); cursor: pointer; position: relative; display: inline-block; }
   .crt-title:hover { color: var(--gold); text-shadow: -1.5px 0 var(--red), 1.5px 0 var(--cyan), 0 0 8px var(--gold); }
+  /* Reuses the .spine-tip component (title + genre on hover/focus), but
+     .crt-screen has overflow:hidden, so a tooltip popping upward like the
+     bookshelf spines would get clipped for the first couple of rows. Flip
+     it to appear below the title instead, with the pointer arrow flipped
+     to match. */
+  .crt-title .spine-tip {
+    bottom: auto;
+    top: calc(100% + 10px);
+    transform: translateX(-50%) translateY(-6px);
+    z-index: 30;
+  }
+  .crt-title .spine-tip::after {
+    top: auto;
+    bottom: 100%;
+    border-right: none;
+    border-bottom: none;
+    border-left: 1px solid var(--gold);
+    border-top: 1px solid var(--gold);
+    margin-top: 0;
+    margin-bottom: -5px;
+  }
+  .crt-title:hover .spine-tip,
+  .crt-title:focus-visible .spine-tip {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
   .crt-tag { color: var(--gold); font-size: 0.95rem; opacity: 0.9; }
   .crt-meta { color: var(--bone-dim); font-size: 0.95rem; }
   .crt-state {

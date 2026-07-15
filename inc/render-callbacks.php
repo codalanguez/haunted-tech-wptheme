@@ -263,9 +263,16 @@ function ht_render_crt_monitor($attributes = []) {
                   $status_class = in_array($status, ['ongoing','complete','hiatus'], true) ? $status : 'ongoing';
                   $slug         = sanitize_title(get_the_title($wn)) . '/';
               ?>
+              <?php $wn_tip_id = 'spine-tip-wn-' . esc_attr($wn->post_name); ?>
               <div class="crt-row" id="webnovel-<?php echo esc_attr($wn->post_name); ?>">
                 <div class="crt-status <?php echo esc_attr($status_class); ?>"><?php echo $status_dot; ?></div>
-                <a class="crt-title" href="<?php echo esc_url(get_permalink($wn)); ?>" data-open-webnovel="<?php echo esc_attr($wn->post_name); ?>"><?php echo esc_html($slug); ?></a>
+                <a class="crt-title" href="<?php echo esc_url(get_permalink($wn)); ?>" data-open-webnovel="<?php echo esc_attr($wn->post_name); ?>" aria-describedby="<?php echo esc_attr($wn_tip_id); ?>">
+                  <?php echo esc_html($slug); ?>
+                  <span class="spine-tip" id="<?php echo esc_attr($wn_tip_id); ?>" role="tooltip">
+                    <span class="spine-tip-title"><?php echo esc_html(get_the_title($wn)); ?></span>
+                    <?php if ($genre): ?><span class="spine-tip-genre"><?php echo esc_html($genre); ?></span><?php endif; ?>
+                  </span>
+                </a>
                 <div class="crt-tag">[<?php echo esc_html(strtoupper($genre)); ?>]</div>
                 <div class="crt-state <?php echo esc_attr($status_class); ?>"><?php echo esc_html(strtoupper($status)); ?></div>
               </div>
