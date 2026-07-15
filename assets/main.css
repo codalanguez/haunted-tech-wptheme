@@ -801,6 +801,7 @@
   }
   .bookshelf {
     display: flex; align-items: flex-end; justify-content: center; gap: 6px;
+    flex-wrap: wrap;
     min-height: 440px; padding: 0 1rem;
   }
   .spine {
@@ -843,6 +844,8 @@
   }
   .spine-title {
     font-size: 1rem;
+    line-height: 1.5;
+    max-block-size: 100%;
     transition: text-shadow 0.3s;
   }
   .spine-author {

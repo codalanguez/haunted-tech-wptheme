@@ -200,7 +200,7 @@ function ht_render_bookshelf($attributes = []) {
                 $width   = 60 + (($i * 7) % 25);
                 $height  = 380 + (($i * 11) % 60);
             ?>
-            <a id="book-<?php echo esc_attr($book->post_name); ?>" href="<?php echo esc_url(get_permalink($book)); ?>" data-open-book="<?php echo esc_attr($book->post_name); ?>" class="spine <?php echo esc_attr($variant); ?>" style="width:<?php echo (int)$width; ?>px; height:<?php echo (int)$height; ?>px;">
+            <a id="book-<?php echo esc_attr($book->post_name); ?>" href="<?php echo esc_url(get_permalink($book)); ?>" data-open-book="<?php echo esc_attr($book->post_name); ?>" class="spine <?php echo esc_attr($variant); ?>" style="min-width:<?php echo (int)$width; ?>px; height:<?php echo (int)$height; ?>px;">
               <div class="spine-ornament">&#9670; &#9670;</div>
               <div class="spine-title"><?php echo esc_html(get_the_title($book)); ?></div>
               <div class="spine-author"><?php echo esc_html($series); ?></div>
