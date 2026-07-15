@@ -111,7 +111,7 @@
   /* ============ HEADER ============
    * Sticky on <header> alone fails because its direct parent (the
    * .wp-block-template-part wrapper div) is only as tall as the social bar
-   * + header combined â€” once you scroll past that, sticky detaches.
+   * + header combined — once you scroll past that, sticky detaches.
    *
    * Fix: `display: contents` on the wrapper removes its box from layout,
    * so the social bar and <header> become direct children of
@@ -143,7 +143,7 @@
   .header-inner { max-width: 1300px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 2rem; }
   .header-right { display: flex; align-items: center; gap: 2.5rem; }
 
-  /* Header subscribe CTA â€” prominent, gold-bordered, glitches + glows on hover */
+  /* Header subscribe CTA — prominent, gold-bordered, glitches + glows on hover */
   .header-cta {
     display: inline-flex;
     align-items: center;
@@ -163,7 +163,7 @@
     animation: red-pulse 6s infinite;
     white-space: nowrap;
   }
-  .header-cta::before { content: 'â—†'; color: var(--red); font-size: 0.6em; vertical-align: middle; text-shadow: 0 0 6px var(--red); }
+  .header-cta::before { content: '◆'; color: var(--red); font-size: 0.6em; vertical-align: middle; text-shadow: 0 0 6px var(--red); }
   .header-cta:hover {
     background: var(--gold);
     color: var(--void);
@@ -228,7 +228,7 @@
     .logo img { height: 64px; }
   }
 
-  /* Footer logo â€” smaller, centered */
+  /* Footer logo — smaller, centered */
   .footer-logo {
     display: inline-block;
     margin-bottom: 1.5rem;
@@ -355,7 +355,7 @@
     color: var(--gold); text-transform: uppercase; margin-bottom: 2rem;
     text-shadow: 0 0 12px rgba(255,212,0,0.5);
   }
-  .hero-eyebrow::before, .hero-eyebrow::after { content: 'â—†'; color: var(--red); margin: 0 0.5rem; font-size: 0.7em; vertical-align: middle; text-shadow: 0 0 8px var(--red); }
+  .hero-eyebrow::before, .hero-eyebrow::after { content: '◆'; color: var(--red); margin: 0 0.5rem; font-size: 0.7em; vertical-align: middle; text-shadow: 0 0 8px var(--red); }
   .hero h1 {
     font-family: 'Forum', serif; font-size: clamp(3rem, 9vw, 7rem);
     line-height: 0.95; color: var(--bone); margin-bottom: 1.8rem;
@@ -388,7 +388,7 @@
     animation: red-pulse 5s infinite;
   }
   .cta:hover { background: var(--gold); color: var(--void); text-shadow: none; letter-spacing: 0.5em; box-shadow: 0 0 0 4px var(--void), 0 0 0 5px var(--red), 0 0 60px rgba(229,9,20,0.5); animation: glitch-shift-fast 0.3s; }
-  .cta::before, .cta::after { content: 'â—†'; color: inherit; font-size: 0.7em; }
+  .cta::before, .cta::after { content: '◆'; color: inherit; font-size: 0.7em; }
 
   /* ============ BLOCK: ABOUT MODAL (opens from nav) ============ */
   .about-modal {
@@ -500,7 +500,7 @@
     margin-bottom: 0.6rem;
     text-shadow: 0 0 6px rgba(229,9,20,0.4);
   }
-  .about-eyebrow::before, .about-eyebrow::after { content: 'â—†'; color: var(--gold); margin: 0 0.5rem; font-size: 0.7em; vertical-align: middle; }
+  .about-eyebrow::before, .about-eyebrow::after { content: '◆'; color: var(--gold); margin: 0 0.5rem; font-size: 0.7em; vertical-align: middle; }
 
   .about-name {
     font-family: 'Forum', serif;
@@ -590,7 +590,7 @@
     border-top: 1px solid var(--border-dim);
     text-align: center;
   }
-  .about-handle::before, .about-handle::after { content: 'â—†'; color: var(--red); margin: 0 0.6rem; font-size: 0.7em; vertical-align: middle; }
+  .about-handle::before, .about-handle::after { content: '◆'; color: var(--red); margin: 0 0.6rem; font-size: 0.7em; vertical-align: middle; }
   .about-close {
     position: absolute; top: -1px; right: -1px;
     width: 48px; height: 48px;
@@ -697,7 +697,7 @@
     .hero-content { top: 3rem; left: 1.5rem; right: 1.5rem; bottom: 3rem; }
   }
 
-  /* Slide-specific eyebrow color accent â€” distinguishes the 3 update types */
+  /* Slide-specific eyebrow color accent — distinguishes the 3 update types */
   .hero-content[data-slide="0"] .hero-eyebrow { color: var(--gold); }
   .hero-content[data-slide="0"] .hero-eyebrow::before, .hero-content[data-slide="0"] .hero-eyebrow::after { color: var(--red); }
   .hero-content[data-slide="1"] .hero-eyebrow { color: var(--red); text-shadow: 0 0 12px rgba(229,9,20,0.5); }
@@ -705,7 +705,7 @@
   .hero-content[data-slide="2"] .hero-eyebrow { color: var(--cyan); text-shadow: 0 0 12px rgba(0,255,224,0.4); }
   .hero-content[data-slide="2"] .hero-eyebrow::before, .hero-content[data-slide="2"] .hero-eyebrow::after { color: var(--gold); }
 
-  /* Hero slider controls â€” sit OUTSIDE the deco frame, below */
+  /* Hero slider controls — sit OUTSIDE the deco frame, below */
   .hero-controls {
     position: relative;
     z-index: 3;
@@ -911,7 +911,7 @@
     opacity: 0.5;
   }
   .shelf-base::after {
-    content: 'â—†        â—†        â—†        â—†        â—†';
+    content: '◆        ◆        ◆        ◆        ◆';
     position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
     color: var(--gold); font-size: 0.6rem; letter-spacing: 0.4em;
     text-shadow: 0 0 6px rgba(255,212,0,0.5);
@@ -1048,7 +1048,7 @@
     text-shadow: 0 0 8px rgba(255,212,0,0.4);
     opacity: 0.85;
   }
-  .crt-brand::before, .crt-brand::after { content: 'â—†'; color: var(--red); margin: 0 0.5rem; font-size: 0.7em; vertical-align: middle; }
+  .crt-brand::before, .crt-brand::after { content: '◆'; color: var(--red); margin: 0 0.5rem; font-size: 0.7em; vertical-align: middle; }
 
   /* ============ SERVICES ============ */
   .services-grid {
@@ -1120,7 +1120,7 @@
     margin-bottom: 0.6rem;
     text-shadow: 0 0 6px rgba(229,9,20,0.4);
   }
-  .service-eyebrow::before { content: 'â—† '; }
+  .service-eyebrow::before { content: '◆ '; }
   .service-title {
     font-family: 'Forum', serif;
     font-size: 1.5rem;
@@ -1153,7 +1153,7 @@
     text-decoration: none;
     transition: all 0.3s;
   }
-  .service-btn::after { content: 'â†’'; }
+  .service-btn::after { content: '→'; }
   .service-btn:hover {
     background: var(--red);
     border-color: var(--red);
@@ -1195,7 +1195,7 @@
     margin: 0 -0.5px;
   }
   .gallery-tab::before {
-    content: 'â—†';
+    content: '◆';
     color: var(--red);
     margin-right: 0.6rem;
     font-size: 0.6em;
@@ -1307,7 +1307,7 @@
     padding: 0.5rem 1rem;
   }
   .gallery-image-label::before, .gallery-image-label::after {
-    content: 'â—†'; color: var(--red); margin: 0 0.4rem; font-size: 0.6em; vertical-align: middle;
+    content: '◆'; color: var(--red); margin: 0 0.4rem; font-size: 0.6em; vertical-align: middle;
   }
 
   .gallery-meta { padding: 1.2rem 1.4rem; position: relative; z-index: 4; }
@@ -1357,7 +1357,7 @@
     cursor: pointer;
     transition: all 0.2s;
   }
-  .gallery-chip::before { content: 'â—†'; color: var(--red); font-size: 0.5em; vertical-align: middle; margin-right: 0.4rem; opacity: 0.4; transition: opacity 0.2s; }
+  .gallery-chip::before { content: '◆'; color: var(--red); font-size: 0.5em; vertical-align: middle; margin-right: 0.4rem; opacity: 0.4; transition: opacity 0.2s; }
   .gallery-chip:hover {
     color: var(--gold);
     border-color: var(--gold);
@@ -1433,7 +1433,7 @@
     text-shadow: 0 0 8px rgba(255,212,0,0.3);
     margin-left: 1rem;
   }
-  .gallery-view-all::after { content: 'â†’'; }
+  .gallery-view-all::after { content: '→'; }
   .gallery-view-all:hover {
     background: var(--red);
     color: var(--bone);
@@ -1527,7 +1527,7 @@
     margin-bottom: 0.6rem;
     text-shadow: 0 0 6px rgba(229,9,20,0.4);
   }
-  .lightbox-tag::before { content: 'â—† '; color: var(--gold); }
+  .lightbox-tag::before { content: '◆ '; color: var(--gold); }
   .lightbox-title {
     font-family: 'Forum', serif;
     font-size: 1.6rem;
@@ -1566,7 +1566,7 @@
     transition: all 0.2s;
     align-self: flex-start;
   }
-  .lightbox-cta::after { content: 'â†’'; }
+  .lightbox-cta::after { content: '→'; }
   .lightbox-cta:hover {
     background: var(--red); color: var(--bone); border-color: var(--red);
     box-shadow: 0 0 16px rgba(229,9,20,0.4);
@@ -1657,7 +1657,7 @@
     text-shadow: 0 0 8px rgba(229,9,20,0.4);
   }
   .newsletter-eyebrow::before, .newsletter-eyebrow::after {
-    content: 'â—†'; color: var(--gold); margin: 0 0.6rem; font-size: 0.7em; vertical-align: middle;
+    content: '◆'; color: var(--gold); margin: 0 0.6rem; font-size: 0.7em; vertical-align: middle;
   }
   .newsletter h2 {
     font-family: 'Forum', serif;
@@ -1740,8 +1740,8 @@
     text-transform: uppercase;
     margin-top: 2rem;
   }
-  .newsletter-fine::before { content: 'â—† '; color: var(--red); }
-  .newsletter-fine::after { content: ' â—†'; color: var(--red); }
+  .newsletter-fine::before { content: '◆ '; color: var(--red); }
+  .newsletter-fine::after { content: ' ◆'; color: var(--red); }
 
   /* ============ FOOTER ============ */
   footer {
@@ -1773,7 +1773,7 @@
   }
 
   /* =========================================================
-   * v0.7.0 â€” additional in-page anchors
+   * v0.7.0 — additional in-page anchors
    * Generic scroll-offset so any :target lands clear of the
    * sticky social bar + header (~140 px combined). Applies to
    * built-in section IDs and per-content anchors alike.
@@ -1800,7 +1800,7 @@
   }
 
 /* =========================================================
- * v0.8.0 â€” Book Modal Â· Back-to-Top Â· Book single sections
+ * v0.8.0 — Book Modal · Back-to-Top · Book single sections
  * Imported from theme-mockups/16-book-modal-spa.html
  * ========================================================= */
 /* ============ BLOCK: BOOK MODAL (SPA-style overlay) ============ */
@@ -2025,7 +2025,7 @@
     z-index: 11;
     box-shadow: 0 0 14px rgba(255,212,0,0.6);
   }
-  .ku-badge::before { content: 'â—† '; color: var(--red-deep); }
+  .ku-badge::before { content: '◆ '; color: var(--red-deep); }
 
   .book-meta-col { padding-top: 0.5rem; }
   .book-series-mark {
@@ -2037,7 +2037,7 @@
     margin-bottom: 0.8rem;
     text-shadow: 0 0 6px rgba(229,9,20,0.5);
   }
-  .book-series-mark::before { content: 'â—† '; color: var(--gold); }
+  .book-series-mark::before { content: '◆ '; color: var(--gold); }
   .book-series-mark a { color: var(--red); text-decoration: none; }
   .book-title {
     font-family: 'Forum', serif;
@@ -2095,7 +2095,7 @@
     transition: all 0.3s;
     text-shadow: 0 0 6px rgba(255,212,0,0.3);
   }
-  .buy-btn::before { content: 'â—†'; color: var(--red); font-size: 0.55em; }
+  .buy-btn::before { content: '◆'; color: var(--red); font-size: 0.55em; }
   .buy-btn:hover {
     background: var(--gold); color: var(--void); text-shadow: none;
     box-shadow: 0 0 20px rgba(255,212,0,0.5);
@@ -2103,7 +2103,7 @@
   }
   .buy-btn:hover::before { color: var(--red-deep); }
 
-  /* v0.9 â€” Download Free (reader-magnet primary CTA).
+  /* v0.9 — Download Free (reader-magnet primary CTA).
      Inverts the .buy-btn pattern: filled on rest to draw the eye,
      brighter glow on hover. Used when download_url is set on a book. */
   .buy-btn-download {
@@ -2114,7 +2114,7 @@
     text-shadow: 0 0 8px rgba(255,212,0,0.35);
     box-shadow: 0 0 14px rgba(255,212,0,0.35);
   }
-  .buy-btn-download::before { content: 'â¬‡'; color: var(--red-deep); }
+  .buy-btn-download::before { content: '⬇'; color: var(--red-deep); }
   .buy-btn-download:hover {
     background: var(--gold-bright);
     color: var(--void);
@@ -2141,7 +2141,7 @@
     text-transform: uppercase; text-decoration: none;
     transition: all 0.25s;
   }
-  .find-btn::before { content: 'â—†'; color: var(--red); font-size: 0.55em; }
+  .find-btn::before { content: '◆'; color: var(--red); font-size: 0.55em; }
   .find-btn:hover {
     color: var(--gold); border-color: var(--gold);
     background: rgba(255,212,0,0.05);
@@ -2173,8 +2173,8 @@
     transition: background 0.2s;
   }
   .content-warnings summary::-webkit-details-marker { display: none; }
-  .content-warnings summary::before { content: 'â—†'; color: var(--red); font-size: 0.65em; text-shadow: 0 0 4px var(--red); }
-  .content-warnings summary::after  { content: 'â–¸'; margin-left: auto; color: var(--gold); font-size: 0.9em; transition: transform 0.25s; }
+  .content-warnings summary::before { content: '◆'; color: var(--red); font-size: 0.65em; text-shadow: 0 0 4px var(--red); }
+  .content-warnings summary::after  { content: '▸'; margin-left: auto; color: var(--gold); font-size: 0.9em; transition: transform 0.25s; }
   .content-warnings[open] summary::after { transform: rotate(90deg); }
   .content-warnings summary:hover { background: rgba(229,9,20,0.08); }
   .cw-count {
@@ -2198,7 +2198,7 @@
     background: rgba(0,0,0,0.4); border: 1px solid var(--red-deep);
     padding: 0.35rem 0.65rem;
   }
-  .cw-list li::before { content: 'â—† '; color: var(--red); font-size: 0.8em; }
+  .cw-list li::before { content: '◆ '; color: var(--red); font-size: 0.8em; }
   .cw-graphic li { border-color: var(--red); color: var(--red-bright); }
 
   /* Excerpt */
@@ -2214,7 +2214,7 @@
     color: var(--red); text-transform: uppercase;
     margin-bottom: 1rem;
   }
-  .book-excerpt-eyebrow::before, .book-excerpt-eyebrow::after { content: 'â—†'; color: var(--gold); margin: 0 0.6rem; font-size: 0.7em; vertical-align: middle; }
+  .book-excerpt-eyebrow::before, .book-excerpt-eyebrow::after { content: '◆'; color: var(--gold); margin: 0 0.6rem; font-size: 0.7em; vertical-align: middle; }
   .book-excerpt-title {
     font-family: 'Forum', serif; text-align: center;
     color: var(--gold); font-size: 1.8rem;
@@ -2346,16 +2346,16 @@
     text-shadow: 0 0 14px rgba(255,212,0,0.4);
     position: relative;
   }
-  .also-by-cover::before { content: 'â—† â—†'; font-size: 0.45rem; letter-spacing: 0.5em; color: var(--red); margin-bottom: 0.8rem; }
-  .also-by-cover::after  { content: 'â—† â—†'; font-size: 0.45rem; letter-spacing: 0.5em; color: var(--red); margin-top: 0.8rem; }
+  .also-by-cover::before { content: '◆ ◆'; font-size: 0.45rem; letter-spacing: 0.5em; color: var(--red); margin-bottom: 0.8rem; }
+  .also-by-cover::after  { content: '◆ ◆'; font-size: 0.45rem; letter-spacing: 0.5em; color: var(--red); margin-top: 0.8rem; }
   .also-by-cover-title { font-size: 0.95rem; }
   .ab-meta { padding: 1.2rem 1.2rem 1.4rem; position: relative; z-index: 4; }
   .ab-tag { font-family: 'Forum', serif; font-size: 0.6rem; letter-spacing: 0.35em; color: var(--red); text-transform: uppercase; margin-bottom: 0.4rem; }
-  .ab-tag::before { content: 'â—† '; color: var(--gold); }
+  .ab-tag::before { content: '◆ '; color: var(--gold); }
   .ab-title { font-family: 'Forum', serif; font-size: 1rem; color: var(--gold); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.35rem; transition: text-shadow 0.3s; }
   .ab-tagline { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 0.9rem; color: var(--bone-dim); line-height: 1.5; }
 
-  /* ============ BACK TO TOP â€” floating arrow, bottom-right ============ */
+  /* ============ BACK TO TOP — floating arrow, bottom-right ============ */
   .back-to-top {
     position: fixed;
     bottom: 2rem; right: 2rem;
@@ -2409,7 +2409,7 @@
 
   
 /* =========================================================
- * v0.9.0 â€” author byline on book hero
+ * v0.9.0 — author byline on book hero
  * ========================================================= */
 .book-byline {
   display: inline-flex;
@@ -2447,9 +2447,9 @@
 
 
   /* =========================================================
-   * v0.9.1 â€” LINKTREE PAGE
+   * v0.9.1 — LINKTREE PAGE
    * Single-column bio-link layout for /links page.
-   * Avatar + name + bio â†’ stacked Books / Web Novels / Follow.
+   * Avatar + name + bio → stacked Books / Web Novels / Follow.
    * ========================================================= */
   .block-linktree {
     max-width: 640px;
@@ -2592,7 +2592,7 @@
   }
   .linktree-tile:hover .linktree-tile-cta { opacity: 1; transform: translateX(3px); }
 
-  /* Reader-magnet "free download" tile â€” leans gold to signal primary CTA */
+  /* Reader-magnet "free download" tile — leans gold to signal primary CTA */
   .linktree-tile--free { border-color: rgba(255,212,0,0.35); }
   .linktree-tile--free:hover { box-shadow: 0 0 22px rgba(255,212,0,0.4); }
 
@@ -2633,7 +2633,7 @@
 
 
   /* =========================================================
-   * v0.9.3 â€” COMMISSION INQUIRY FORMS
+   * v0.9.3 — COMMISSION INQUIRY FORMS
    * Shortcodes: [ht_commission_art] [ht_commission_cover] [ht_commission_ai]
    * Self-posting forms, wp_mail() delivery, Haunted Tech aesthetic.
    * ========================================================= */
@@ -2940,7 +2940,7 @@
   text-shadow: 0 0 6px rgba(229, 9, 20, 0.4);
 }
 .commission-eyebrow::before, .commission-eyebrow::after {
-  content: 'â—†'; color: var(--gold); margin: 0 0.5rem;
+  content: '◆'; color: var(--gold); margin: 0 0.5rem;
   font-size: 0.7em; vertical-align: middle;
 }
 .commission-title {
@@ -2984,19 +2984,19 @@
 }
 .commission-body::-webkit-scrollbar-thumb:hover { background: var(--red); box-shadow: 0 0 8px var(--red); }
 
-/* Form sits cleanly inside the modal's right column â€” strip its outer
+/* Form sits cleanly inside the modal's right column — strip its outer
  * wrap/panel chrome so the modal frame is the only visible container. */
 .commission-body .htf-wrap { max-width: none; margin: 0; padding: 0; }
 .commission-body .htf-form { background: none; border: none; padding: 0; }
 
 body.commission-open { overflow: hidden; }
 /* Hide every page-level visual while a commission modal is open so the
- * modal overlay reads as a clean, fully-black backdrop â€” matching the
+ * modal overlay reads as a clean, fully-black backdrop — matching the
  * about modal exactly.
  *   - header / social-bar: would otherwise sit above the overlay thanks
  *     to their own backdrop-filter stacking contexts.
  *   - .crt-band / .static-burst: position:fixed page-level "overlays"
- *     with mix-blend-mode:screen â€” their brightness bleeds THROUGH the
+ *     with mix-blend-mode:screen — their brightness bleeds THROUGH the
  *     94% black modal overlay because screen-blend adds light. */
 body.commission-open header,
 body.commission-open .social-bar,
