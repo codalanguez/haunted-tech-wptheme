@@ -1,3 +1,59 @@
+  // ===== Shared modal focus-trap =====
+  // htFocusTrap(modalEl) returns { activate(), deactivate() }. Call activate()
+  // right after a modal becomes visible: it remembers whatever had focus,
+  // moves focus into the modal, and traps Tab/Shift+Tab inside it. Call
+  // deactivate() right after closing: it releases the trap and restores focus
+  // to whatever triggered the modal (button, spine, card, etc.). Every modal
+  // root (#about-modal, #monkii-modal, #lightbox, #book-modal, #webnovel-modal)
+  // needs tabindex="-1" so it's a valid fallback focus target when it has no
+  // focusable children yet (e.g. book/webnovel modals before REST content loads).
+  const HT_FOCUSABLE = 'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
+  function htFocusTrap(modal) {
+    let lastFocused = null;
+    function focusable() {
+      return Array.from(modal.querySelectorAll(HT_FOCUSABLE))
+        .filter(el => el.offsetWidth || el.offsetHeight || el === document.activeElement);
+    }
+    function onKeydown(e) {
+      if (e.key !== 'Tab') return;
+      const items = focusable();
+      if (!items.length) return;
+      const first = items[0];
+      const last  = items[items.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault(); last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault(); first.focus();
+      }
+    }
+    let isActive = false;
+    return {
+      // Safe to call again while already active (e.g. a "More in Series" /
+      // "Also By" link navigates the modal to new REST-fetched content
+      // without closing it first) — re-focuses the fresh content but keeps
+      // the ORIGINAL trigger as the element focus returns to on deactivate().
+      activate() {
+        if (!isActive) {
+          lastFocused = document.activeElement;
+          isActive = true;
+        }
+        modal.addEventListener('keydown', onKeydown);
+        requestAnimationFrame(() => {
+          const items = focusable();
+          (items[0] || modal).focus({ preventScroll: true });
+        });
+      },
+      deactivate() {
+        modal.removeEventListener('keydown', onKeydown);
+        if (lastFocused && typeof lastFocused.focus === 'function') {
+          lastFocused.focus({ preventScroll: true });
+        }
+        lastFocused = null;
+        isActive = false;
+      }
+    };
+  }
+
   // ===== About modal: open from any [data-open-about] OR any <a> whose href
   // resolves to #about (so user-created WP menu items pointing to /#about
   // or #about work without needing the data attribute). Close on Esc / × /
@@ -6,15 +62,18 @@
     const modal = document.getElementById('about-modal');
     if (!modal) return;
     const closeBtn = modal.querySelector('.about-close');
+    const trap = htFocusTrap(modal);
     function open() {
       modal.classList.add('active');
       modal.setAttribute('aria-hidden', 'false');
       document.body.classList.add('about-open');
+      trap.activate();
     }
     function close() {
       modal.classList.remove('active');
       modal.setAttribute('aria-hidden', 'true');
       document.body.classList.remove('about-open');
+      trap.deactivate();
     }
     // Delegated click handler — catches both [data-open-about] triggers and
     // any anchor pointing at the #about hash (same-page or cross-page).
@@ -50,10 +109,12 @@
     const modal = document.getElementById('monkii-modal');
     if (!modal) return;
     const closeBtn = modal.querySelector('.monkii-close');
+    const trap = htFocusTrap(modal);
     function open() {
       modal.classList.add('active');
       modal.setAttribute('aria-hidden', 'false');
       document.body.classList.add('monkii-open');
+      trap.activate();
       // Close conflicting modals
       const about = document.getElementById('about-modal');
       if (about && about.classList.contains('active')) {
@@ -66,6 +127,7 @@
       modal.classList.remove('active');
       modal.setAttribute('aria-hidden', 'true');
       document.body.classList.remove('monkii-open');
+      trap.deactivate();
       if (location.hash === '#monkii') {
         history.replaceState(null, '', location.pathname + location.search);
       }
@@ -238,6 +300,7 @@
     const lbClose = lightbox.querySelector('.lightbox-close');
     const lbPrev = lightbox.querySelector('.lightbox-nav.prev');
     const lbNext = lightbox.querySelector('.lightbox-nav.next');
+    const lbTrap = htFocusTrap(lightbox);
     let currentItems = [];
     let currentIndex = 0;
 
@@ -251,6 +314,7 @@
       lightbox.classList.add('active');
       lightbox.setAttribute('aria-hidden', 'false');
       document.body.classList.add('lightbox-open');
+      lbTrap.activate();
     }
     function renderLightbox() {
       const item = currentItems[currentIndex];
@@ -272,6 +336,7 @@
       lightbox.classList.remove('active');
       lightbox.setAttribute('aria-hidden', 'true');
       document.body.classList.remove('lightbox-open');
+      lbTrap.deactivate();
     }
     document.querySelectorAll('.gallery-item').forEach(item => {
       item.addEventListener('click', e => { e.preventDefault(); openLightbox(item); });
@@ -295,6 +360,7 @@
     const body  = document.getElementById('book-modal-body');
     const title = document.getElementById('book-modal-title');
     const close = modal.querySelector('.book-modal-close');
+    const trap  = htFocusTrap(modal);
 
     // Endpoint base — same-origin /wp-json/haunted-tech/v1/book-modal/<slug>
     const REST_ROOT = (window.wpApiSettings && window.wpApiSettings.root) || (location.origin + '/wp-json/');
@@ -317,6 +383,7 @@
         modal.setAttribute('aria-hidden', 'false');
         document.body.classList.add('book-modal-open');
         body.scrollTop = 0;
+        trap.activate();
         if (!fromHash) history.replaceState(null, '', '#book-' + slug);
         // Close conflicting modals
         const about = document.getElementById('about-modal');
@@ -332,6 +399,7 @@
       modal.classList.remove('active');
       modal.setAttribute('aria-hidden', 'true');
       document.body.classList.remove('book-modal-open');
+      trap.deactivate();
       if (location.hash.startsWith('#book-')) {
         history.replaceState(null, '', location.pathname + location.search);
       }
@@ -384,6 +452,7 @@
     const body  = document.getElementById('webnovel-modal-body');
     const title = document.getElementById('webnovel-modal-title');
     const close = modal.querySelector('[data-close-webnovel]');
+    const trap  = htFocusTrap(modal);
     const REST_ROOT = (window.wpApiSettings && window.wpApiSettings.root) || (location.origin + '/wp-json/');
     const ENDPOINT  = REST_ROOT + 'haunted-tech/v1/webnovel-modal/';
     const cache = new Map();
@@ -403,6 +472,7 @@
         modal.setAttribute('aria-hidden', 'false');
         document.body.classList.add('book-modal-open');
         body.scrollTop = 0;
+        trap.activate();
         if (!fromHash) history.replaceState(null, '', '#webnovel-' + slug);
         // Close conflicting modals
         const bookModal = document.getElementById('book-modal');
@@ -418,6 +488,7 @@
       modal.classList.remove('active');
       modal.setAttribute('aria-hidden', 'true');
       document.body.classList.remove('book-modal-open');
+      trap.deactivate();
       if (location.hash.startsWith('#webnovel-')) {
         history.replaceState(null, '', location.pathname + location.search);
       }
@@ -438,5 +509,31 @@
     window.addEventListener('hashchange', () => {
       const m2 = location.hash.match(/^#webnovel-([\w-]+)/);
       if (m2) openWN(m2[1], true);
+    });
+  })();
+
+  // ===== Header search: toggle popover, focus input on open, close on Esc / outside click =====
+  (function(){
+    const toggle = document.getElementById('header-search-toggle');
+    const panel  = document.getElementById('header-search-panel');
+    if (!toggle || !panel) return;
+    const input = panel.querySelector('input[type="search"]');
+    function open() {
+      panel.hidden = false;
+      toggle.setAttribute('aria-expanded', 'true');
+      if (input) input.focus({ preventScroll: true });
+    }
+    function close() {
+      panel.hidden = true;
+      toggle.setAttribute('aria-expanded', 'false');
+    }
+    toggle.addEventListener('click', () => { panel.hidden ? open() : close(); });
+    document.addEventListener('click', e => {
+      if (panel.hidden) return;
+      if (panel.contains(e.target) || toggle.contains(e.target)) return;
+      close();
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && !panel.hidden) { close(); toggle.focus(); }
     });
   })();

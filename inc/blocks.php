@@ -44,6 +44,7 @@ add_action('init', function () {
         ['slug' => 'book-excerpt',          'title' => 'Book Excerpt',                'render' => 'ht_render_book_excerpt',          'icon' => 'edit-page'],
         ['slug' => 'book-more-in-series',   'title' => 'Book — More in Series',       'render' => 'ht_render_book_more_in_series',   'icon' => 'book'],
         ['slug' => 'also-by',               'title' => 'Also by (Author)',             'render' => 'ht_render_also_by',               'icon' => 'screenoptions'],
+        ['slug' => 'related-across-formats', 'title' => 'You Might Also Like (cross-format)', 'render' => 'ht_render_related_across_formats', 'icon' => 'randomize'],
         ['slug' => 'book-modal',            'title' => 'Book Modal (singleton)',       'render' => 'ht_render_book_modal_shell',      'icon' => 'fullscreen-alt'],
         ['slug' => 'webnovel-modal',        'title' => 'Web Novel Modal (singleton)', 'render' => 'ht_render_webnovel_modal_shell',  'icon' => 'fullscreen-alt'],
         ['slug' => 'also-by-webnovels',     'title' => 'Also by (Web Novels)',         'render' => 'ht_render_also_by_webnovels',     'icon' => 'admin-page'],

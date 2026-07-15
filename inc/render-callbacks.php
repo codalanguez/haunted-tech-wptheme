@@ -95,6 +95,14 @@ function ht_render_site_header($attributes = []) {
             ]);
             ?>
           </nav>
+          <div class="header-search-wrap">
+            <button type="button" class="header-search-toggle" id="header-search-toggle" aria-expanded="false" aria-controls="header-search-panel" aria-label="<?php esc_attr_e('Search the site', 'haunted-tech'); ?>">
+              <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+            </button>
+            <div class="header-search-panel" id="header-search-panel" hidden>
+              <?php get_search_form(); ?>
+            </div>
+          </div>
           <a href="#newsletter" class="header-cta">Subscribe</a>
         </div>
       </div>
@@ -291,7 +299,7 @@ function ht_render_services($attributes = []) {
     <section class="block-services" id="services">
       <div class="section-header">
         <h2 class="section-title">Services</h2>
-        <div class="section-meta">Commissions Open &mdash; Limited Slots</div>
+        <div class="section-meta">Commissions Open &mdash; Booking Now</div>
       </div>
       <div class="services-grid">
         <div class="service-card" id="service-art">
@@ -659,7 +667,7 @@ function ht_render_monkii_modal($attributes = []) {
     $icon = HAUNTED_TECH_URI . '/assets/monkii-icon.png';
     $shot = HAUNTED_TECH_URI . '/assets/monkii-chat.png';
     ob_start(); ?>
-    <div class="monkii-modal" id="monkii-modal" role="dialog" aria-modal="true" aria-labelledby="monkii-name" aria-hidden="true">
+    <div class="monkii-modal" id="monkii-modal" role="dialog" aria-modal="true" aria-labelledby="monkii-name" aria-hidden="true" tabindex="-1">
       <div class="monkii-frame">
         <button class="monkii-close" aria-label="Close MONKII studio">&times;</button>
         <div class="monkii-visual" style="background-image: url('<?php echo esc_url($shot); ?>');">
@@ -709,7 +717,7 @@ function ht_render_overlays($attributes = []) {
  * ============================================================ */
 function ht_render_lightbox($attributes = []) {
     ob_start(); ?>
-    <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-labelledby="lightbox-title" aria-hidden="true">
+    <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-labelledby="lightbox-title" aria-hidden="true" tabindex="-1">
       <div class="lightbox-frame">
         <button class="lightbox-nav prev" aria-label="Previous">&larr;</button>
         <button class="lightbox-nav next" aria-label="Next">&rarr;</button>
@@ -746,7 +754,7 @@ function ht_render_about_modal($attributes = []) {
         }
     }
     ob_start(); ?>
-    <div class="about-modal" id="about-modal" role="dialog" aria-modal="true" aria-labelledby="about-name" aria-hidden="true">
+    <div class="about-modal" id="about-modal" role="dialog" aria-modal="true" aria-labelledby="about-name" aria-hidden="true" tabindex="-1">
       <div class="about-frame">
         <button class="about-close" aria-label="Close about">&times;</button>
         <div class="about-portrait" style="background-image: url('<?php echo esc_url($portrait); ?>');">
@@ -1081,13 +1089,94 @@ function ht_render_also_by($attributes = []) {
 }
 
 /* ============================================================
+ * RELATED ACROSS FORMATS — "you might also like" cross-recs.
+ * Book pages recommend web novels; web novel pages recommend books.
+ * Always scoped to this author — single-site, no external picks.
+ * Prioritizes items whose `genre` field overlaps the current post's,
+ * then backfills with the most recent items of the other format.
+ * ============================================================ */
+function ht_render_related_across_formats($attributes = []) {
+    $current_id   = get_the_ID();
+    $current_type = $current_id ? get_post_type($current_id) : '';
+    if (!in_array($current_type, ['book', 'webnovel'], true)) return '';
+
+    $target_type   = ($current_type === 'book') ? 'webnovel' : 'book';
+    $current_genre = strtolower((string) get_field('genre', $current_id));
+    $genre_words   = array_filter(array_map('trim', preg_split('/[,\/&]+/', $current_genre)));
+
+    $candidates = get_posts([
+        'post_type'      => $target_type,
+        'posts_per_page' => -1,
+        'post_status'    => 'publish',
+        'orderby'        => 'date',
+        'order'          => 'DESC',
+    ]);
+    if (empty($candidates)) return '';
+
+    $matched = $unmatched = [];
+    foreach ($candidates as $c) {
+        $c_genre  = strtolower((string) get_field('genre', $c->ID));
+        $overlaps = false;
+        foreach ($genre_words as $w) {
+            if ($w !== '' && strpos($c_genre, $w) !== false) { $overlaps = true; break; }
+        }
+        if ($overlaps) $matched[] = $c; else $unmatched[] = $c;
+    }
+    $others = array_slice(array_merge($matched, $unmatched), 0, 4);
+    if (empty($others)) return '';
+
+    $is_wn   = ($target_type === 'webnovel');
+    $heading = ($current_type === 'book') ? 'You Might Also Like' : 'If You Like This, Try&hellip;';
+    $meta    = $is_wn ? 'A web novel by ' . get_bloginfo('name') : 'A book by ' . get_bloginfo('name');
+
+    ob_start(); ?>
+    <section class="also-by-section related-cross-format">
+      <div class="section-header">
+        <h2 class="section-title"><?php echo $heading; ?></h2>
+        <div class="section-meta"><?php echo esc_html($meta); ?></div>
+      </div>
+      <div class="also-by-grid">
+        <?php foreach ($others as $item):
+            $tagline   = $is_wn ? get_field('tagline', $item->ID) : get_field('blurb', $item->ID);
+            $tagline   = $tagline ? wp_trim_words($tagline, 18, '…') : '';
+            $cover     = get_field('cover', $item->ID);
+            $cover_url = (is_array($cover) && !empty($cover['url'])) ? $cover['url']
+                       : (has_post_thumbnail($item->ID) ? get_the_post_thumbnail_url($item->ID, 'medium') : '');
+            $format_label = $is_wn ? 'Web Novel' : (get_field('series', $item->ID) ?: 'Book');
+            $open_attr    = $is_wn
+                ? ' data-open-webnovel="' . esc_attr($item->post_name) . '"'
+                : ' data-open-book="'     . esc_attr($item->post_name) . '"';
+        ?>
+          <a href="<?php echo esc_url(get_permalink($item)); ?>"<?php echo $open_attr; ?> class="also-by-card">
+            <div class="also-by-cover" style="<?php echo $cover_url ? 'padding:0;' : ''; ?>">
+              <?php if ($cover_url): ?>
+                <img src="<?php echo esc_url($cover_url); ?>" alt="<?php echo esc_attr(get_the_title($item)); ?>" style="display:block;width:100%;height:100%;object-fit:cover;">
+              <?php else: ?>
+                <div class="also-by-cover-title"><?php echo esc_html(get_the_title($item)); ?></div>
+              <?php endif; ?>
+            </div>
+            <div class="ab-meta">
+              <div class="ab-tag"><?php echo esc_html($format_label); ?></div>
+              <div class="ab-title"><?php echo esc_html(get_the_title($item)); ?></div>
+              <?php if ($tagline): ?><div class="ab-tagline"><?php echo esc_html($tagline); ?></div><?php endif; ?>
+            </div>
+          </a>
+        <?php endforeach; ?>
+      </div>
+    </section>
+    <?php
+    return ob_get_clean();
+}
+
+/* ============================================================
  * COMPOSED MODAL CONTENT
  * ============================================================ */
 function ht_render_book_modal_content() {
     return ht_render_single_book()
          . ht_render_book_excerpt()
          . ht_render_book_more_in_series()
-         . ht_render_also_by();
+         . ht_render_also_by()
+         . ht_render_related_across_formats();
 }
 
 /* ============================================================
@@ -1095,7 +1184,7 @@ function ht_render_book_modal_content() {
  * ============================================================ */
 function ht_render_book_modal_shell($attributes = []) {
     ob_start(); ?>
-    <div class="book-modal" id="book-modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="book-modal" id="book-modal" role="dialog" aria-modal="true" aria-hidden="true" tabindex="-1">
       <div class="book-modal-frame">
         <div class="book-modal-topbar">
           <div class="book-modal-breadcrumb">
@@ -1115,7 +1204,7 @@ function ht_render_book_modal_shell($attributes = []) {
  * ============================================================ */
 function ht_render_webnovel_modal_shell($attributes = []) {
     ob_start(); ?>
-    <div class="book-modal webnovel-modal" id="webnovel-modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="book-modal webnovel-modal" id="webnovel-modal" role="dialog" aria-modal="true" aria-hidden="true" tabindex="-1">
       <div class="book-modal-frame">
         <div class="book-modal-topbar">
           <div class="book-modal-breadcrumb">
@@ -1174,7 +1263,8 @@ function ht_render_also_by_webnovels($attributes = []) {
 
 function ht_render_webnovel_modal_content() {
     return ht_render_single_webnovel()
-         . ht_render_also_by_webnovels();
+         . ht_render_also_by_webnovels()
+         . ht_render_related_across_formats();
 }
 
 /* ============================================================

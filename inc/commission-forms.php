@@ -67,7 +67,25 @@ function ht_commission_process($form_id, $subject_prefix, $fields) {
         "Reply-To: {$name} <{$email}>",
     ];
 
-    return ['success' => wp_mail(HT_COMMISSION_EMAIL, $subject, $body, $headers)];
+    $sent = wp_mail(HT_COMMISSION_EMAIL, $subject, $body, $headers);
+
+    /* Best-effort receipt back to the submitter — doesn't affect $sent /
+     * the on-page success state, since the inquiry itself already landed. */
+    if ($sent && is_email($email)) {
+        $confirm_subject = "Got it — your {$subject_prefix} inquiry has landed";
+        $confirm_body  = "Hey {$first},\n\n";
+        $confirm_body .= "Your {$subject_prefix} inquiry just landed in my inbox. I'll review it and reply within 2–3 business days.\n\n";
+        $confirm_body .= "For your records, here's what you sent:\n\n";
+        $confirm_body .= implode("\n", $lines);
+        $confirm_body .= "\n\n---\n" . get_bloginfo('name') . ' — ' . get_bloginfo('url');
+        $confirm_headers = [
+            'Content-Type: text/plain; charset=UTF-8',
+            'Reply-To: ' . HT_COMMISSION_EMAIL,
+        ];
+        wp_mail($email, $confirm_subject, $confirm_body, $confirm_headers);
+    }
+
+    return ['success' => $sent];
 }
 
 /* ============================================================
