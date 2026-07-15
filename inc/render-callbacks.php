@@ -85,16 +85,16 @@ function ht_render_site_header($attributes = []) {
             <?php endif; ?>
           </span>
         </a>
+        <nav class="site-nav" role="navigation" aria-label="Primary">
+          <?php
+          wp_nav_menu([
+              'theme_location' => 'primary',
+              'container'      => false,
+              'fallback_cb'    => 'haunted_tech_default_primary_menu',
+          ]);
+          ?>
+        </nav>
         <div class="header-right">
-          <nav role="navigation" aria-label="Primary">
-            <?php
-            wp_nav_menu([
-                'theme_location' => 'primary',
-                'container'      => false,
-                'fallback_cb'    => 'haunted_tech_default_primary_menu',
-            ]);
-            ?>
-          </nav>
           <div class="header-search-wrap">
             <button type="button" class="header-search-toggle" id="header-search-toggle" aria-expanded="false" aria-controls="header-search-panel" aria-label="<?php esc_attr_e('Search the site', 'haunted-tech'); ?>">
               <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>

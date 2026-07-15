@@ -140,8 +140,22 @@
     width: 200px; height: 1px;
     background: linear-gradient(90deg, transparent, var(--red), var(--gold), var(--red), transparent);
   }
-  .header-inner { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 2rem; }
-  .header-right { display: flex; align-items: center; gap: 2.5rem; }
+  /* Three-column grid instead of absolute-centering the nav: the two 1fr
+     tracks are always equal width regardless of what the logo/header-right
+     actually contain, so the auto-width middle track (nav) is genuinely
+     centered on the header with no risk of overlapping either side —
+     tested and reverted from position:absolute, which overlapped the logo
+     at ordinary desktop widths (1280px) once the nav's own width grew. */
+  .header-inner {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 2rem;
+  }
+  .logo { justify-self: start; }
+  .site-nav { justify-self: center; }
+  .header-right { display: flex; align-items: center; gap: 2.5rem; justify-self: end; }
 
   /* Header subscribe CTA — prominent, gold-bordered, glitches + glows on hover */
   .header-cta {
@@ -1888,7 +1902,8 @@
   footer .theme-name { font-family: 'Forum', serif; color: var(--gold); letter-spacing: 0.4em; text-transform: uppercase; font-size: 0.7rem; margin-top: 0.5rem; }
 
   @media (max-width: 700px) {
-    .header-inner { flex-direction: column; gap: 1rem; }
+    .header-inner { grid-template-columns: 1fr; justify-items: center; gap: 1rem; }
+    .logo, .site-nav, .header-right { justify-self: center; }
     .hero-frame { padding: 3rem 1.5rem; }
     .crt-row { grid-template-columns: 24px 1fr; gap: 0.6rem; }
     .crt-tag, .crt-meta, .crt-state { grid-column: 2; font-size: 0.85rem; }
