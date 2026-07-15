@@ -38,10 +38,13 @@
           isActive = true;
         }
         modal.addEventListener('keydown', onKeydown);
-        requestAnimationFrame(() => {
-          const items = focusable();
-          (items[0] || modal).focus({ preventScroll: true });
-        });
+        // Synchronous, not requestAnimationFrame: rAF can be paused/throttled
+        // in backgrounded or non-visible tabs, silently dropping the focus
+        // shift. Reading offsetWidth/offsetHeight inside focusable() already
+        // forces the layout the class-toggle just triggered, so the browser
+        // has accurate, current geometry without needing to wait a frame.
+        const items = focusable();
+        (items[0] || modal).focus({ preventScroll: true });
       },
       deactivate() {
         modal.removeEventListener('keydown', onKeydown);
