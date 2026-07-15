@@ -286,7 +286,7 @@ function ht_render_crt_monitor($attributes = []) {
               </div>
             <?php endif; ?>
           </div>
-          <div style="margin-top:1.5rem; position:relative; z-index:2;">
+          <div style="margin-top:1.5rem; position:relative; z-index:1;">
             <span class="user" style="color:var(--gold)">coda@haunted-tech</span>:<span class="path" style="color:var(--bone)">~/webnovels</span>$ <span class="crt-cursor">&#9608;</span>
           </div>
         </div>
