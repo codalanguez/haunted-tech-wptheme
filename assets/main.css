@@ -856,7 +856,10 @@
     color: var(--bone-dim);
     text-transform: none;
   }
-  /* Hover tooltip: title + genre, matches the .social-list a::after pattern */
+  /* Hover tooltip: title + genre, matches the .social-list a::after pattern.
+   * Shared component for any book-spine listing (.spine, .more-spine, ...) —
+   * this is THE convention for spine ornaments site-wide: no red dots, a
+   * .spine-tip on hover/focus instead. */
   .spine-tip {
     writing-mode: horizontal-tb;
     position: absolute;
@@ -905,11 +908,14 @@
     color: var(--bone-dim);
   }
   .spine:hover .spine-tip,
-  .spine:focus-visible .spine-tip {
+  .spine:focus-visible .spine-tip,
+  .more-spine:hover .spine-tip,
+  .more-spine:focus-visible .spine-tip {
     opacity: 1;
     transform: translateX(-50%) translateY(0);
   }
-  .spine.gold .spine-tip { border-color: var(--gold-bright); }
+  .spine.gold .spine-tip,
+  .more-spine.gold .spine-tip { border-color: var(--gold-bright); }
   .spine.oxblood {
     background:
       linear-gradient(90deg, rgba(0,0,0,0.5) 0%, transparent 10%, transparent 90%, rgba(0,0,0,0.5) 100%),
@@ -2289,6 +2295,7 @@
   .more-series-section { padding: 4rem 3rem; max-width: 1300px; margin: 0 auto; }
   .series-spine-row {
     display: flex; gap: 12px; align-items: flex-end; justify-content: center;
+    flex-wrap: wrap;
     margin-top: 2.5rem; min-height: 420px;
     position: relative; padding-bottom: 60px;
   }
@@ -2337,9 +2344,8 @@
       linear-gradient(90deg, rgba(0,0,0,0.5) 0%, transparent 10%, transparent 90%, rgba(0,0,0,0.5) 100%),
       linear-gradient(180deg, #1A4550 0%, #0a2028 50%, #1A4550 100%);
   }
-  .more-spine-title { font-size: 0.95rem; }
+  .more-spine-title { font-size: 0.95rem; line-height: 1.5; max-block-size: 100%; }
   .more-spine-author { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 0.65rem; letter-spacing: 0.2em; color: var(--bone-dim); text-transform: none; }
-  .more-spine-ornament { writing-mode: horizontal-tb; color: var(--red); font-size: 0.55rem; letter-spacing: 0.4em; }
   .series-shelf-base {
     position: absolute; bottom: 30px; left: 0; right: 0; height: 30px;
     background: linear-gradient(180deg, var(--obsidian) 0%, var(--void) 100%);

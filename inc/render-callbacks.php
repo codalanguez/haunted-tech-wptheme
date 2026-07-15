@@ -992,15 +992,20 @@ function ht_render_book_more_in_series($attributes = []) {
             $width      = 64 + (($i * 7) % 25);
             $height     = 380 + (($i * 11) % 60);
             $n          = get_field('series_number', $sib->ID) ?: '?';
+            $sib_genre  = get_field('genre', $sib->ID);
             $cls        = 'more-spine ' . $variant . ($is_current ? ' current' : '');
+            $tip_id     = 'spine-tip-' . esc_attr($sib->post_name);
         ?>
           <a <?php echo $is_current ? '' : 'href="' . esc_url(get_permalink($sib)) . '" data-open-book="' . esc_attr($sib->post_name) . '"'; ?>
              class="<?php echo esc_attr($cls); ?>"
-             style="width:<?php echo (int)$width; ?>px; height:<?php echo (int)$height; ?>px;">
-            <div class="more-spine-ornament">&#9670; &#9670;</div>
+             style="min-width:<?php echo (int)$width; ?>px; height:<?php echo (int)$height; ?>px;"
+             aria-describedby="<?php echo esc_attr($tip_id); ?>">
             <div class="more-spine-title"><?php echo esc_html(get_the_title($sib)); ?> &mdash; <?php echo esc_html($n); ?></div>
             <div class="more-spine-author"><?php echo esc_html($series); ?></div>
-            <div class="more-spine-ornament">&#9670; &#9670;</div>
+            <div class="spine-tip" id="<?php echo esc_attr($tip_id); ?>" role="tooltip">
+              <span class="spine-tip-title"><?php echo esc_html(get_the_title($sib)); ?></span>
+              <?php if ($sib_genre): ?><span class="spine-tip-genre"><?php echo esc_html($sib_genre); ?></span><?php endif; ?>
+            </div>
           </a>
         <?php endforeach; ?>
         <div class="series-shelf-base"></div>
