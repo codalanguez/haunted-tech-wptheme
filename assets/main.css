@@ -856,13 +856,60 @@
     color: var(--bone-dim);
     text-transform: none;
   }
-  .spine-ornament {
+  /* Hover tooltip: title + genre, matches the .social-list a::after pattern */
+  .spine-tip {
     writing-mode: horizontal-tb;
-    color: var(--red);
-    font-size: 0.6rem;
-    letter-spacing: 0.4em;
-    text-shadow: 0 0 6px rgba(229,9,20,0.4);
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 14px);
+    transform: translateX(-50%) translateY(6px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    min-width: 140px;
+    max-width: 220px;
+    padding: 0.55rem 0.9rem;
+    background: var(--void);
+    border: 1px solid var(--gold);
+    box-shadow: 0 0 20px rgba(0,0,0,0.7);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s, transform 0.2s;
+    z-index: 20;
   }
+  .spine-tip::after {
+    content: '';
+    position: absolute; top: 100%; left: 50%; transform: translateX(-50%) rotate(45deg);
+    width: 8px; height: 8px;
+    background: var(--void);
+    border-right: 1px solid var(--gold);
+    border-bottom: 1px solid var(--gold);
+    margin-top: -5px;
+  }
+  .spine-tip-title {
+    font-family: 'Forum', serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gold);
+    text-align: center;
+    white-space: normal;
+  }
+  .spine-tip-genre {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--bone-dim);
+  }
+  .spine:hover .spine-tip,
+  .spine:focus-visible .spine-tip {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  .spine.gold .spine-tip { border-color: var(--gold-bright); }
   .spine.oxblood {
     background:
       linear-gradient(90deg, rgba(0,0,0,0.5) 0%, transparent 10%, transparent 90%, rgba(0,0,0,0.5) 100%),
@@ -887,7 +934,6 @@
     border-bottom-color: rgba(0,0,0,0.4);
   }
   .spine.gold .spine-author { color: rgba(0,0,0,0.7); }
-  .spine.gold .spine-ornament { color: var(--red-deep); text-shadow: none; }
   .spine.charcoal {
     background:
       linear-gradient(90deg, rgba(0,0,0,0.6) 0%, transparent 10%, transparent 90%, rgba(0,0,0,0.6) 100%),

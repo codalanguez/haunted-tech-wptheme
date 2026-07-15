@@ -196,15 +196,18 @@ function ht_render_bookshelf($attributes = []) {
           <?php if (!empty($books)): ?>
             <?php foreach ($books as $i => $book):
                 $series  = get_field('series', $book->ID) ?: 'Coda Languez';
+                $genre   = get_field('genre', $book->ID);
                 $variant = $variants[$i % count($variants)];
                 $width   = 60 + (($i * 7) % 25);
                 $height  = 380 + (($i * 11) % 60);
             ?>
-            <a id="book-<?php echo esc_attr($book->post_name); ?>" href="<?php echo esc_url(get_permalink($book)); ?>" data-open-book="<?php echo esc_attr($book->post_name); ?>" class="spine <?php echo esc_attr($variant); ?>" style="min-width:<?php echo (int)$width; ?>px; height:<?php echo (int)$height; ?>px;">
-              <div class="spine-ornament">&#9670; &#9670;</div>
+            <a id="book-<?php echo esc_attr($book->post_name); ?>" href="<?php echo esc_url(get_permalink($book)); ?>" data-open-book="<?php echo esc_attr($book->post_name); ?>" class="spine <?php echo esc_attr($variant); ?>" style="min-width:<?php echo (int)$width; ?>px; height:<?php echo (int)$height; ?>px;" aria-describedby="spine-tip-<?php echo esc_attr($book->post_name); ?>">
               <div class="spine-title"><?php echo esc_html(get_the_title($book)); ?></div>
               <div class="spine-author"><?php echo esc_html($series); ?></div>
-              <div class="spine-ornament">&#9670; &#9670;</div>
+              <div class="spine-tip" id="spine-tip-<?php echo esc_attr($book->post_name); ?>" role="tooltip">
+                <span class="spine-tip-title"><?php echo esc_html(get_the_title($book)); ?></span>
+                <?php if ($genre): ?><span class="spine-tip-genre"><?php echo esc_html($genre); ?></span><?php endif; ?>
+              </div>
             </a>
             <?php endforeach; ?>
           <?php else: ?>
