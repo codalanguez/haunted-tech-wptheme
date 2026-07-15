@@ -21,7 +21,7 @@
   /* Smooth-scroll for in-page anchor jumps */
   html { scroll-behavior: smooth; }
   /* Sticky header is ~120px tall; offset anchor targets so they don't slide under it */
-  [id="books"], [id="web-novels"], [id="services"], [id="gallery"], [id="newsletter"], [id="about"], [id="hero-slider"] {
+  [id="books"], [id="web-novels"], [id="services"], [id="gallery"], [id="newsletter"], [id="about"], [id="hero-slider"], [id="lab"] {
     scroll-margin-top: 140px;
   }
   body {
@@ -3023,3 +3023,243 @@ body.commission-open .static-burst { display: none !important; }
   background: var(--gold);
   color: var(--void);
 }
+
+  /* ============ THE LAB (free & open-source software) ============ */
+  .lab-grid {
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+  .lab-icon-area { aspect-ratio: 16/7; }
+  .lab-icon {
+    width: 120px; height: 120px;
+    border-radius: 18px;
+    position: relative; z-index: 2;
+    box-shadow:
+      0 0 0 1px var(--border),
+      0 0 32px rgba(255,212,0,0.25),
+      0 12px 32px rgba(0,0,0,0.7);
+    transition: transform 0.4s;
+  }
+  .lab-card:hover .lab-icon { transform: translateY(-4px) scale(1.03); }
+  .lab-actions { display: flex; flex-wrap: wrap; gap: 0.8rem; }
+  .lab-btn-ghost { border-color: var(--border-dim); color: var(--bone-dim); }
+  .lab-btn-ghost:hover { border-color: var(--gold); }
+  .lab-foot {
+    text-align: center;
+    margin-top: 3rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    color: var(--bone-dim);
+    font-size: 1.05rem;
+    letter-spacing: 0.08em;
+  }
+  .lab-foot a { color: var(--gold); text-decoration: none; border-bottom: 1px solid var(--border); }
+  .lab-foot a:hover { color: var(--gold-bright); border-color: var(--gold-bright); text-shadow: 0 0 8px rgba(255,212,0,0.5); }
+
+  /* ============ MONKII MODAL (singleton) ============ */
+  .monkii-modal {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.94);
+    z-index: 2100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    backdrop-filter: blur(10px);
+  }
+  .monkii-modal.active { display: flex; animation: lightbox-fade 0.4s ease-out; }
+  .monkii-modal::before {
+    content: '';
+    position: fixed; inset: 0;
+    background: repeating-linear-gradient(0deg, transparent 0, transparent 2px, rgba(255,212,0,0.04) 2px, rgba(255,212,0,0.04) 3px);
+    pointer-events: none;
+    animation: scanline-drift 8s linear infinite;
+  }
+  .monkii-frame {
+    position: relative;
+    max-width: 1100px;
+    max-height: 88vh;
+    height: 700px;
+    width: 100%;
+    background: var(--obsidian);
+    border: 1px solid var(--gold);
+    box-shadow:
+      0 0 0 4px var(--void),
+      0 0 0 5px var(--gold),
+      0 0 80px rgba(255,212,0,0.15);
+    display: grid;
+    grid-template-columns: 460px 1fr;
+    overflow: hidden;
+  }
+  @media (max-width: 900px) {
+    .monkii-frame {
+      grid-template-columns: 1fr;
+      grid-template-rows: 260px 1fr;
+      max-height: 92vh;
+      height: 92vh;
+    }
+  }
+  .monkii-frame::before, .monkii-frame::after {
+    content: ''; position: absolute; width: 50px; height: 50px;
+    border: 2px solid var(--gold);
+    box-shadow: 0 0 16px rgba(255,212,0,0.4);
+    z-index: 10;
+    pointer-events: none;
+  }
+  .monkii-frame::before { top: 8px; left: 8px; border-right: none; border-bottom: none; }
+  .monkii-frame::after { bottom: 8px; right: 8px; border-left: none; border-top: none; }
+  .monkii-visual {
+    background: var(--void);
+    background-size: cover;
+    background-position: left center;
+    position: relative;
+    border-right: 1px solid var(--border-dim);
+  }
+  @media (max-width: 900px) {
+    .monkii-visual { border-right: none; border-bottom: 1px solid var(--border-dim); }
+  }
+  .monkii-visual::after {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(90deg, transparent 70%, rgba(15,13,10,0.6) 100%),
+      repeating-linear-gradient(0deg, transparent 0, transparent 3px, rgba(0,0,0,0.18) 3px, rgba(0,0,0,0.18) 4px);
+    pointer-events: none;
+  }
+  .monkii-visual-caption {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    padding: 0.8rem 1.2rem;
+    font-family: 'Courier New', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    background: linear-gradient(0deg, rgba(0,0,0,0.85), transparent);
+    z-index: 2;
+  }
+  .monkii-meta {
+    padding: 3rem 2.5rem;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    height: 100%;
+    min-height: 0;
+    position: relative;
+  }
+  @media (max-width: 900px) { .monkii-meta { padding: 2rem 1.8rem; } }
+  .monkii-meta-head { flex-shrink: 0; }
+  .monkii-eyebrow {
+    display: flex; align-items: center; gap: 0.7rem;
+    font-family: 'Forum', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.5em;
+    color: var(--red);
+    text-transform: uppercase;
+    margin-bottom: 0.6rem;
+    text-shadow: 0 0 6px rgba(229,9,20,0.4);
+  }
+  .monkii-badge {
+    width: 34px; height: 34px;
+    border-radius: 8px;
+    box-shadow: 0 0 0 1px var(--border), 0 0 12px rgba(255,212,0,0.3);
+  }
+  .monkii-name {
+    font-family: 'Forum', serif;
+    font-size: 2.4rem;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    margin-bottom: 0.4rem;
+    text-shadow: 0 0 24px rgba(255,212,0,0.4);
+    position: relative;
+    display: inline-block;
+    animation: glitch-tear 4s infinite;
+  }
+  .monkii-name::before, .monkii-name::after {
+    content: attr(data-text);
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    overflow: hidden; mix-blend-mode: screen;
+  }
+  .monkii-name::before { color: var(--red); animation: glitch-clip-1 3s infinite linear; }
+  .monkii-name::after { color: var(--cyan); animation: glitch-clip-2 3s infinite linear; }
+  .monkii-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    color: var(--bone-dim);
+    font-size: 1.05rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 1.2rem;
+  }
+  .monkii-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    opacity: 0.4;
+    margin: 0 0 1.4rem;
+  }
+  .monkii-body-wrap { flex: 1 1 auto; min-height: 0; display: flex; }
+  .monkii-body {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    color: var(--bone);
+    line-height: 1.7;
+    flex: 1 1 auto;
+    overflow-y: auto;
+    min-height: 0;
+    padding-right: 1rem;
+    margin-right: -0.5rem;
+  }
+  .monkii-body p { margin-bottom: 1rem; }
+  .monkii-body::-webkit-scrollbar { width: 6px; }
+  .monkii-body::-webkit-scrollbar-track { background: rgba(255,212,0,0.04); }
+  .monkii-body::-webkit-scrollbar-thumb {
+    background: var(--gold);
+    box-shadow: 0 0 6px rgba(255,212,0,0.5);
+  }
+  .monkii-features { list-style: none; margin: 0 0 1rem; padding: 0; }
+  .monkii-features li {
+    padding: 0.35rem 0 0.35rem 1.4rem;
+    position: relative;
+  }
+  .monkii-features li::before {
+    content: '\25C6';
+    position: absolute; left: 0; top: 0.45rem;
+    color: var(--gold);
+    font-size: 0.6em;
+    text-shadow: 0 0 6px rgba(255,212,0,0.5);
+  }
+  .monkii-features strong { color: var(--gold); font-weight: 600; }
+  .monkii-features code {
+    font-family: 'Courier New', monospace;
+    color: var(--cyan);
+    font-size: 0.85em;
+    border: 1px solid var(--border-dim);
+    padding: 0 0.35em;
+  }
+  .monkii-fine {
+    font-size: 0.95rem;
+    font-style: italic;
+    color: var(--bone-dim);
+  }
+  .monkii-fine a { color: var(--gold); text-decoration: none; }
+  .monkii-fine a:hover { color: var(--gold-bright); }
+  .monkii-meta-foot {
+    flex-shrink: 0;
+    display: flex; flex-wrap: wrap; gap: 0.8rem;
+    padding-top: 1.4rem;
+  }
+  .monkii-close {
+    position: absolute; top: -1px; right: -1px;
+    width: 48px; height: 48px;
+    background: var(--void);
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-family: 'Forum', serif;
+    font-size: 1.4rem;
+    cursor: pointer;
+    z-index: 11;
+    transition: all 0.3s;
+  }
+  .monkii-close:hover { background: var(--red); color: var(--bone); border-color: var(--red); text-shadow: 0 0 8px var(--red); }
+  body.monkii-open { overflow: hidden; }

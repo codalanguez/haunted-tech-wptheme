@@ -1,6 +1,6 @@
 <?php
 /**
- * Haunted Tech — theme bootstrap (FSE block-theme edition).
+ * Haunted Tech â€” theme bootstrap (FSE block-theme edition).
  *
  * Wires:
  *   - theme supports + menu locations
@@ -20,7 +20,7 @@
 
 if (!defined('ABSPATH')) { exit; }
 
-define('HAUNTED_TECH_VERSION', '0.9.4');
+define('HAUNTED_TECH_VERSION', '0.10.0');
 define('HAUNTED_TECH_DIR', get_template_directory());
 define('HAUNTED_TECH_URI', get_template_directory_uri());
 
@@ -114,7 +114,7 @@ add_action('wp_enqueue_scripts', function () {
  * 3. Custom post type: hero_update  (data source for the homepage hero slider)
  * ------------------------------------------------------------------------- */
 add_action('init', function () {
-    /* hero_update — drives the homepage hero slider */
+    /* hero_update â€” drives the homepage hero slider */
     register_post_type('hero_update', [
         'label'        => __('Hero Updates', 'haunted-tech'),
         'labels'       => [
@@ -134,7 +134,7 @@ add_action('init', function () {
         'has_archive'  => false,
     ]);
 
-    /* gallery_item — populates the homepage Gallery section's three tabs */
+    /* gallery_item â€” populates the homepage Gallery section's three tabs */
     register_post_type('gallery_item', [
         'label'        => __('Gallery Items', 'haunted-tech'),
         'labels'       => [
@@ -162,17 +162,17 @@ add_action('acf/init', function () {
      * Augments the existing Book field group (imported from book-fields.json)
      * with the modal-era fields: content warnings, discovery links, excerpt.
      * v0.9 adds download_url for reader-magnet titles.
-     * These render conditionally — empty fields collapse out of the layout.
+     * These render conditionally â€” empty fields collapse out of the layout.
      */
     acf_add_local_field_group([
         'key'      => 'group_book_extras',
-        'title'    => 'Book — Modal & Discovery',
+        'title'    => 'Book â€” Modal & Discovery',
         'fields'   => [
-            ['key'=>'field_book_cw_graphic', 'label'=>'Content Warnings · Graphic',
+            ['key'=>'field_book_cw_graphic', 'label'=>'Content Warnings Â· Graphic',
              'name'=>'content_warnings_graphic', 'type'=>'textarea', 'rows'=>3,
              'instructions'=>'Comma-separated list. These render in the brighter red treatment (top of the list).',
              'show_in_rest'=>1],
-            ['key'=>'field_book_cw_standard', 'label'=>'Content Warnings · Standard',
+            ['key'=>'field_book_cw_standard', 'label'=>'Content Warnings Â· Standard',
              'name'=>'content_warnings', 'type'=>'textarea', 'rows'=>3,
              'instructions'=>'Comma-separated list. Rendered in muted oxblood-bordered chips.',
              'show_in_rest'=>1],
@@ -184,7 +184,7 @@ add_action('acf/init', function () {
              'name'=>'storygraph_url','type'=>'url', 'show_in_rest'=>1],
             ['key'=>'field_book_excerpt_eyebrow', 'label'=>'Excerpt Eyebrow',
              'name'=>'excerpt_eyebrow', 'type'=>'text',
-             'instructions'=>'Small label above the excerpt heading (e.g. "Chapter One · The Server Where She Buried Him")',
+             'instructions'=>'Small label above the excerpt heading (e.g. "Chapter One Â· The Server Where She Buried Him")',
              'show_in_rest'=>1],
             ['key'=>'field_book_excerpt_html', 'label'=>'Excerpt',
              'name'=>'excerpt_html', 'type'=>'wysiwyg', 'tabs'=>'visual', 'toolbar'=>'basic', 'media_upload'=>0,
@@ -212,9 +212,9 @@ add_action('acf/init', function () {
              'choices'=>['art'=>'Art Commissions','covers'=>'Book Covers','ai'=>'AI Generation'],
              'default_value'=>'art', 'required'=>1, 'show_in_rest'=>1],
             ['key'=>'field_gi_category',     'label'=>'Filter Category','name'=>'category',   'type'=>'text',
-             'instructions'=>'Lower-case slug used by the Art Commissions filter chips (portrait, bust, couple, scene, ritual, …). Leave blank for non-art tabs.', 'show_in_rest'=>1],
+             'instructions'=>'Lower-case slug used by the Art Commissions filter chips (portrait, bust, couple, scene, ritual, â€¦). Leave blank for non-art tabs.', 'show_in_rest'=>1],
             ['key'=>'field_gi_tag',          'label'=>'Card Tag',      'name'=>'tag',          'type'=>'text',
-             'instructions'=>'Small badge label shown on the card and in the lightbox (e.g. "Portrait", "Bone Frequencies · I", "Chapter Banner").', 'show_in_rest'=>1],
+             'instructions'=>'Small badge label shown on the card and in the lightbox (e.g. "Portrait", "Bone Frequencies Â· I", "Chapter Banner").', 'show_in_rest'=>1],
             ['key'=>'field_gi_description',  'label'=>'Description',   'name'=>'description',  'type'=>'textarea', 'rows'=>4,
              'instructions'=>'Long caption shown in the lightbox; first ~18 words also show on the card.', 'show_in_rest'=>1],
             ['key'=>'field_gi_image',        'label'=>'Image',         'name'=>'image',        'type'=>'image',
@@ -248,8 +248,8 @@ add_action('acf/init', function () {
              'choices'=>['book'=>'Book Release (gold)','chapter'=>'Chapter Drop (red)','mandate'=>'Mandate / Misc (cyan)'],
              'default_value'=>'mandate', 'required'=>1, 'show_in_rest'=>1],
             ['key'=>'field_hero_eyebrow',      'label'=>'Eyebrow',              'name'=>'eyebrow',      'type'=>'text', 'instructions'=>"Small label above the title", 'show_in_rest'=>1],
-            ['key'=>'field_hero_title_first',  'label'=>'Title — First Part',   'name'=>'title_first',  'type'=>'text', 'instructions'=>"First half of the title (plain).",     'show_in_rest'=>1],
-            ['key'=>'field_hero_title_accent', 'label'=>'Title — Accent Part',  'name'=>'title_accent', 'type'=>'text', 'instructions'=>"Second half (gold + glitch glow).",    'show_in_rest'=>1],
+            ['key'=>'field_hero_title_first',  'label'=>'Title â€” First Part',   'name'=>'title_first',  'type'=>'text', 'instructions'=>"First half of the title (plain).",     'show_in_rest'=>1],
+            ['key'=>'field_hero_title_accent', 'label'=>'Title â€” Accent Part',  'name'=>'title_accent', 'type'=>'text', 'instructions'=>"Second half (gold + glitch glow).",    'show_in_rest'=>1],
             ['key'=>'field_hero_blurb',        'label'=>'Blurb',                'name'=>'blurb',        'type'=>'textarea', 'rows'=>4, 'show_in_rest'=>1],
             ['key'=>'field_hero_cta_label',    'label'=>'CTA Button Label',     'name'=>'cta_label',    'type'=>'text', 'default_value'=>'Read More', 'show_in_rest'=>1],
             ['key'=>'field_hero_cta_link',     'label'=>'CTA Link',             'name'=>'cta_link',     'type'=>'url', 'show_in_rest'=>1],
@@ -337,7 +337,7 @@ if (!class_exists('Haunted_Tech_Social_Walker')) {
                 'threads.net'    => 'fa-brands fa-threads',
                 'twitter.com'    => 'fa-brands fa-x-twitter',
                 'x.com'          => 'fa-brands fa-x-twitter',
-                /* v0.9 — extra platforms */
+                /* v0.9 â€” extra platforms */
                 'youtube.com'    => 'fa-brands fa-youtube',
                 'facebook.com'   => 'fa-brands fa-facebook',
                 'bookbub.com'    => 'fa-solid fa-book-bookmark',
@@ -348,12 +348,12 @@ if (!class_exists('Haunted_Tech_Social_Walker')) {
                 if (strpos($host, $needle) !== false) return $cls;
             }
 
-            /* v0.9.2 — slug/label fallback. Lets Pretty Link URLs
+            /* v0.9.2 â€” slug/label fallback. Lets Pretty Link URLs
              * (codalanguez.com/go/<slug>) resolve to brand icons by also
              * checking the URL path and the menu item label for platform
              * keywords. Slugs are intentionally shorter than the host keys
              * (no ".com" suffix) to match path segments. X/Twitter is omitted
-             * from this pass since the single letter "x" is too ambiguous —
+             * from this pass since the single letter "x" is too ambiguous â€”
              * use the host map (twitter.com / x.com) instead. */
             $haystack = strtolower(($url ?: '') . ' ' . ($label ?: ''));
             $slug_map = [
@@ -393,7 +393,7 @@ add_filter('body_class', function ($classes) {
 });
 
 /* ---------------------------------------------------------------------------
- * 8. Includes — render callbacks, dynamic blocks, patterns
+ * 8. Includes â€” render callbacks, dynamic blocks, patterns
  * ------------------------------------------------------------------------- */
 require_once HAUNTED_TECH_DIR . '/inc/customizer.php';
 require_once HAUNTED_TECH_DIR . '/inc/render-callbacks.php';

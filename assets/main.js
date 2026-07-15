@@ -43,6 +43,56 @@
     window.addEventListener('hashchange', () => { if (location.hash === '#about') open(); });
   })();
 
+  // ===== MONKII modal: open from any [data-open-monkii] OR any <a> whose href
+  // resolves to #monkii (same delegated pattern as the About modal). Close on
+  // Esc / × / backdrop. =====
+  (function(){
+    const modal = document.getElementById('monkii-modal');
+    if (!modal) return;
+    const closeBtn = modal.querySelector('.monkii-close');
+    function open() {
+      modal.classList.add('active');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('monkii-open');
+      // Close conflicting modals
+      const about = document.getElementById('about-modal');
+      if (about && about.classList.contains('active')) {
+        about.classList.remove('active');
+        about.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('about-open');
+      }
+    }
+    function close() {
+      modal.classList.remove('active');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('monkii-open');
+      if (location.hash === '#monkii') {
+        history.replaceState(null, '', location.pathname + location.search);
+      }
+    }
+    document.addEventListener('click', function(e){
+      const a = e.target.closest('a, [data-open-monkii]');
+      if (!a) return;
+      const isMonkiiTrigger =
+        a.hasAttribute('data-open-monkii') ||
+        (a.tagName === 'A' && (a.getAttribute('href') || '').match(/(^\/|\/)#monkii$/));
+      if (!isMonkiiTrigger) return;
+      // Same-page: open the modal without navigating.
+      if (a.tagName !== 'A' || a.pathname === location.pathname || a.getAttribute('href').charAt(0) === '#') {
+        e.preventDefault();
+        open();
+      }
+    });
+    closeBtn.addEventListener('click', close);
+    modal.addEventListener('click', e => { if (e.target === modal) close(); });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && modal.classList.contains('active')) close();
+    });
+    // Open on direct hash load (#monkii) or any hashchange to #monkii.
+    if (location.hash === '#monkii') open();
+    window.addEventListener('hashchange', () => { if (location.hash === '#monkii') open(); });
+  })();
+
   // ===== Hero slider — auto-rotate w/ pause on hover, arrows + dots + progress =====
   (function(){
     const hero = document.getElementById('hero-slider');
