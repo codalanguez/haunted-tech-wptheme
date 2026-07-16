@@ -372,7 +372,7 @@ function ht_render_services($attributes = []) {
             'shortcode'=> '[ht_commission_ai]',
         ],
     ] as $key => $cfg): ?>
-    <div class="commission-modal" id="commission-modal-<?php echo esc_attr($key); ?>" role="dialog" aria-modal="true" aria-labelledby="cm-title-<?php echo esc_attr($key); ?>" aria-hidden="true">
+    <div class="commission-modal" id="commission-modal-<?php echo esc_attr($key); ?>" role="dialog" aria-modal="true" aria-labelledby="cm-title-<?php echo esc_attr($key); ?>" aria-hidden="true" tabindex="-1">
       <div class="commission-frame">
         <button class="commission-close" aria-label="Close inquiry form">&times;</button>
         <div class="commission-poster">
@@ -404,17 +404,30 @@ function ht_render_services($attributes = []) {
         m.classList.add('active');
         m.setAttribute('aria-hidden', 'false');
         document.body.classList.add('commission-open');
+        // htFocusTrap lives in main.js, which loads in the footer - this
+        // inline script runs mid-body, before main.js has executed. Deferring
+        // the call to first open (a real click, always after both scripts
+        // have run) avoids referencing it before it exists.
+        if (!m._trap && typeof htFocusTrap === 'function') m._trap = htFocusTrap(m);
+        if (m._trap) m._trap.activate();
       }
       function close(m){
         m.classList.remove('active');
         m.setAttribute('aria-hidden', 'true');
         document.body.classList.remove('commission-open');
+        if (m._trap) m._trap.deactivate();
       }
-      document.querySelectorAll('[data-open-commission]').forEach(function(btn){
-        btn.addEventListener('click', function(e){
-          e.preventDefault();
-          open(this.dataset.openCommission);
-        });
+      // Delegated on document, not bound per-button: the gallery's "Inquire"
+      // button (ht_render_gallery) shares this same [data-open-commission]
+      // convention but renders LATER in the page template than this script,
+      // so a one-time querySelectorAll().forEach() at parse time never saw
+      // it and its clicks did nothing. Delegation checks the DOM at click
+      // time instead, so it works regardless of render order.
+      document.addEventListener('click', function(e){
+        var btn = e.target.closest('[data-open-commission]');
+        if (!btn) return;
+        e.preventDefault();
+        open(btn.dataset.openCommission);
       });
       modals.forEach(function(m){
         m.querySelector('.commission-close').addEventListener('click', function(){ close(m); });
