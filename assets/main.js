@@ -296,6 +296,7 @@
     // ---------- Lightbox ----------
     const lightbox = document.getElementById('lightbox');
     const lbImage = document.getElementById('lightbox-image');
+    const lbPhoto = document.getElementById('lightbox-image-photo');
     const lbLabel = document.getElementById('lightbox-image-label');
     const lbTag = document.getElementById('lightbox-tag');
     const lbTitle = document.getElementById('lightbox-title');
@@ -328,6 +329,19 @@
       const innerImage = item.querySelector('.gallery-image');
       const ratio = innerImage ? getComputedStyle(innerImage).aspectRatio : 'auto';
       lbImage.style.aspectRatio = ratio !== 'auto' ? ratio : '';
+      // Real uploaded photo, when one exists — otherwise fall back to the
+      // decorative gradient variant + text label (pre-existing behavior for
+      // items with no image set).
+      if (item.dataset.image) {
+        lbPhoto.src = item.dataset.image;
+        lbPhoto.alt = item.dataset.title || '';
+        lbPhoto.hidden = false;
+        lbLabel.hidden = true;
+      } else {
+        lbPhoto.hidden = true;
+        lbPhoto.removeAttribute('src');
+        lbLabel.hidden = false;
+      }
       lbLabel.textContent = item.dataset.title || '';
       lbTag.textContent = item.dataset.tag || '';
       lbTitle.textContent = item.dataset.title || '';

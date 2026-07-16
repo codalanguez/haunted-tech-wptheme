@@ -1674,6 +1674,15 @@
     background: repeating-linear-gradient(0deg, transparent 0, transparent 3px, rgba(0,0,0,0.2) 3px, rgba(0,0,0,0.2) 4px);
     pointer-events: none;
   }
+  /* The real uploaded photo, when one exists — sits above the decorative
+     gradient variant (still visible as a colored backdrop around a
+     contained/letterboxed image) and below the scanline ::after overlay. */
+  #lightbox-image-photo {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: contain;
+  }
+  #lightbox-image-photo[hidden] { display: none; }
   .lightbox-meta {
     padding: 3rem 2rem;
     background: var(--obsidian);

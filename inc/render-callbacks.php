@@ -545,7 +545,8 @@ function ht_render_gallery($attributes = []) {
                    data-tag="<?php echo esc_attr($card_tag); ?>"
                    data-title="<?php echo esc_attr(get_the_title($item)); ?>"
                    data-desc="<?php echo esc_attr($desc); ?>"
-                   data-image-class="<?php echo esc_attr($variant); ?>">
+                   data-image-class="<?php echo esc_attr($variant); ?>"
+                   <?php if ($image_url): ?>data-image="<?php echo esc_url($image_url); ?>"<?php endif; ?>>
                   <div class="gallery-image <?php echo esc_attr($variant); ?>" style="--ratio: <?php echo esc_attr($ratio); ?>; position:relative;">
                     <?php if ($image_url): ?>
                       <img src="<?php echo esc_url($image_url); ?>" alt="<?php echo esc_attr($alt); ?>" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;z-index:1;">
@@ -733,7 +734,10 @@ function ht_render_lightbox($attributes = []) {
           <img src="<?php echo esc_url(haunted_tech_logo_url()); ?>" alt="">
           <span class="lightbox-brand-text"><?php bloginfo('name'); ?></span>
         </div>
-        <div class="lightbox-image" id="lightbox-image"><span class="gallery-image-label" id="lightbox-image-label"></span></div>
+        <div class="lightbox-image" id="lightbox-image">
+          <img id="lightbox-image-photo" alt="" hidden>
+          <span class="gallery-image-label" id="lightbox-image-label"></span>
+        </div>
         <div class="lightbox-meta">
           <div class="lightbox-tag" id="lightbox-tag"></div>
           <div class="lightbox-title" id="lightbox-title"></div>
