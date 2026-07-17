@@ -301,6 +301,7 @@
     const lbTag = document.getElementById('lightbox-tag');
     const lbTitle = document.getElementById('lightbox-title');
     const lbDesc = document.getElementById('lightbox-desc');
+    const lbBuy = document.getElementById('lightbox-buy');
     const lbClose = lightbox.querySelector('.lightbox-close');
     const lbPrev = lightbox.querySelector('.lightbox-nav.prev');
     const lbNext = lightbox.querySelector('.lightbox-nav.next');
@@ -346,6 +347,13 @@
       lbTag.textContent = item.dataset.tag || '';
       lbTitle.textContent = item.dataset.title || '';
       lbDesc.textContent = item.dataset.desc || '';
+      if (item.dataset.buyUrl) {
+        lbBuy.href = item.dataset.buyUrl;
+        lbBuy.hidden = false;
+      } else {
+        lbBuy.hidden = true;
+        lbBuy.removeAttribute('href');
+      }
       lbPrev.style.visibility = currentIndex > 0 ? 'visible' : 'hidden';
       lbNext.style.visibility = currentIndex < currentItems.length - 1 ? 'visible' : 'hidden';
     }

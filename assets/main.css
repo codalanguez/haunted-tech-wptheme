@@ -1725,6 +1725,9 @@
     line-height: 1.6;
     margin-bottom: 1.5rem;
   }
+  .lightbox-buy {
+    align-self: flex-start;
+  }
   .lightbox-divider {
     height: 1px;
     background: linear-gradient(90deg, transparent, var(--gold), transparent);

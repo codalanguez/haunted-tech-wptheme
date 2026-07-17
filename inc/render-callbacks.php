@@ -547,6 +547,7 @@ function ht_render_gallery($attributes = []) {
                   $cat_slug   = $cat_raw !== '' ? strtolower(sanitize_title($cat_raw)) : '';
                   $card_tag   = (string) get_field('tag', $item->ID);
                   $desc       = (string) get_field('description', $item->ID);
+                  $buy_url    = (string) get_field('buy_url', $item->ID);
                   $ratio      = (string) (get_field('aspect_ratio', $item->ID) ?: '3/4');
                   $variant    = 'v' . ((($idx % 8) + 1));
                   $image      = get_field('image', $item->ID);
@@ -567,7 +568,8 @@ function ht_render_gallery($attributes = []) {
                    data-title="<?php echo esc_attr(get_the_title($item)); ?>"
                    data-desc="<?php echo esc_attr($desc); ?>"
                    data-image-class="<?php echo esc_attr($variant); ?>"
-                   <?php if ($image_url): ?>data-image="<?php echo esc_url($image_url); ?>"<?php endif; ?>>
+                   <?php if ($image_url): ?>data-image="<?php echo esc_url($image_url); ?>"<?php endif; ?>
+                   <?php if ($buy_url): ?>data-buy-url="<?php echo esc_url($buy_url); ?>"<?php endif; ?>>
                   <div class="gallery-image <?php echo esc_attr($variant); ?>" style="--ratio: <?php echo esc_attr($ratio); ?>; position:relative;">
                     <?php if ($image_url): ?>
                       <img src="<?php echo esc_url($image_url); ?>" alt="<?php echo esc_attr($alt); ?>" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;z-index:1;">
@@ -764,6 +766,7 @@ function ht_render_lightbox($attributes = []) {
           <div class="lightbox-title" id="lightbox-title"></div>
           <div class="lightbox-divider"></div>
           <div class="lightbox-desc" id="lightbox-desc"></div>
+          <a href="#" class="buy-btn lightbox-buy" id="lightbox-buy" target="_blank" rel="noopener" hidden>Buy on BookCovers.com</a>
         </div>
       </div>
     </div>
