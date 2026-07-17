@@ -1160,11 +1160,51 @@
   .crt-status.hiatus { color: var(--red-bright); }
   .crt-status.complete { color: #6ED49A; }
   .crt-title {
+    position: relative;
     display: flex;
     flex-direction: column;
     gap: 0.15rem;
     cursor: pointer;
     text-decoration: none;
+  }
+  /* .crt-screen has overflow:hidden, so the tooltip opens downward
+     (rather than the usual upward spine-tip direction) to avoid getting
+     clipped on the first couple of rows. */
+  .crt-tip {
+    position: absolute;
+    left: 0;
+    top: calc(100% + 10px);
+    transform: translateY(-6px);
+    width: max-content;
+    max-width: 280px;
+    padding: 0.6rem 0.9rem;
+    background: var(--void);
+    border: 1px solid var(--gold);
+    box-shadow: 0 0 20px rgba(0,0,0,0.7);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    color: var(--bone);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s, transform 0.2s;
+    z-index: 30;
+  }
+  .crt-tip::after {
+    content: '';
+    position: absolute; bottom: 100%; left: 20px;
+    width: 8px; height: 8px;
+    background: var(--void);
+    border-left: 1px solid var(--gold);
+    border-top: 1px solid var(--gold);
+    transform: rotate(45deg);
+    margin-bottom: -5px;
+  }
+  .crt-title:hover .crt-tip,
+  .crt-title:focus-visible .crt-tip {
+    opacity: 1;
+    transform: translateY(0);
   }
   .crt-title-name {
     color: var(--bone);

@@ -246,17 +246,23 @@ function ht_render_crt_screen($webnovels, $prompt_path = '~/webnovels') {
         <div class="crt-list">
           <?php if (!empty($webnovels)): ?>
             <?php foreach ($webnovels as $wn):
-                $status = get_field('status', $wn->ID) ?: 'ongoing';
-                $genre  = get_field('genre',  $wn->ID) ?: '';
+                $status  = get_field('status', $wn->ID) ?: 'ongoing';
+                $genre   = get_field('genre',  $wn->ID) ?: '';
+                $tagline = get_field('tagline', $wn->ID) ?: get_field('blurb', $wn->ID);
+                $tagline = $tagline ? wp_trim_words($tagline, 20, "\xE2\x80\xA6") : '';
                 $status_dot   = ['ongoing'=>'&#9679;', 'complete'=>'&#10003;', 'hiatus'=>'&#9711;', 'planned'=>'&#9633;', 'discontinued'=>'&#10007;'][$status] ?? '&#9679;';
                 $status_class = in_array($status, ['ongoing','complete','hiatus'], true) ? $status : 'ongoing';
                 $slug         = sanitize_title(get_the_title($wn)) . '/';
+                $tip_id       = 'crt-tip-' . esc_attr($wn->post_name);
             ?>
             <div class="crt-row" id="webnovel-<?php echo esc_attr($wn->post_name); ?>">
               <div class="crt-status <?php echo esc_attr($status_class); ?>"><?php echo $status_dot; ?></div>
-              <a class="crt-title" href="<?php echo esc_url(get_permalink($wn)); ?>" data-open-webnovel="<?php echo esc_attr($wn->post_name); ?>">
+              <a class="crt-title" href="<?php echo esc_url(get_permalink($wn)); ?>" data-open-webnovel="<?php echo esc_attr($wn->post_name); ?>" <?php if ($tagline): ?>aria-describedby="<?php echo esc_attr($tip_id); ?>"<?php endif; ?>>
                 <span class="crt-title-name"><?php echo esc_html(get_the_title($wn)); ?></span>
                 <span class="crt-title-slug"><?php echo esc_html($slug); ?></span>
+                <?php if ($tagline): ?>
+                  <span class="crt-tip" id="<?php echo esc_attr($tip_id); ?>" role="tooltip"><?php echo esc_html($tagline); ?></span>
+                <?php endif; ?>
               </a>
               <div class="crt-tag">[<?php echo esc_html(strtoupper($genre)); ?>]</div>
               <div class="crt-state <?php echo esc_attr($status_class); ?>"><?php echo esc_html(strtoupper($status)); ?></div>
