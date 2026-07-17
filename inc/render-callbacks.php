@@ -1464,8 +1464,10 @@ function ht_render_linktree($attributes = []) {
       <div class="linktree-card">
 
         <div class="linktree-header">
-          <img class="linktree-avatar" src="<?php echo esc_url(haunted_tech_logo_url()); ?>" alt="<?php echo esc_attr(get_bloginfo('name')); ?>">
-          <h1 class="linktree-name" data-text="<?php echo esc_attr(get_bloginfo('name')); ?>"><?php bloginfo('name'); ?></h1>
+          <a href="<?php echo esc_url(home_url('/')); ?>" class="linktree-header-link" aria-label="<?php echo esc_attr(get_bloginfo('name')); ?> &mdash; home">
+            <img class="linktree-avatar" src="<?php echo esc_url(haunted_tech_logo_url()); ?>" alt="<?php echo esc_attr(get_bloginfo('name')); ?>">
+            <h1 class="linktree-name" data-text="<?php echo esc_attr(get_bloginfo('name')); ?>"><?php bloginfo('name'); ?></h1>
+          </a>
           <?php if ($bio): ?><p class="linktree-bio"><?php echo esc_html($bio); ?></p><?php endif; ?>
         </div>
 
