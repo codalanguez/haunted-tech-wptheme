@@ -232,6 +232,57 @@ function ht_render_bookshelf($attributes = []) {
 }
 
 /* ============================================================
+ * CRT SCREEN – shared terminal-listing markup for a set of
+ * webnovels. Used by the homepage monitor and the "Other
+ * Serials" panel on single webnovel pages.
+ * ============================================================ */
+function ht_render_crt_screen($webnovels, $prompt_path = '~/webnovels') {
+    ob_start(); ?>
+    <div class="crt-monitor">
+      <div class="crt-screw-bl"></div>
+      <div class="crt-screw-br"></div>
+      <div class="crt-screen">
+        <div class="crt-prompt"><span class="user">coda@haunted-tech</span>:<span class="path"><?php echo esc_html($prompt_path); ?></span>$ ls -la --status</div>
+        <div class="crt-list">
+          <?php if (!empty($webnovels)): ?>
+            <?php foreach ($webnovels as $wn):
+                $status = get_field('status', $wn->ID) ?: 'ongoing';
+                $genre  = get_field('genre',  $wn->ID) ?: '';
+                $status_dot   = ['ongoing'=>'&#9679;', 'complete'=>'&#10003;', 'hiatus'=>'&#9711;', 'planned'=>'&#9633;', 'discontinued'=>'&#10007;'][$status] ?? '&#9679;';
+                $status_class = in_array($status, ['ongoing','complete','hiatus'], true) ? $status : 'ongoing';
+                $slug         = sanitize_title(get_the_title($wn)) . '/';
+            ?>
+            <div class="crt-row" id="webnovel-<?php echo esc_attr($wn->post_name); ?>">
+              <div class="crt-status <?php echo esc_attr($status_class); ?>"><?php echo $status_dot; ?></div>
+              <a class="crt-title" href="<?php echo esc_url(get_permalink($wn)); ?>" data-open-webnovel="<?php echo esc_attr($wn->post_name); ?>">
+                <span class="crt-title-name"><?php echo esc_html(get_the_title($wn)); ?></span>
+                <span class="crt-title-slug"><?php echo esc_html($slug); ?></span>
+              </a>
+              <div class="crt-tag">[<?php echo esc_html(strtoupper($genre)); ?>]</div>
+              <div class="crt-state <?php echo esc_attr($status_class); ?>"><?php echo esc_html(strtoupper($status)); ?></div>
+            </div>
+            <?php endforeach; ?>
+          <?php else: ?>
+            <div class="crt-row">
+              <div class="crt-status">&#9679;</div>
+              <div class="crt-title">no_webnovels_yet/</div>
+              <div class="crt-tag">[EMPTY]</div>
+              <div class="crt-state">WAITING</div>
+            </div>
+          <?php endif; ?>
+        </div>
+        <div style="margin-top:1.5rem; position:relative; z-index:1;">
+          <span class="user" style="color:var(--gold)">coda@haunted-tech</span>:<span class="path" style="color:var(--bone)"><?php echo esc_html($prompt_path); ?></span>$ <span class="crt-cursor">&#9608;</span>
+        </div>
+      </div>
+      <div class="crt-led"></div>
+      <div class="crt-brand">CODA-OS v.0xDEAD</div>
+    </div>
+    <?php
+    return ob_get_clean();
+}
+
+/* ============================================================
  * CRT MONITOR – list webnovels with status indicators
  * ============================================================ */
 function ht_render_crt_monitor($attributes = []) {
@@ -249,46 +300,7 @@ function ht_render_crt_monitor($attributes = []) {
         <h2 class="section-title">Active Transmissions</h2>
         <div class="section-meta">All Serialized Web Novels &mdash; Live Channel Log</div>
       </div>
-      <div class="crt-monitor">
-        <div class="crt-screw-bl"></div>
-        <div class="crt-screw-br"></div>
-        <div class="crt-screen">
-          <div class="crt-prompt"><span class="user">coda@haunted-tech</span>:<span class="path">~/webnovels</span>$ ls -la --status</div>
-          <div class="crt-list">
-            <?php if (!empty($webnovels)): ?>
-              <?php foreach ($webnovels as $wn):
-                  $status = get_field('status', $wn->ID) ?: 'ongoing';
-                  $genre  = get_field('genre',  $wn->ID) ?: '';
-                  $status_dot   = ['ongoing'=>'&#9679;', 'complete'=>'&#10003;', 'hiatus'=>'&#9711;', 'planned'=>'&#9633;', 'discontinued'=>'&#10007;'][$status] ?? '&#9679;';
-                  $status_class = in_array($status, ['ongoing','complete','hiatus'], true) ? $status : 'ongoing';
-                  $slug         = sanitize_title(get_the_title($wn)) . '/';
-              ?>
-              <div class="crt-row" id="webnovel-<?php echo esc_attr($wn->post_name); ?>">
-                <div class="crt-status <?php echo esc_attr($status_class); ?>"><?php echo $status_dot; ?></div>
-                <a class="crt-title" href="<?php echo esc_url(get_permalink($wn)); ?>" data-open-webnovel="<?php echo esc_attr($wn->post_name); ?>">
-                  <span class="crt-title-name"><?php echo esc_html(get_the_title($wn)); ?></span>
-                  <span class="crt-title-slug"><?php echo esc_html($slug); ?></span>
-                </a>
-                <div class="crt-tag">[<?php echo esc_html(strtoupper($genre)); ?>]</div>
-                <div class="crt-state <?php echo esc_attr($status_class); ?>"><?php echo esc_html(strtoupper($status)); ?></div>
-              </div>
-              <?php endforeach; ?>
-            <?php else: ?>
-              <div class="crt-row">
-                <div class="crt-status">&#9679;</div>
-                <div class="crt-title">no_webnovels_yet/</div>
-                <div class="crt-tag">[EMPTY]</div>
-                <div class="crt-state">WAITING</div>
-              </div>
-            <?php endif; ?>
-          </div>
-          <div style="margin-top:1.5rem; position:relative; z-index:1;">
-            <span class="user" style="color:var(--gold)">coda@haunted-tech</span>:<span class="path" style="color:var(--bone)">~/webnovels</span>$ <span class="crt-cursor">&#9608;</span>
-          </div>
-        </div>
-        <div class="crt-led"></div>
-        <div class="crt-brand">CODA-OS v.0xDEAD</div>
-      </div>
+      <?php echo ht_render_crt_screen($webnovels); ?>
     </section>
     <?php
     return ob_get_clean();
@@ -1149,6 +1161,23 @@ function ht_render_related_across_formats($attributes = []) {
     $heading = ($current_type === 'book') ? 'You Might Also Like' : 'If You Like This, Try&hellip;';
     $meta    = $is_wn ? 'A web novel by ' . get_bloginfo('name') : 'A book by ' . get_bloginfo('name');
 
+    // Webnovel recommendations reuse the CRT terminal listing (status dots,
+    // slugs) for visual consistency with the other webnovel sections. Book
+    // recommendations keep the cover-grid cards, since books have no
+    // serialization status and read better with cover art up front.
+    if ($is_wn) {
+        ob_start(); ?>
+        <section class="crt-section also-by-section related-cross-format">
+          <div class="section-header">
+            <h2 class="section-title"><?php echo $heading; ?></h2>
+            <div class="section-meta"><?php echo esc_html($meta); ?></div>
+          </div>
+          <?php echo ht_render_crt_screen($others, '~/webnovels/recommended'); ?>
+        </section>
+        <?php
+        return ob_get_clean();
+    }
+
     ob_start(); ?>
     <section class="also-by-section related-cross-format">
       <div class="section-header">
@@ -1157,17 +1186,14 @@ function ht_render_related_across_formats($attributes = []) {
       </div>
       <div class="also-by-grid">
         <?php foreach ($others as $item):
-            $tagline   = $is_wn ? get_field('tagline', $item->ID) : get_field('blurb', $item->ID);
+            $tagline   = get_field('blurb', $item->ID);
             $tagline   = $tagline ? wp_trim_words($tagline, 18, '…') : '';
             $cover     = get_field('cover', $item->ID);
             $cover_url = (is_array($cover) && !empty($cover['url'])) ? $cover['url']
                        : (has_post_thumbnail($item->ID) ? get_the_post_thumbnail_url($item->ID, 'medium') : '');
-            $format_label = $is_wn ? 'Web Novel' : (get_field('series', $item->ID) ?: 'Book');
-            $open_attr    = $is_wn
-                ? ' data-open-webnovel="' . esc_attr($item->post_name) . '"'
-                : ' data-open-book="'     . esc_attr($item->post_name) . '"';
+            $format_label = get_field('series', $item->ID) ?: 'Book';
         ?>
-          <a href="<?php echo esc_url(get_permalink($item)); ?>"<?php echo $open_attr; ?> class="also-by-card">
+          <a href="<?php echo esc_url(get_permalink($item)); ?>" data-open-book="<?php echo esc_attr($item->post_name); ?>" class="also-by-card">
             <div class="also-by-cover" style="<?php echo $cover_url ? 'padding:0;' : ''; ?>">
               <?php if ($cover_url): ?>
                 <img src="<?php echo esc_url($cover_url); ?>" alt="<?php echo esc_attr(get_the_title($item)); ?>" style="display:block;width:100%;height:100%;object-fit:cover;">
@@ -1254,28 +1280,12 @@ function ht_render_also_by_webnovels($attributes = []) {
     ]);
     if (empty($others)) return '';
     ob_start(); ?>
-    <section class="also-by-section">
+    <section class="crt-section also-by-section">
       <div class="section-header">
         <h2 class="section-title">Other Serials</h2>
-        <div class="section-meta">More live channels</div>
+        <div class="section-meta">More Live Channels</div>
       </div>
-      <div class="also-by-grid">
-        <?php foreach ($others as $wn):
-            $status  = get_field('status', $wn->ID) ?: 'ongoing';
-            $tagline = get_field('tagline', $wn->ID);
-        ?>
-          <a href="<?php echo esc_url(get_permalink($wn)); ?>" data-open-webnovel="<?php echo esc_attr($wn->post_name); ?>" class="also-by-card">
-            <div class="also-by-cover">
-              <div class="also-by-cover-title"><?php echo esc_html(get_the_title($wn)); ?></div>
-            </div>
-            <div class="ab-meta">
-              <div class="ab-tag"><?php echo esc_html(ucfirst($status)); ?></div>
-              <div class="ab-title"><?php echo esc_html(get_the_title($wn)); ?></div>
-              <?php if ($tagline): ?><div class="ab-tagline"><?php echo esc_html($tagline); ?></div><?php endif; ?>
-            </div>
-          </a>
-        <?php endforeach; ?>
-      </div>
+      <?php echo ht_render_crt_screen($others, '~/webnovels/other'); ?>
     </section>
     <?php
     return ob_get_clean();
