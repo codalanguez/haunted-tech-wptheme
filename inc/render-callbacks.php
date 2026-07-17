@@ -1535,6 +1535,36 @@ function ht_render_linktree($attributes = []) {
           </div>
         <?php endif; ?>
 
+        <div class="linktree-section">
+          <h2 class="linktree-section-title">Explore</h2>
+          <div class="linktree-stack">
+            <a href="<?php echo esc_url(home_url('/#services')); ?>" class="linktree-tile linktree-tile--link">
+              <div class="linktree-tile-cover"><span>&#10048;</span></div>
+              <div class="linktree-tile-body">
+                <div class="linktree-tile-title">Commission Services</div>
+                <div class="linktree-tile-sub">Art, book covers &amp; AI generation &mdash; inquire now</div>
+              </div>
+              <div class="linktree-tile-cta">&rarr;</div>
+            </a>
+            <a href="<?php echo esc_url(home_url('/lab/')); ?>" class="linktree-tile linktree-tile--link">
+              <div class="linktree-tile-cover"><span>&#9879;</span></div>
+              <div class="linktree-tile-body">
+                <div class="linktree-tile-title">The Lab</div>
+                <div class="linktree-tile-sub">Free &amp; open-source software</div>
+              </div>
+              <div class="linktree-tile-cta">&rarr;</div>
+            </a>
+            <a href="<?php echo esc_url(home_url('/')); ?>" class="linktree-tile linktree-tile--link">
+              <div class="linktree-tile-cover"><span>&#8962;</span></div>
+              <div class="linktree-tile-body">
+                <div class="linktree-tile-title">Home</div>
+                <div class="linktree-tile-sub">Back to codalanguez.com</div>
+              </div>
+              <div class="linktree-tile-cta">&rarr;</div>
+            </a>
+          </div>
+        </div>
+
         <?php if (has_nav_menu('social')): ?>
           <div class="linktree-section linktree-section--social">
             <h2 class="linktree-section-title">Follow</h2>
