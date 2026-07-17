@@ -1134,12 +1134,14 @@
   .crt-list { position: relative; z-index: 2; }
   .crt-row {
     display: grid;
-    grid-template-columns: 24px 1fr 100px 110px 130px;
+    grid-template-columns: 28px 1fr 120px 140px;
     gap: 1rem;
-    padding: 0.5rem 0;
+    padding: 0.7rem 0;
+    border-bottom: 1px dashed rgba(255,212,0,0.15);
     transition: background 0.2s;
     align-items: center;
   }
+  .crt-row:last-child { border-bottom: none; }
   .crt-row:hover { background: rgba(255,212,0,0.08); }
   .crt-status {
     text-align: center;
@@ -1148,33 +1150,29 @@
   .crt-status.ongoing { color: var(--gold); }
   .crt-status.hiatus { color: var(--red-bright); }
   .crt-status.complete { color: #6ED49A; }
-  .crt-title { color: var(--bone); text-shadow: 0 0 6px rgba(245,239,216,0.4); cursor: pointer; position: relative; display: inline-block; }
-  .crt-title:hover { color: var(--gold); text-shadow: -1.5px 0 var(--red), 1.5px 0 var(--cyan), 0 0 8px var(--gold); }
-  /* Reuses the .spine-tip component (title + genre on hover/focus), but
-     .crt-screen has overflow:hidden, so a tooltip popping upward like the
-     bookshelf spines would get clipped for the first couple of rows. Flip
-     it to appear below the title instead, with the pointer arrow flipped
-     to match. */
-  .crt-title .spine-tip {
-    bottom: auto;
-    top: calc(100% + 10px);
-    transform: translateX(-50%) translateY(-6px);
-    z-index: 30;
+  .crt-title {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    cursor: pointer;
+    text-decoration: none;
   }
-  .crt-title .spine-tip::after {
-    top: auto;
-    bottom: 100%;
-    border-right: none;
-    border-bottom: none;
-    border-left: 1px solid var(--gold);
-    border-top: 1px solid var(--gold);
-    margin-top: 0;
-    margin-bottom: -5px;
+  .crt-title-name {
+    color: var(--bone);
+    font-size: 1.4rem;
+    line-height: 1.2;
+    letter-spacing: 0.01em;
+    text-shadow: 0 0 6px rgba(245,239,216,0.4);
   }
-  .crt-title:hover .spine-tip,
-  .crt-title:focus-visible .spine-tip {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
+  .crt-title-slug {
+    color: var(--bone-dim);
+    font-size: 0.85rem;
+    opacity: 0.6;
+  }
+  .crt-title:hover .crt-title-name,
+  .crt-title:focus-visible .crt-title-name {
+    color: var(--gold);
+    text-shadow: -1.5px 0 var(--red), 1.5px 0 var(--cyan), 0 0 8px var(--gold);
   }
   .crt-tag { color: var(--gold); font-size: 0.95rem; opacity: 0.9; }
   .crt-meta { color: var(--bone-dim); font-size: 0.95rem; }
@@ -1940,7 +1938,7 @@
     .header-inner { grid-template-columns: 1fr; justify-items: center; gap: 1rem; }
     .logo, .site-nav, .header-right { justify-self: center; }
     .hero-frame { padding: 3rem 1.5rem; }
-    .crt-row { grid-template-columns: 24px 1fr; gap: 0.6rem; }
+    .crt-row { grid-template-columns: 28px 1fr; gap: 0.6rem; }
     .crt-tag, .crt-meta, .crt-state { grid-column: 2; font-size: 0.85rem; }
     .bookshelf { gap: 4px; flex-wrap: wrap; min-height: auto; }
     .spine { min-height: 320px; }
