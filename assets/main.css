@@ -1175,17 +1175,16 @@
     left: 0;
     top: calc(100% + 10px);
     transform: translateY(-6px);
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
     width: max-content;
-    max-width: 280px;
-    padding: 0.6rem 0.9rem;
+    min-width: 140px;
+    max-width: 260px;
+    padding: 0.55rem 0.9rem;
     background: var(--void);
     border: 1px solid var(--gold);
     box-shadow: 0 0 20px rgba(0,0,0,0.7);
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 0.85rem;
-    line-height: 1.4;
-    color: var(--bone);
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.2s, transform 0.2s;
@@ -1200,6 +1199,22 @@
     border-top: 1px solid var(--gold);
     transform: rotate(45deg);
     margin-bottom: -5px;
+  }
+  .crt-tip-title {
+    font-family: 'Forum', serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gold);
+    white-space: normal;
+  }
+  .crt-tip-genre {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--bone-dim);
   }
   .crt-title:hover .crt-tip,
   .crt-title:focus-visible .crt-tip {
