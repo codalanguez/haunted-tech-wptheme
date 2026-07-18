@@ -593,7 +593,7 @@ function ht_render_gallery($attributes = []) {
 
             <div class="gallery-footer">
               <button class="gallery-arrow prev" aria-label="Previous page" disabled>&larr;</button>
-              <div class="gallery-page-indicator">Page <span>1</span> / <?php echo (int)$total_pages; ?></div>
+              <div class="gallery-page-indicator">Page <span class="gallery-page-current">1</span> / <span class="gallery-page-total"><?php echo (int)$total_pages; ?></span></div>
               <button class="gallery-arrow next" aria-label="Next page" <?php echo $total_pages <= 1 ? 'disabled' : ''; ?>>&rarr;</button>
               <button type="button" class="gallery-inquire" data-open-commission="<?php echo esc_attr($modal_key); ?>">Inquire &rarr;</button>
             </div>

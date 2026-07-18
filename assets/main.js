@@ -253,44 +253,59 @@
     window.addEventListener('hashchange', syncFromHash);
     syncFromHash();
 
-    // ---------- Filter chips (currently only Art Commissions panel) ----------
-    document.querySelectorAll('.gallery-chips').forEach(chipBar => {
-      const panel = chipBar.closest('.gallery-panel');
-      const chips = chipBar.querySelectorAll('.gallery-chip');
-      chips.forEach(chip => {
-        chip.addEventListener('click', () => {
-          chips.forEach(c => c.classList.remove('active'));
-          chip.classList.add('active');
-          const filter = chip.dataset.filter;
-          panel.querySelectorAll('.gallery-item').forEach(item => {
-            const matches = filter === 'all' || item.dataset.cat === filter;
-            item.classList.toggle('filtered-out', !matches);
-          });
-        });
-      });
-    });
-
-    // ---------- Pagination ----------
+    // ---------- Filter chips + pagination (combined so a category filter
+    // re-paginates its own matches, instead of being constrained to
+    // whichever page was showing when the filter was applied) ----------
     document.querySelectorAll('.gallery-panel').forEach(panel => {
-      const totalPages = parseInt(panel.dataset.pages, 10) || 1;
-      if (totalPages < 2) return;
+      const allItems = Array.from(panel.querySelectorAll('.gallery-item'));
+      // Page size = however many items PHP put on page 1 before any filter ran.
+      const pageSize = allItems.filter(i => parseInt(i.dataset.page, 10) === 1).length || allItems.length || 1;
       const prevBtn = panel.querySelector('.gallery-arrow.prev');
       const nextBtn = panel.querySelector('.gallery-arrow.next');
-      const indicator = panel.querySelector('.gallery-page-indicator span');
-      let currentPage = parseInt(panel.dataset.page, 10) || 1;
+      const currentEl = panel.querySelector('.gallery-page-current');
+      const totalEl = panel.querySelector('.gallery-page-total');
+      let currentPage = 1;
+
       function showPage(n) {
+        const matched = allItems.filter(i => !i.classList.contains('filtered-out'));
+        const totalPages = Math.max(1, Math.ceil(matched.length / pageSize));
         currentPage = Math.max(1, Math.min(totalPages, n));
-        panel.dataset.page = currentPage;
-        panel.querySelectorAll('.gallery-item').forEach(item => {
-          const itemPage = parseInt(item.dataset.page, 10);
+        allItems.forEach(item => {
+          if (item.classList.contains('filtered-out')) {
+            item.classList.add('page-hidden');
+            return;
+          }
+          const idx = matched.indexOf(item);
+          const itemPage = Math.floor(idx / pageSize) + 1;
           item.classList.toggle('page-hidden', itemPage !== currentPage);
         });
-        if (indicator) indicator.textContent = currentPage;
+        if (currentEl) currentEl.textContent = currentPage;
+        if (totalEl) totalEl.textContent = totalPages;
         if (prevBtn) prevBtn.disabled = currentPage <= 1;
         if (nextBtn) nextBtn.disabled = currentPage >= totalPages;
       }
+
       if (prevBtn) prevBtn.addEventListener('click', () => showPage(currentPage - 1));
       if (nextBtn) nextBtn.addEventListener('click', () => showPage(currentPage + 1));
+
+      const chipBar = panel.querySelector('.gallery-chips');
+      if (chipBar) {
+        const chips = chipBar.querySelectorAll('.gallery-chip');
+        chips.forEach(chip => {
+          chip.addEventListener('click', () => {
+            chips.forEach(c => c.classList.remove('active'));
+            chip.classList.add('active');
+            const filter = chip.dataset.filter;
+            allItems.forEach(item => {
+              const matches = filter === 'all' || item.dataset.cat === filter;
+              item.classList.toggle('filtered-out', !matches);
+            });
+            showPage(1);
+          });
+        });
+      }
+
+      showPage(1);
     });
 
     // ---------- Lightbox ----------
