@@ -527,7 +527,7 @@ function ht_render_gallery($attributes = []) {
         <div class="gallery-panel<?php echo $is_active ? ' active' : ''; ?>" id="<?php echo esc_attr($panel_id); ?>" role="tabpanel" data-page="1" data-pages="<?php echo (int)$total_pages; ?>">
 
           <?php
-          if ($tab === 'art' && !empty($items)):
+          if (in_array($tab, ['art', 'ai'], true) && !empty($items)):
               $cats = [];
               foreach ($items as $i) {
                   $raw = trim((string) get_field('category', $i->ID));
@@ -536,7 +536,7 @@ function ht_render_gallery($attributes = []) {
                   $cats[$slug] = ucfirst($raw);
               }
               if (!empty($cats)): ?>
-                <div class="gallery-chips" role="toolbar" aria-label="Filter commissions">
+                <div class="gallery-chips" role="toolbar" aria-label="Filter <?php echo esc_attr($label); ?>">
                   <button class="gallery-chip active" data-filter="all">All</button>
                   <?php foreach ($cats as $slug => $label_cat): ?>
                     <button class="gallery-chip" data-filter="<?php echo esc_attr($slug); ?>"><?php echo esc_html($label_cat); ?></button>
