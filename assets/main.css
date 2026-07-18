@@ -1786,6 +1786,9 @@
   .lightbox-buy {
     align-self: flex-start;
   }
+  .lightbox-buy[hidden] {
+    display: none;
+  }
   .lightbox-divider {
     height: 1px;
     background: linear-gradient(90deg, transparent, var(--gold), transparent);
