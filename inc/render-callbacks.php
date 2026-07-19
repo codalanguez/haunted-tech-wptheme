@@ -494,9 +494,11 @@ function ht_render_gallery($attributes = []) {
         'ai'     => 'All AI Pieces',
     ];
 
-    $first_active = 'art';
-    foreach (array_keys($tab_labels) as $key) {
-        if (!empty($grouped[$key])) { $first_active = $key; break; }
+    $first_active = 'covers';
+    if (empty($grouped[$first_active])) {
+        foreach (array_keys($tab_labels) as $key) {
+            if (!empty($grouped[$key])) { $first_active = $key; break; }
+        }
     }
 
     $page_size = 9;

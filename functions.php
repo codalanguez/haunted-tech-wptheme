@@ -20,7 +20,7 @@
 
 if (!defined('ABSPATH')) { exit; }
 
-define('HAUNTED_TECH_VERSION', '0.11.21');
+define('HAUNTED_TECH_VERSION', '0.11.22');
 define('HAUNTED_TECH_DIR', get_template_directory());
 define('HAUNTED_TECH_URI', get_template_directory_uri());
 
