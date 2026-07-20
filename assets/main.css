@@ -419,7 +419,7 @@
     text-shadow: 0 0 12px rgba(255,212,0,0.5);
   }
   .hero-eyebrow::before, .hero-eyebrow::after { content: '◆'; color: var(--red); margin: 0 0.5rem; font-size: 0.7em; vertical-align: middle; text-shadow: 0 0 8px var(--red); }
-  .hero h1 {
+  .hero h2 {
     font-family: 'Forum', serif; font-size: clamp(3rem, 9vw, 7rem);
     line-height: 0.95; color: var(--bone); margin-bottom: 1.8rem;
     letter-spacing: 0.08em; text-transform: uppercase; position: relative;
@@ -427,13 +427,13 @@
     text-shadow: 0 0 30px rgba(255,212,0,0.25), 0 0 60px rgba(229,9,20,0.15);
     animation: glitch-tear 3s infinite;
   }
-  .hero h1 .gold { color: var(--gold); text-shadow: 0 0 24px rgba(255,212,0,0.7), 0 0 48px rgba(229,9,20,0.3); }
-  .hero h1::before, .hero h1::after {
+  .hero h2 .gold { color: var(--gold); text-shadow: 0 0 24px rgba(255,212,0,0.7), 0 0 48px rgba(229,9,20,0.3); }
+  .hero h2::before, .hero h2::after {
     content: attr(data-text); position: absolute; top: 0; left: 0;
     width: 100%; height: 100%; overflow: hidden; mix-blend-mode: screen;
   }
-  .hero h1::before { color: var(--red); animation: glitch-clip-1 2.4s infinite linear; text-shadow: 0 0 20px var(--red); }
-  .hero h1::after { color: var(--cyan); animation: glitch-clip-2 2.4s infinite linear; text-shadow: 0 0 20px var(--cyan); }
+  .hero h2::before { color: var(--red); animation: glitch-clip-1 2.4s infinite linear; text-shadow: 0 0 20px var(--red); }
+  .hero h2::after { color: var(--cyan); animation: glitch-clip-2 2.4s infinite linear; text-shadow: 0 0 20px var(--cyan); }
   .hero p {
     font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1.4rem;
     color: var(--bone); max-width: 620px; margin: 0 auto 3rem; line-height: 1.6; opacity: 0.92;

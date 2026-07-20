@@ -120,6 +120,7 @@ function ht_render_hero_slider($attributes = []) {
     <span id="hero" class="ht-anchor" aria-hidden="true"></span>
     <span id="top"  class="ht-anchor" aria-hidden="true"></span>
     <div class="hero block-hero" id="hero-slider">
+        <?php if ( is_front_page() ) : ?><h1 class="ht-site-h1" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;"><?php echo esc_html( get_bloginfo( 'name' ) . ' — Dark Fantasy Romance & Web Novels' ); ?></h1><?php endif; ?>
       <div class="hero-watermark" aria-hidden="true">
         <?php
         $_wm_id = get_theme_mod('custom_logo');
@@ -148,7 +149,7 @@ function ht_render_hero_slider($attributes = []) {
           ?>
           <div class="hero-content<?php echo $i === 0 ? ' active' : ''; ?>" data-slide="<?php echo (int)$i; ?>">
             <?php if ($eyebrow): ?><div class="hero-eyebrow"><?php echo esc_html($eyebrow); ?></div><?php endif; ?>
-            <h1 data-text="<?php echo esc_attr($combined); ?>"><?php echo esc_html($first); ?> <span class="gold"><?php echo esc_html($accent); ?></span></h1>
+            <h2 data-text="<?php echo esc_attr($combined); ?>"><?php echo esc_html($first); ?> <span class="gold"><?php echo esc_html($accent); ?></span></h2>
             <?php if ($blurb): ?><p><?php echo esc_html($blurb); ?></p><?php endif; ?>
             <a href="<?php echo esc_url($cta_link); ?>" class="cta"><?php echo esc_html($cta_label); ?></a>
           </div>
@@ -156,7 +157,7 @@ function ht_render_hero_slider($attributes = []) {
         <?php else: ?>
           <div class="hero-content active" data-slide="0">
             <div class="hero-eyebrow">Welcome</div>
-            <h1 data-text="HAUNTED TECH">HAUNTED <span class="gold">TECH</span></h1>
+            <h2 data-text="HAUNTED TECH">HAUNTED <span class="gold">TECH</span></h2>
             <p>Add your first slide by going to WP Admin &rarr; Hero Updates &rarr; Add New. The three most recent updates appear here automatically.</p>
             <a href="<?php echo esc_url(admin_url('post-new.php?post_type=hero_update')); ?>" class="cta">Create First Update</a>
           </div>
