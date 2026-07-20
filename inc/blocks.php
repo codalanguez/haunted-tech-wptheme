@@ -41,6 +41,7 @@ add_action('init', function () {
         ['slug' => 'about-modal',   'title' => 'About Modal',    'render' => 'ht_render_about_modal',  'icon' => 'admin-users'],
         ['slug' => 'single-book',           'title' => 'Single Book Layout',          'render' => 'ht_render_single_book',          'icon' => 'book-alt'],
         ['slug' => 'single-webnovel',       'title' => 'Single Web Novel Layout',     'render' => 'ht_render_single_webnovel',      'icon' => 'welcome-write-blog'],
+        ['slug' => 'single-chapter',        'title' => 'Single Chapter Layout',       'render' => 'ht_render_single_chapter',       'icon' => 'text-page'],
         ['slug' => 'book-excerpt',          'title' => 'Book Excerpt',                'render' => 'ht_render_book_excerpt',          'icon' => 'edit-page'],
         ['slug' => 'book-more-in-series',   'title' => 'Book — More in Series',       'render' => 'ht_render_book_more_in_series',   'icon' => 'book'],
         ['slug' => 'also-by',               'title' => 'Also by (Author)',             'render' => 'ht_render_also_by',               'icon' => 'screenoptions'],

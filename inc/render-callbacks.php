@@ -1440,6 +1440,182 @@ function ht_render_single_webnovel($attributes = []) {
         </div>
       </div>
     </section>
+
+    <?php
+    $chapters = get_posts([
+        'post_type'      => 'chapter',
+        'posts_per_page' => -1,
+        'post_status'    => 'publish',
+        'meta_key'       => 'chapter_number',
+        'orderby'        => 'meta_value_num',
+        'order'          => 'ASC',
+        'meta_query'     => [['key' => 'webnovel', 'value' => $wn_id]],
+    ]);
+    $access_labels = [
+        'free'          => 'Free',
+        'early_access'  => 'Early Access',
+        'patron_only'   => 'Patron Only',
+        'ream_premium'  => 'Ream Premium',
+        'substack_paid' => 'Substack Premium',
+        'locked'        => 'Locked',
+    ];
+    if (!empty($chapters)): ?>
+      <section class="chapter-index">
+        <div class="section-header">
+          <h2 class="section-title">Chapters</h2>
+          <div class="section-meta"><?php echo (int) count($chapters); ?> published</div>
+        </div>
+        <ol class="chapter-index-list">
+          <?php foreach ($chapters as $ch):
+              $ch_access = get_field('access_level', $ch->ID) ?: 'free';
+              $ch_arc    = get_field('arc', $ch->ID);
+              $ch_no     = get_field('chapter_number', $ch->ID);
+          ?>
+            <li class="chapter-index-item">
+              <a href="<?php echo esc_url(get_permalink($ch)); ?>" class="chapter-index-link">
+                <span class="chapter-index-num"><?php echo $ch_no ? esc_html($ch_no) : ''; ?></span>
+                <span class="chapter-index-title"><?php if ($ch_arc): ?><em><?php echo esc_html($ch_arc); ?> &middot; </em><?php endif; ?><?php echo esc_html(get_the_title($ch)); ?></span>
+                <span class="chapter-access-badge chapter-access-<?php echo esc_attr($ch_access); ?>"><?php echo esc_html($access_labels[$ch_access] ?? 'Free'); ?></span>
+              </a>
+            </li>
+          <?php endforeach; ?>
+        </ol>
+      </section>
+    <?php endif; ?>
+    <?php
+    return ob_get_clean();
+}
+
+/* ============================================================
+ * SINGLE CHAPTER
+ * ============================================================ */
+function ht_render_single_chapter($attributes = []) {
+    $ch_id = get_the_ID();
+    if (!$ch_id || get_post_type($ch_id) !== 'chapter') return '';
+
+    $wn_id      = get_field('webnovel', $ch_id);
+    $wn_id      = is_object($wn_id) ? $wn_id->ID : (int) $wn_id;
+    $chapter_no = get_field('chapter_number', $ch_id);
+    $arc        = get_field('arc', $ch_id);
+    $word_count = get_field('word_count', $ch_id);
+    $release    = get_field('release_date', $ch_id);
+    $access     = get_field('access_level', $ch_id) ?: 'free';
+    $read_url   = get_field('external_read_url', $ch_id);
+    $note       = get_field('authors_note', $ch_id);
+    $warnings   = get_field('chapter_warnings', $ch_id);
+    $prev_id    = get_field('prev_chapter', $ch_id);
+    $next_id    = get_field('next_chapter', $ch_id);
+    $prev_id    = is_object($prev_id) ? $prev_id->ID : (int) $prev_id;
+    $next_id    = is_object($next_id) ? $next_id->ID : (int) $next_id;
+
+    $access_labels = [
+        'free'          => 'Free / Public',
+        'early_access'  => 'Early Access',
+        'patron_only'   => 'Patron Only',
+        'ream_premium'  => 'Ream Premium',
+        'substack_paid' => 'Substack Premium',
+        'locked'        => 'Locked / Off-Platform',
+    ];
+    $access_label = $access_labels[$access] ?? 'Free / Public';
+    $is_gated     = in_array($access, ['early_access', 'patron_only', 'ream_premium', 'substack_paid', 'locked'], true);
+
+    /* Auto-compute prev/next by chapter_number within the same series unless
+     * manually overridden via the prev_chapter / next_chapter fields. */
+    if ($wn_id && (!$prev_id || !$next_id)) {
+        $siblings = get_posts([
+            'post_type'      => 'chapter',
+            'posts_per_page' => -1,
+            'post_status'    => 'publish',
+            'meta_key'       => 'chapter_number',
+            'orderby'        => 'meta_value_num',
+            'order'          => 'ASC',
+            'meta_query'     => [['key' => 'webnovel', 'value' => $wn_id]],
+            'fields'         => 'ids',
+        ]);
+        $pos = array_search($ch_id, $siblings, true);
+        if ($pos !== false) {
+            if (!$prev_id && $pos > 0) $prev_id = $siblings[$pos - 1];
+            if (!$next_id && $pos < count($siblings) - 1) $next_id = $siblings[$pos + 1];
+        }
+    }
+
+    $cw_items = array_filter(array_map('trim', explode(',', (string) $warnings)));
+
+    ob_start(); ?>
+    <section class="book-hero is-chapter">
+      <div class="book-hero-inner chapter-hero-inner">
+        <div class="book-meta-col chapter-meta-col">
+          <?php if ($wn_id): ?>
+            <a href="<?php echo esc_url(get_permalink($wn_id)); ?>" class="chapter-parent-link">&larr; <?php echo esc_html(get_the_title($wn_id)); ?></a>
+          <?php endif; ?>
+
+          <div class="book-series-mark">
+            <?php if ($arc): ?><?php echo esc_html($arc); ?> &middot; <?php endif; ?>
+            <?php if ($chapter_no): ?>Chapter <?php echo esc_html($chapter_no); ?><?php endif; ?>
+          </div>
+
+          <h1 class="book-title" data-text="<?php echo esc_attr(get_the_title($ch_id)); ?>"><?php echo esc_html(get_the_title($ch_id)); ?></h1>
+
+          <div class="book-detail-row">
+            <span class="chapter-access-badge chapter-access-<?php echo esc_attr($access); ?>"><?php echo esc_html($access_label); ?></span>
+            <?php if ($word_count): ?><span><strong>Words:</strong> <?php echo esc_html(number_format_i18n((int) $word_count)); ?></span><?php endif; ?>
+            <?php if ($release): ?><span><strong>Released:</strong> <?php echo esc_html(date_i18n('M j, Y', strtotime($release))); ?></span><?php endif; ?>
+          </div>
+
+          <?php if (!empty($cw_items)): ?>
+            <details class="content-warnings">
+              <summary>Content Warnings <span class="cw-count"><?php echo count($cw_items); ?> listed</span></summary>
+              <div class="cw-body">
+                <ul class="cw-list">
+                  <?php foreach ($cw_items as $cw): ?><li><?php echo esc_html($cw); ?></li><?php endforeach; ?>
+                </ul>
+              </div>
+            </details>
+          <?php endif; ?>
+        </div>
+      </div>
+    </section>
+
+    <section class="book-excerpt-section">
+      <div class="book-excerpt-eyebrow"><?php echo $is_gated ? 'Excerpt' : 'Chapter'; ?></div>
+      <div class="book-excerpt-body"><?php the_content(); ?></div>
+      <?php if ($is_gated && $read_url): ?>
+        <div class="book-excerpt-fade">
+          <a href="<?php echo esc_url($read_url); ?>" class="cta" target="_blank" rel="noopener">Continue Reading on Substack</a>
+        </div>
+      <?php elseif ($read_url): ?>
+        <div style="text-align:center;margin-top:2rem;">
+          <a href="<?php echo esc_url($read_url); ?>" class="buy-btn buy-btn-download" target="_blank" rel="noopener">Also Available on Substack</a>
+        </div>
+      <?php endif; ?>
+    </section>
+
+    <?php if ($note): ?>
+      <section class="book-excerpt-section chapter-authors-note">
+        <div class="book-excerpt-eyebrow">Author's Note</div>
+        <div class="book-excerpt-body"><?php echo wp_kses_post(wpautop($note)); ?></div>
+      </section>
+    <?php endif; ?>
+
+    <?php if ($prev_id || $next_id): ?>
+      <nav class="chapter-nav" aria-label="Chapter navigation">
+        <?php if ($prev_id): ?>
+          <a href="<?php echo esc_url(get_permalink($prev_id)); ?>" class="chapter-nav-link chapter-nav-prev">
+            <span class="chapter-nav-dir">&larr; Previous</span>
+            <span class="chapter-nav-title"><?php echo esc_html(get_the_title($prev_id)); ?></span>
+          </a>
+        <?php else: ?><span class="chapter-nav-spacer"></span><?php endif; ?>
+        <?php if ($wn_id): ?>
+          <a href="<?php echo esc_url(get_permalink($wn_id)); ?>" class="chapter-nav-index">All Chapters</a>
+        <?php endif; ?>
+        <?php if ($next_id): ?>
+          <a href="<?php echo esc_url(get_permalink($next_id)); ?>" class="chapter-nav-link chapter-nav-next">
+            <span class="chapter-nav-dir">Next &rarr;</span>
+            <span class="chapter-nav-title"><?php echo esc_html(get_the_title($next_id)); ?></span>
+          </a>
+        <?php else: ?><span class="chapter-nav-spacer"></span><?php endif; ?>
+      </nav>
+    <?php endif; ?>
     <?php
     return ob_get_clean();
 }
