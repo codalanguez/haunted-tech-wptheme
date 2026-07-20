@@ -1333,13 +1333,24 @@
     overflow: hidden;
   }
   .service-icon-area::before {
-    content: ''; position: absolute; inset: 0;
+    content: ''; position: absolute; inset: 0; z-index: 2;
     background: conic-gradient(from 0deg at 50% 50%,
       transparent 0deg, rgba(229,9,20,0.08) 60deg, transparent 120deg,
       rgba(255,212,0,0.08) 180deg, transparent 240deg, rgba(229,9,20,0.08) 300deg, transparent 360deg);
     mix-blend-mode: screen;
     -webkit-mask: radial-gradient(circle at 50% 50%, black 0%, transparent 70%);
     mask: radial-gradient(circle at 50% 50%, black 0%, transparent 70%);
+  }
+  .service-image {
+    position: absolute; inset: 0; z-index: 1;
+    width: 100%; height: 100%;
+    object-fit: cover; object-position: center 20%;
+    filter: saturate(1.05) brightness(0.94);
+    transition: transform 0.6s ease, filter 0.5s ease;
+  }
+  .service-card:hover .service-image {
+    transform: scale(1.05);
+    filter: saturate(1.2) brightness(1);
   }
   .service-icon {
     font-family: 'Forum', serif;
@@ -1353,6 +1364,24 @@
   .service-card:hover .service-icon {
     animation: glitch-shift-fast 0.5s;
     text-shadow: -3px 0 var(--red), 3px 0 var(--cyan), 0 0 32px rgba(255,212,0,0.8);
+  }
+  .service-icon-badge {
+    position: absolute; z-index: 3; bottom: 0.9rem; right: 0.9rem;
+    width: 2.5rem; height: 2.5rem;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Forum', serif; font-size: 1.2rem;
+    color: var(--gold);
+    background: rgba(10,10,12,0.55);
+    border: 1px solid rgba(255,212,0,0.4);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    text-shadow: 0 0 10px rgba(255,212,0,0.6);
+    transition: all 0.4s;
+  }
+  .service-card:hover .service-icon-badge {
+    animation: glitch-shift-fast 0.5s;
+    border-color: var(--gold);
+    box-shadow: 0 0 18px rgba(255,212,0,0.35);
   }
   .service-meta { padding: 2rem 1.8rem; position: relative; z-index: 3; }
   .service-eyebrow {
@@ -3106,7 +3135,9 @@
 
 /* ----- Left poster panel: large icon + atmospheric tagline ----- */
 .commission-poster {
-  background: var(--void);
+  background-color: var(--void);
+  background-size: cover;
+  background-position: center 18%;
   position: relative;
   border-right: 1px solid var(--border-dim);
   display: flex;
@@ -3119,6 +3150,12 @@
 @media (max-width: 900px) {
   .commission-poster { border-right: none; border-bottom: 1px solid var(--border-dim); padding: 2rem 1.5rem; }
 }
+.commission-poster::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(10,10,12,0.3) 0%, rgba(10,10,12,0.5) 55%, rgba(10,10,12,0.88) 100%);
+  pointer-events: none;
+}
 .commission-poster::after {
   content: '';
   position: absolute; inset: 0;
@@ -3128,18 +3165,21 @@
   pointer-events: none;
 }
 .commission-poster-icon {
-  font-size: 9rem;
+  position: absolute; z-index: 2; top: 1.4rem; left: 1.4rem;
+  width: 3.4rem; height: 3.4rem;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.6rem;
   line-height: 1;
   color: var(--gold);
+  background: rgba(10,10,12,0.55);
+  border: 1px solid rgba(255,212,0,0.4);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
   text-shadow:
-    0 0 30px rgba(255,212,0,0.5),
-    0 0 60px rgba(229,9,20,0.25);
-  margin-bottom: 2.5rem;
-  position: relative;
-  z-index: 1;
+    0 0 12px rgba(255,212,0,0.6);
 }
 @media (max-width: 900px) {
-  .commission-poster-icon { font-size: 5rem; margin-bottom: 1rem; }
+  .commission-poster-icon { width: 2.8rem; height: 2.8rem; font-size: 1.3rem; }
 }
 .commission-poster-tagline {
   font-family: 'Cormorant Garamond', serif;

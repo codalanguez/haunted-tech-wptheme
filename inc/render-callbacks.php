@@ -326,9 +326,22 @@ function ht_render_services($attributes = []) {
         <h2 class="section-title">Services</h2>
         <div class="section-meta">Commissions Open &mdash; Booking Now</div>
       </div>
+      <?php
+      // Featured images pulled from the strongest gallery_item in each
+      // service's own category (see /wp-admin gallery_item list, "Client
+      // Commission" / "Premade Cover" / "Character Portrait" tags).
+      $service_images = [
+          'art'    => ['url' => 'https://codalanguez.com/wp-content/uploads/2026/07/havelock-under-neon-881x1024.jpg', 'alt' => 'Havelock, Under Neon — client character commission by Coda Languez'],
+          'covers' => ['url' => 'https://codalanguez.com/wp-content/uploads/2026/07/a-model-glitch-768x1024.jpg', 'alt' => 'A Model Glitch — premade book cover design by Coda Languez'],
+          'ai'     => ['url' => 'https://codalanguez.com/wp-content/uploads/2026/07/ai11-585x1024.jpg', 'alt' => 'Red-haired woman with skull earring — AI-generated character portrait by Coda Languez'],
+      ];
+      ?>
       <div class="services-grid">
         <div class="service-card" id="service-art">
-          <div class="service-icon-area"><div class="service-icon">&#10048;</div></div>
+          <div class="service-icon-area">
+            <img class="service-image" src="<?php echo esc_url($service_images['art']['url']); ?>" alt="<?php echo esc_attr($service_images['art']['alt']); ?>" loading="lazy">
+            <div class="service-icon-badge">&#10048;</div>
+          </div>
           <div class="service-meta">
             <div class="service-eyebrow">Bespoke</div>
             <div class="service-title">Art Commissions</div>
@@ -340,7 +353,10 @@ function ht_render_services($attributes = []) {
           </div>
         </div>
         <div class="service-card" id="service-covers">
-          <div class="service-icon-area"><div class="service-icon">&#10065;</div></div>
+          <div class="service-icon-area">
+            <img class="service-image" src="<?php echo esc_url($service_images['covers']['url']); ?>" alt="<?php echo esc_attr($service_images['covers']['alt']); ?>" loading="lazy">
+            <div class="service-icon-badge">&#10065;</div>
+          </div>
           <div class="service-meta">
             <div class="service-eyebrow">Premade &amp; Custom</div>
             <div class="service-title">Book Cover Design</div>
@@ -352,7 +368,10 @@ function ht_render_services($attributes = []) {
           </div>
         </div>
         <div class="service-card" id="service-ai">
-          <div class="service-icon-area"><div class="service-icon">&#9635;</div></div>
+          <div class="service-icon-area">
+            <img class="service-image" src="<?php echo esc_url($service_images['ai']['url']); ?>" alt="<?php echo esc_attr($service_images['ai']['alt']); ?>" loading="lazy">
+            <div class="service-icon-badge">&#9635;</div>
+          </div>
           <div class="service-meta">
             <div class="service-eyebrow">AI-Assisted</div>
             <div class="service-title">AI Image Generation</div>
@@ -372,6 +391,7 @@ function ht_render_services($attributes = []) {
             'eyebrow'  => 'Bespoke',
             'title'    => 'Art Commission',
             'icon'     => '&#10048;',
+            'image'    => 'https://codalanguez.com/wp-content/uploads/2026/07/havelock-under-neon-881x1024.jpg',
             'tagline'  => 'Original character art, cyber-gothic portraits, and scene illustrations. Hand-drawn with neon-glitch finish.',
             'shortcode'=> '[ht_commission_art]',
         ],
@@ -379,6 +399,7 @@ function ht_render_services($attributes = []) {
             'eyebrow'  => 'Premade & Custom',
             'title'    => 'Book Cover Design',
             'icon'     => '&#10065;',
+            'image'    => 'https://codalanguez.com/wp-content/uploads/2026/07/a-model-glitch-768x1024.jpg',
             'tagline'  => 'Full-wrap cover design for dark romance, horror, and cyberpunk fiction. Ebook, paperback, hardcover.',
             'shortcode'=> '[ht_commission_cover]',
         ],
@@ -386,6 +407,7 @@ function ht_render_services($attributes = []) {
             'eyebrow'  => 'AI-Assisted',
             'title'    => 'AI Generation',
             'icon'     => '&#9635;',
+            'image'    => 'https://codalanguez.com/wp-content/uploads/2026/07/ai11-585x1024.jpg',
             'tagline'  => 'Custom AI-generated character art, mood boards, and chapter banners – finished by hand.',
             'shortcode'=> '[ht_commission_ai]',
         ],
@@ -393,7 +415,7 @@ function ht_render_services($attributes = []) {
     <div class="commission-modal" id="commission-modal-<?php echo esc_attr($key); ?>" role="dialog" aria-modal="true" aria-labelledby="cm-title-<?php echo esc_attr($key); ?>" aria-hidden="true" tabindex="-1">
       <div class="commission-frame">
         <button class="commission-close" aria-label="Close inquiry form">&times;</button>
-        <div class="commission-poster">
+        <div class="commission-poster" style="background-image:url('<?php echo esc_url($cfg['image']); ?>');">
           <div class="commission-poster-icon" aria-hidden="true"><?php echo $cfg['icon']; ?></div>
           <div class="commission-poster-tagline"><?php echo esc_html($cfg['tagline']); ?></div>
         </div>
