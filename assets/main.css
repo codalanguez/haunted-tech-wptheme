@@ -420,7 +420,7 @@
   }
   .hero-eyebrow::before, .hero-eyebrow::after { content: '◆'; color: var(--red); margin: 0 0.5rem; font-size: 0.7em; vertical-align: middle; text-shadow: 0 0 8px var(--red); }
   .hero h2 {
-    font-family: 'Forum', serif; font-size: clamp(3rem, 9vw, 7rem);
+    font-family: 'Forum', serif; font-size: clamp(3.5rem, 10vw, 8rem); font-weight: 700;
     line-height: 0.95; color: var(--bone); margin-bottom: 1.8rem;
     letter-spacing: 0.08em; text-transform: uppercase; position: relative;
     display: inline-block;
