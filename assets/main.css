@@ -1244,12 +1244,27 @@
   .crt-tag { color: var(--gold); font-size: 0.95rem; opacity: 0.9; }
   .crt-meta { color: var(--bone-dim); font-size: 0.95rem; }
   .crt-state {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.2rem;
     text-align: right;
     color: var(--gold);
     letter-spacing: 0.1em;
+    line-height: 1.2;
   }
   .crt-state.hiatus { color: var(--red-bright); }
   .crt-state.complete { color: #6ED49A; }
+  .crt-schedule {
+    display: block;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.72rem;
+    font-weight: normal;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--bone-dim);
+  }
   .crt-cursor {
     color: var(--gold);
     animation: cursor-blink 1s steps(2) infinite;

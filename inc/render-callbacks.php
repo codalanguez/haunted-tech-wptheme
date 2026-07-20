@@ -249,6 +249,7 @@ function ht_render_crt_screen($webnovels, $prompt_path = '~/webnovels') {
             <?php foreach ($webnovels as $wn):
                 $status = get_field('status', $wn->ID) ?: 'ongoing';
                 $genre  = get_field('genre',  $wn->ID) ?: '';
+                $sched  = get_field('update_schedule', $wn->ID) ?: '';
                 $status_dot   = ['ongoing'=>'&#9679;', 'complete'=>'&#10003;', 'hiatus'=>'&#9711;', 'planned'=>'&#9633;', 'discontinued'=>'&#10007;'][$status] ?? '&#9679;';
                 $status_class = in_array($status, ['ongoing','complete','hiatus'], true) ? $status : 'ongoing';
                 $slug         = sanitize_title(get_the_title($wn)) . '/';
@@ -265,7 +266,10 @@ function ht_render_crt_screen($webnovels, $prompt_path = '~/webnovels') {
                 </span>
               </a>
               <div class="crt-tag">[<?php echo esc_html(strtoupper($genre)); ?>]</div>
-              <div class="crt-state <?php echo esc_attr($status_class); ?>"><?php echo esc_html(strtoupper($status)); ?></div>
+              <div class="crt-state <?php echo esc_attr($status_class); ?>">
+                <?php echo esc_html(strtoupper($status)); ?>
+                <?php if ($sched): ?><span class="crt-schedule"><?php echo esc_html($sched); ?></span><?php endif; ?>
+              </div>
             </div>
             <?php endforeach; ?>
           <?php else: ?>
@@ -1527,6 +1531,7 @@ function ht_render_linktree($attributes = []) {
                   $tag = get_field('tagline', $wn->ID) ?: get_field('blurb', $wn->ID);
                   $sub = $tag ? wp_trim_words($tag, 14, "\xE2\x80\xA6") : '';
                   $status = get_field('status', $wn->ID);
+                  $sched  = get_field('update_schedule', $wn->ID);
               ?>
                 <a href="<?php echo esc_url(get_permalink($wn)); ?>" class="linktree-tile linktree-tile--webnovel">
                   <div class="linktree-tile-cover">
@@ -1537,7 +1542,7 @@ function ht_render_linktree($attributes = []) {
                     <?php endif; ?>
                   </div>
                   <div class="linktree-tile-body">
-                    <?php if ($status): ?><div class="linktree-tile-eyebrow"><?php echo esc_html(ucfirst((string)$status)); ?></div><?php endif; ?>
+                    <?php if ($status): ?><div class="linktree-tile-eyebrow"><?php echo esc_html(ucfirst((string)$status)); ?><?php if ($sched): ?> &middot; <?php echo esc_html($sched); ?><?php endif; ?></div><?php endif; ?>
                     <div class="linktree-tile-title"><?php echo esc_html(get_the_title($wn)); ?></div>
                     <?php if ($sub): ?><div class="linktree-tile-sub"><?php echo esc_html($sub); ?></div><?php endif; ?>
                   </div>
