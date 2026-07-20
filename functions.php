@@ -20,7 +20,7 @@
 
 if (!defined('ABSPATH')) { exit; }
 
-define('HAUNTED_TECH_VERSION', '0.11.22');
+define('HAUNTED_TECH_VERSION', '0.11.10');
 define('HAUNTED_TECH_DIR', get_template_directory());
 define('HAUNTED_TECH_URI', get_template_directory_uri());
 
@@ -314,12 +314,23 @@ if (!class_exists('Haunted_Tech_Social_Walker')) {
             $url   = $item->url   ?? '#';
             $label = $item->title ?? '';
             $icon  = self::icon_for($url, $label);
+            $rel   = self::rel_for($url, $label);
             $output .= sprintf(
-                '<li><a href="%s" data-label="%s" aria-label="%s"><i class="%s"></i></a></li>',
-                esc_url($url), esc_attr($label), esc_attr($label), esc_attr($icon)
+                '<li><a href="%s" rel="%s" data-label="%s" aria-label="%s"><i class="%s"></i></a></li>',
+                esc_url($url), esc_attr($rel), esc_attr($label), esc_attr($label), esc_attr($icon)
             );
         }
         public function end_el(&$output, $item, $depth = 0, $args = null) { /* no-op */ }
+        /* Commercial/affiliate outbound links get sponsored+nofollow; genuine
+         * social profiles stay followable. Matches Pretty Link slugs + hosts. */
+        public static function rel_for($url, $label = '') {
+            $s = strtolower(($url ?: '') . ' ' . ($label ?: ''));
+            $commercial = ['amazon', 'audible', 'barnes', 'noble', '/go/bn', 'kobo', 'apple', 'bookshop', 'gumroad', 'redbubble', 'etsy', 'ko-fi', 'kofi'];
+            foreach ($commercial as $needle) {
+                if (strpos($s, $needle) !== false) return 'sponsored nofollow noopener';
+            }
+            return 'noopener';
+        }
         public static function icon_for($url, $label = '') {
             $host = parse_url($url, PHP_URL_HOST) ?: '';
             $map = [

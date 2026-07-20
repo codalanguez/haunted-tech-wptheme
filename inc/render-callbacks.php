@@ -939,7 +939,7 @@ function ht_render_single_book($attributes = []) {
               <?php foreach ($buys as $b):
                   $cls = $b[2] ?? 'buy-btn';
               ?>
-                <a href="<?php echo esc_url($b[1]); ?>" class="<?php echo esc_attr($cls); ?>" target="_blank" rel="noopener"><?php echo esc_html($b[0]); ?></a>
+                <a href="<?php echo esc_url($b[1]); ?>" class="<?php echo esc_attr($cls); ?>" target="_blank" rel="<?php echo (strpos($cls, 'buy-btn-download') !== false) ? 'noopener' : 'sponsored nofollow noopener'; ?>"><?php echo esc_html($b[0]); ?></a>
               <?php endforeach; ?>
             </div>
           <?php endif; ?>
@@ -948,7 +948,7 @@ function ht_render_single_book($attributes = []) {
             <div class="book-find-row">
               <span class="book-find-label">Find online</span>
               <?php foreach ($find_links as $label => $url): ?>
-                <a href="<?php echo esc_url($url); ?>" class="find-btn" target="_blank" rel="noopener"><?php echo esc_html($label); ?></a>
+                <a href="<?php echo esc_url($url); ?>" class="find-btn" target="_blank" rel="nofollow noopener"><?php echo esc_html($label); ?></a>
               <?php endforeach; ?>
             </div>
           <?php endif; ?>
@@ -1001,7 +1001,7 @@ function ht_render_book_excerpt($attributes = []) {
       <div class="book-excerpt-body"><?php echo wp_kses_post($excerpt); ?></div>
       <?php if ($amazon): ?>
         <div class="book-excerpt-fade">
-          <a href="<?php echo esc_url($amazon); ?>" class="cta" target="_blank" rel="noopener">Continue Reading on Amazon</a>
+          <a href="<?php echo esc_url($amazon); ?>" class="cta" target="_blank" rel="sponsored nofollow noopener">Continue Reading on Amazon</a>
         </div>
       <?php endif; ?>
     </section>
