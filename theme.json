@@ -35,11 +35,6 @@
           "slug": "forum"
         },
         {
-          "fontFamily": "Inter, sans-serif",
-          "name": "Inter",
-          "slug": "inter"
-        },
-        {
           "fontFamily": "'Cormorant Garamond', serif",
           "name": "Cormorant Garamond",
           "slug": "cormorant"
@@ -80,7 +75,7 @@
       "text":       "var(--wp--preset--color--bone)"
     },
     "typography": {
-      "fontFamily": "var(--wp--preset--font-family--inter)",
+      "fontFamily": "var(--wp--preset--font-family--cormorant)",
       "lineHeight": "1.6"
     },
     "elements": {
