@@ -324,6 +324,75 @@
   nav a:hover { color: var(--gold); text-shadow: -2px 0 var(--red), 2px 0 var(--cyan); animation: glitch-shift-fast 0.4s; }
   nav a:hover::after { width: 100%; }
 
+  /* ---------------------------------------------------------------
+   * Primary-nav dropdown submenus
+   * wp_nav_menu already nests child items in <ul class="sub-menu">.
+   * The global `nav ul { display:flex }` rule above laid those out
+   * inline (flat) — these rules turn them into hover/focus dropdowns
+   * on desktop while keeping the top-level bar a horizontal flex row.
+   * ------------------------------------------------------------- */
+  .site-nav .menu-item-has-children { position: relative; }
+  /* caret cue on items that own a submenu */
+  .site-nav .menu-item-has-children > a { padding-right: 1rem; }
+  .site-nav .menu-item-has-children > a::before {
+    content: '\25BE';               /* ▾ */
+    position: absolute; right: 0; top: 50%;
+    transform: translateY(-45%);
+    font-size: 0.62em; line-height: 1;
+    color: var(--gold); opacity: 0.75;
+    transition: transform 0.25s, opacity 0.25s;
+  }
+  .site-nav .menu-item-has-children:hover > a::before,
+  .site-nav .menu-item-has-children:focus-within > a::before { opacity: 1; transform: translateY(-45%) rotate(180deg); }
+
+  .site-nav .sub-menu {
+    position: absolute;
+    top: 100%; left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    display: flex; flex-direction: column; gap: 0;
+    min-width: 230px;
+    margin: 0; padding: 0.5rem 0;
+    list-style: none;
+    background: var(--obsidian);
+    border: 1px solid var(--gold);
+    box-shadow: 0 0 0 4px var(--void), 0 0 0 5px var(--gold), 0 20px 50px rgba(0,0,0,0.75);
+    opacity: 0; visibility: hidden; pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    z-index: 160;
+  }
+  /* invisible bridge so the cursor can travel from item to panel */
+  .site-nav .sub-menu::before {
+    content: ''; position: absolute; left: 0; right: 0; top: -12px; height: 12px;
+  }
+  .site-nav .menu-item-has-children:hover > .sub-menu,
+  .site-nav .menu-item-has-children:focus-within > .sub-menu {
+    opacity: 1; visibility: visible; pointer-events: auto;
+    transform: translateX(-50%) translateY(0);
+  }
+  .site-nav .sub-menu li { width: 100%; }
+  .site-nav .sub-menu a {
+    display: block;
+    padding: 0.5rem 1.4rem;
+    font-size: 0.72rem; letter-spacing: 0.22em;
+    color: var(--bone); white-space: nowrap;
+  }
+  .site-nav .sub-menu a::after { display: none; }   /* no centered underline inside the panel */
+  .site-nav .sub-menu a:hover { color: var(--gold); background: rgba(255,212,0,0.07); text-shadow: none; animation: none; }
+
+  /* Touch / narrow screens: hover can't open a dropdown, so let the
+   * submenu flow as a visible, indented stack under its parent. */
+  @media (max-width: 700px) {
+    .site-nav .sub-menu {
+      position: static; transform: none; opacity: 1; visibility: visible;
+      pointer-events: auto; min-width: 0; width: 100%;
+      border: none; box-shadow: none; background: transparent;
+      padding: 0.15rem 0 0.35rem;
+    }
+    .site-nav .sub-menu::before { display: none; }
+    .site-nav .sub-menu a { padding: 0.35rem 0; text-align: center; white-space: normal; opacity: 0.85; }
+    .site-nav .menu-item-has-children > a::before { content: none; }
+  }
+
   /* ============ BLOCK: SOCIAL BAR (top of page, above header) ============ */
   .social-bar {
     background: var(--void);
