@@ -360,7 +360,7 @@
     list-style: none;
     background: var(--obsidian);
     border: 1px solid var(--gold);
-    box-shadow: 0 0 0 4px var(--void), 0 0 0 5px var(--gold), 0 20px 50px rgba(0,0,0,0.75);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.75);
     opacity: 0; visibility: hidden; pointer-events: none;
     transition: opacity 0.22s ease, transform 0.22s ease;
     z-index: 160;
