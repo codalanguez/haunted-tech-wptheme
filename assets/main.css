@@ -351,18 +351,25 @@
     transform: translateX(-50%) translateY(10px);
     display: flex; flex-direction: column; gap: 0;
     min-width: 230px;
-    margin: 0; padding: 0.5rem 0;
+    max-width: min(680px, calc(100vw - 1.5rem));
+    max-height: min(72vh, 520px); overflow-y: auto;   /* #5 — never run off a short viewport */
+    margin: 0; padding: 0.6rem 0 0.5rem;
     list-style: none;
     background: var(--obsidian);
     border: 1px solid var(--gold);
     box-shadow: 0 0 0 4px var(--void), 0 0 0 5px var(--gold), 0 20px 50px rgba(0,0,0,0.75);
     opacity: 0; visibility: hidden; pointer-events: none;
-    transition: opacity 0.25s ease, transform 0.25s ease;
+    transition: opacity 0.22s ease, transform 0.22s ease;
     z-index: 160;
+    scrollbar-width: thin; scrollbar-color: var(--gold) transparent;
   }
-  /* invisible bridge so the cursor can travel from item to panel */
-  .site-nav .sub-menu::before {
-    content: ''; position: absolute; left: 0; right: 0; top: -12px; height: 12px;
+  .site-nav .sub-menu::-webkit-scrollbar { width: 8px; }
+  .site-nav .sub-menu::-webkit-scrollbar-thumb { background: var(--gold); }
+  /* #4 — red→gold→red hairline at the panel's top edge, echoing the header underline */
+  .site-nav .sub-menu::after {
+    content: ''; position: absolute; top: 0; left: 1.4rem; right: 1.4rem; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--red), var(--gold), var(--red), transparent);
+    pointer-events: none;
   }
   .site-nav .menu-item-has-children:hover > .sub-menu,
   .site-nav .menu-item-has-children:focus-within > .sub-menu {
@@ -372,24 +379,47 @@
   .site-nav .sub-menu li { width: 100%; }
   .site-nav .sub-menu a {
     display: block;
-    padding: 0.5rem 1.4rem;
-    font-size: 0.72rem; letter-spacing: 0.22em;
+    padding: 0.4rem 1.25rem;                          /* #2 — tighter vertical rhythm */
+    font-size: 0.72rem; letter-spacing: 0.12em;       /* #2 — ease the tracking so caps read as titles */
     color: var(--bone); white-space: nowrap;
+    border-left: 2px solid transparent;               /* #3 — reserves space for the hover rail */
+    transition: color .18s, background .18s, transform .18s, border-color .18s;
   }
-  .site-nav .sub-menu a::after { display: none; }   /* no centered underline inside the panel */
-  .site-nav .sub-menu a:hover { color: var(--gold); background: rgba(255,212,0,0.07); text-shadow: none; animation: none; }
+  .site-nav .sub-menu a::after { display: none; }     /* no centered underline inside the panel */
+  .site-nav .sub-menu a:hover {                       /* #3 — directional hover cue */
+    color: var(--gold-bright);
+    background: linear-gradient(90deg, rgba(255,212,0,0.12), transparent);
+    border-left-color: var(--gold);
+    transform: translateX(4px);
+    text-shadow: none; animation: none;
+  }
+
+  /* #1 — Books submenu (11 titles) as a balanced two-column panel; titles
+   * wrap within their column so the panel stays a sane width. */
+  .site-nav #menu-item-385 .sub-menu {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(200px, 1fr));
+    min-width: 460px;
+  }
+  .site-nav #menu-item-385 .sub-menu a { white-space: normal; }
 
   /* Touch / narrow screens: hover can't open a dropdown, so let the
    * submenu flow as a visible, indented stack under its parent. */
   @media (max-width: 700px) {
     .site-nav .sub-menu {
       position: static; transform: none; opacity: 1; visibility: visible;
-      pointer-events: auto; min-width: 0; width: 100%;
+      pointer-events: auto; min-width: 0; width: 100%; max-width: none;
+      max-height: none; overflow: visible;
       border: none; box-shadow: none; background: transparent;
       padding: 0.15rem 0 0.35rem;
     }
-    .site-nav .sub-menu::before { display: none; }
-    .site-nav .sub-menu a { padding: 0.35rem 0; text-align: center; white-space: normal; opacity: 0.85; }
+    .site-nav #menu-item-385 .sub-menu { display: block; grid-template-columns: none; min-width: 0; }
+    .site-nav .sub-menu::after { display: none; }
+    .site-nav .sub-menu a {
+      padding: 0.35rem 0; text-align: center; white-space: normal; opacity: 0.85;
+      border-left: 0;
+    }
+    .site-nav .sub-menu a:hover { transform: none; background: transparent; border-left-color: transparent; }
     .site-nav .menu-item-has-children > a::before { content: none; }
   }
 
