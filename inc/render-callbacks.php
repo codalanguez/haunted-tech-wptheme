@@ -1459,27 +1459,70 @@ function ht_render_single_webnovel($attributes = []) {
         'substack_paid' => 'Substack Premium',
         'locked'        => 'Locked',
     ];
-    if (!empty($chapters)): ?>
-      <section class="chapter-index">
+    if (!empty($chapters)):
+      /* Group chapters by their story (the `arc` field). Chapters are already
+       * ordered by chapter_number ASC. Web novels whose chapters have no arc
+       * (Victoria, Taming Malice, Nobody Came Looking…) render as a flat list,
+       * exactly as before. Web novels that DO use arcs (anthologies like
+       * Letters) render each story as a collapsible accordion. */
+      $ht_arc_groups = [];
+      $ht_arc_order  = [];
+      $ht_has_arcs   = false;
+      foreach ($chapters as $ch) {
+          $arc = trim((string) get_field('arc', $ch->ID));
+          if (!isset($ht_arc_groups[$arc])) { $ht_arc_groups[$arc] = []; $ht_arc_order[] = $arc; }
+          $ht_arc_groups[$arc][] = $ch;
+          if ($arc !== '') { $ht_has_arcs = true; }
+      }
+
+      /* Renders a single <li> for one chapter. $show_arc prefixes the title
+       * with the story name (used only in the flat, no-accordion layout). */
+      $ht_render_chapter_li = function ($ch, $show_arc = false) use ($access_labels) {
+          $ch_access = get_field('access_level', $ch->ID) ?: 'free';
+          $ch_arc    = get_field('arc', $ch->ID);
+          $ch_no     = get_field('chapter_number', $ch->ID);
+          ob_start(); ?>
+          <li class="chapter-index-item">
+            <a href="<?php echo esc_url(get_permalink($ch)); ?>" class="chapter-index-link">
+              <span class="chapter-index-num"><?php echo ($ch_no !== '' && $ch_no !== null) ? esc_html($ch_no) : ''; ?></span>
+              <span class="chapter-index-title"><?php if ($show_arc && $ch_arc): ?><em><?php echo esc_html($ch_arc); ?> &middot; </em><?php endif; ?><?php echo esc_html(get_the_title($ch)); ?></span>
+              <span class="chapter-access-badge chapter-access-<?php echo esc_attr($ch_access); ?>"><?php echo esc_html($access_labels[$ch_access] ?? 'Free'); ?></span>
+            </a>
+          </li>
+          <?php return ob_get_clean();
+      };
+    ?>
+      <section class="chapter-index<?php echo $ht_has_arcs ? ' chapter-index--arcs' : ''; ?>">
         <div class="section-header">
           <h2 class="section-title">Chapters</h2>
           <div class="section-meta"><?php echo (int) count($chapters); ?> published</div>
         </div>
-        <ol class="chapter-index-list">
-          <?php foreach ($chapters as $ch):
-              $ch_access = get_field('access_level', $ch->ID) ?: 'free';
-              $ch_arc    = get_field('arc', $ch->ID);
-              $ch_no     = get_field('chapter_number', $ch->ID);
-          ?>
-            <li class="chapter-index-item">
-              <a href="<?php echo esc_url(get_permalink($ch)); ?>" class="chapter-index-link">
-                <span class="chapter-index-num"><?php echo $ch_no ? esc_html($ch_no) : ''; ?></span>
-                <span class="chapter-index-title"><?php if ($ch_arc): ?><em><?php echo esc_html($ch_arc); ?> &middot; </em><?php endif; ?><?php echo esc_html(get_the_title($ch)); ?></span>
-                <span class="chapter-access-badge chapter-access-<?php echo esc_attr($ch_access); ?>"><?php echo esc_html($access_labels[$ch_access] ?? 'Free'); ?></span>
-              </a>
-            </li>
-          <?php endforeach; ?>
-        </ol>
+        <?php if (!$ht_has_arcs): ?>
+          <ol class="chapter-index-list">
+            <?php foreach ($chapters as $ch) { echo $ht_render_chapter_li($ch, true); } ?>
+          </ol>
+        <?php else: ?>
+          <div class="chapter-arc-groups">
+            <?php foreach ($ht_arc_order as $arc): $arc_chs = $ht_arc_groups[$arc]; ?>
+              <?php if ($arc === ''): /* stray chapters with no story — show them ungrouped */ ?>
+                <ol class="chapter-index-list">
+                  <?php foreach ($arc_chs as $ch) { echo $ht_render_chapter_li($ch, false); } ?>
+                </ol>
+              <?php else: ?>
+                <details class="chapter-arc">
+                  <summary class="chapter-arc-summary">
+                    <span class="chapter-arc-name"><?php echo esc_html($arc); ?></span>
+                    <span class="chapter-arc-count"><?php echo (int) count($arc_chs); ?> part<?php echo count($arc_chs) === 1 ? '' : 's'; ?></span>
+                    <span class="chapter-arc-caret" aria-hidden="true">&#9660;</span>
+                  </summary>
+                  <ol class="chapter-index-list chapter-arc-chapters">
+                    <?php foreach ($arc_chs as $ch) { echo $ht_render_chapter_li($ch, false); } ?>
+                  </ol>
+                </details>
+              <?php endif; ?>
+            <?php endforeach; ?>
+          </div>
+        <?php endif; ?>
       </section>
     <?php endif; ?>
     <?php
