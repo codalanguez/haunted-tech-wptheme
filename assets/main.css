@@ -324,6 +324,9 @@
   nav a:hover { color: var(--gold); text-shadow: -2px 0 var(--red), 2px 0 var(--cyan); animation: glitch-shift-fast 0.4s; }
   nav a:hover::after { width: 100%; }
 
+  /* Larger primary-nav links (header menu only — chapter-nav keeps base size) */
+  .site-nav > ul > li > a { font-size: 0.95rem; }
+
   /* ---------------------------------------------------------------
    * Primary-nav dropdown submenus
    * wp_nav_menu already nests child items in <ul class="sub-menu">.
@@ -380,7 +383,7 @@
   .site-nav .sub-menu a {
     display: block;
     padding: 0.4rem 1.25rem;                          /* #2 — tighter vertical rhythm */
-    font-size: 0.72rem; letter-spacing: 0.12em;       /* #2 — ease the tracking so caps read as titles */
+    font-size: 0.8rem; letter-spacing: 0.12em;        /* #2 — ease the tracking so caps read as titles */
     color: var(--bone); white-space: nowrap;
     border-left: 2px solid transparent;               /* #3 — reserves space for the hover rail */
     transition: color .18s, background .18s, transform .18s, border-color .18s;
