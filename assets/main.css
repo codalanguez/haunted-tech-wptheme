@@ -842,10 +842,13 @@
 
   /* ============ HERO SLIDER ============ */
   /* Each slide overlays the same frame; only one is .active at a time */
-  .hero-frame { min-height: 480px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  /* Slides stack in a single grid cell so the frame grows to the tallest
+     slide. (Previously each slide was position:absolute, so a long blurb
+     overflowed the fixed-height frame and collided with the controls once a
+     second slide made them render.) */
+  .hero-frame { min-height: 480px; display: grid; align-content: center; }
   .hero-content {
-    position: absolute;
-    top: 5rem; left: 4rem; right: 4rem; bottom: 5rem;
+    grid-area: 1 / 1;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     opacity: 0;
     transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
@@ -858,9 +861,7 @@
     transform: translateY(0);
     pointer-events: auto;
   }
-  @media (max-width: 700px) {
-    .hero-content { top: 3rem; left: 1.5rem; right: 1.5rem; bottom: 3rem; }
-  }
+  /* Mobile hero spacing is handled by .hero-frame padding (see mobile block). */
 
   /* Slide-specific eyebrow color accent — distinguishes the 3 update types */
   .hero-content[data-slide="0"] .hero-eyebrow { color: var(--gold); }
