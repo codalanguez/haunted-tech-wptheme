@@ -582,14 +582,30 @@ function ht_render_gallery($attributes = []) {
                   $card_tag   = (string) get_field('tag', $item->ID);
                   $desc       = (string) get_field('description', $item->ID);
                   $buy_url    = (string) get_field('buy_url', $item->ID);
-                  $ratio      = (string) (get_field('aspect_ratio', $item->ID) ?: '3/4');
                   $variant    = 'v' . ((($idx % 8) + 1));
                   $image      = get_field('image', $item->ID);
                   $image_url  = '';
+                  $img_w      = 0;
+                  $img_h      = 0;
                   if (is_array($image) && !empty($image['url'])) {
                       $image_url = $image['url'];
+                      $img_w     = (int) ($image['width'] ?? 0);
+                      $img_h     = (int) ($image['height'] ?? 0);
                   } elseif (has_post_thumbnail($item->ID)) {
-                      $image_url = get_the_post_thumbnail_url($item->ID, 'large');
+                      $src = wp_get_attachment_image_src(get_post_thumbnail_id($item->ID), 'large');
+                      if ($src) {
+                          $image_url = $src[0];
+                          $img_w     = (int) $src[1];
+                          $img_h     = (int) $src[2];
+                      }
+                  }
+                  // Drive the card shape from the image's real pixel dimensions so the
+                  // whole picture fills the card with no crop and no letterboxing (true
+                  // masonry). Fall back to the manual ACF ratio, then a portrait default.
+                  if ($img_w > 0 && $img_h > 0) {
+                      $ratio = $img_w . '/' . $img_h;
+                  } else {
+                      $ratio = (string) (get_field('aspect_ratio', $item->ID) ?: '3/4');
                   }
                   $alt = is_array($image) && !empty($image['alt']) ? $image['alt'] : get_the_title($item);
                   $page_class = $page_num > 1 ? ' page-hidden' : '';
@@ -606,7 +622,7 @@ function ht_render_gallery($attributes = []) {
                    <?php if ($buy_url): ?>data-buy-url="<?php echo esc_url($buy_url); ?>"<?php endif; ?>>
                   <div class="gallery-image <?php echo esc_attr($variant); ?>" style="--ratio: <?php echo esc_attr($ratio); ?>; position:relative;">
                     <?php if ($image_url): ?>
-                      <img src="<?php echo esc_url($image_url); ?>" alt="<?php echo esc_attr($alt); ?>" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;z-index:1;">
+                      <img src="<?php echo esc_url($image_url); ?>" alt="<?php echo esc_attr($alt); ?>" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block;z-index:1;">
                     <?php else: ?>
                       <span class="gallery-image-label"><?php echo esc_html(get_the_title($item)); ?></span>
                     <?php endif; ?>
