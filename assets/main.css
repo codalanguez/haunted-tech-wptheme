@@ -1868,6 +1868,15 @@
   .lightbox-frame::after { bottom: 8px; right: 8px; border-left: none; border-top: none; }
   .lightbox-image {
     min-height: 400px;
+    /* The JS copies each card's aspect-ratio onto this box so the image fills
+       it edge-to-edge. But for very tall portrait ratios that height exceeds
+       the viewport and the frame's overflow:hidden clips the top/bottom.
+       Cap the height to the frame (90vh) and pin the width to the column
+       (width:100%) so an over-tall image scales down and is letterboxed
+       against the gradient backdrop (object-fit:contain) instead of cropped.
+       Images short enough to fit within 90vh still fill the column exactly. */
+    max-height: 90vh;
+    width: 100%;
     background: var(--void);
     display: flex; align-items: center; justify-content: center;
     color: var(--gold);
