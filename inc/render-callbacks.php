@@ -1360,6 +1360,52 @@ function ht_render_back_to_top($attributes = []) {
 /* ============================================================
  * SINGLE WEB NOVEL
  * ============================================================ */
+
+/**
+ * Does this web novel have any gated (premium) chapters?
+ *
+ * True only if at least one published chapter attached to this webnovel has a
+ * non-free access_level. An all-free serial returns false, so the premium
+ * banner is suppressed. Empty/unknown access_level counts as free — a missing
+ * field never invents a paywall.
+ *
+ * The gated vocabulary is kept in sync with $is_gated in
+ * ht_render_single_chapter() so the banner and the per-chapter badges agree.
+ *
+ * @param int $webnovel_id Post ID of the webnovel.
+ * @return bool
+ */
+function ht_webnovel_has_gated_chapters($webnovel_id) {
+    $webnovel_id = absint($webnovel_id);
+    if (!$webnovel_id) return false;
+
+    $cache_key = 'ht_webnovel_gated_' . $webnovel_id;
+    $cached    = wp_cache_get($cache_key, 'ht_webnovel');
+    if (false !== $cached) return (bool) $cached;
+
+    $chapters = get_posts([
+        'post_type'        => 'chapter',
+        'post_status'      => 'publish',
+        'posts_per_page'   => -1,
+        'fields'           => 'ids',
+        'no_found_rows'    => true,
+        'suppress_filters' => false,
+        'meta_query'       => [['key' => 'webnovel', 'value' => $webnovel_id]],
+    ]);
+
+    $gated_levels = ['early_access', 'patron_only', 'ream_premium', 'substack_paid', 'locked'];
+
+    $gated = false;
+    foreach ($chapters as $chapter_id) {
+        $level = get_post_meta($chapter_id, 'access_level', true);
+        $level = is_string($level) ? strtolower(trim($level)) : '';
+        if (in_array($level, $gated_levels, true)) { $gated = true; break; }
+    }
+
+    wp_cache_set($cache_key, $gated ? 1 : 0, 'ht_webnovel', HOUR_IN_SECONDS);
+    return $gated;
+}
+
 function ht_render_single_webnovel($attributes = []) {
     $wn_id = get_the_ID();
     if (!$wn_id || get_post_type($wn_id) !== 'webnovel') return '';
@@ -1403,7 +1449,9 @@ function ht_render_single_webnovel($attributes = []) {
               <div class="cover-author"><?php bloginfo('name'); ?></div>
             </div>
           <?php endif; ?>
-          <span class="premium-banner">For Premium Subscribers</span>
+          <?php if (ht_webnovel_has_gated_chapters($wn_id)) : ?>
+            <span class="premium-banner">Some chapters for Substack Premium</span>
+          <?php endif; ?>
         </div>
 
         <div class="book-meta-col">
