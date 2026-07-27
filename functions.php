@@ -20,7 +20,7 @@
 
 if (!defined('ABSPATH')) { exit; }
 
-define('HAUNTED_TECH_VERSION', '0.12.9');
+define('HAUNTED_TECH_VERSION', '0.13.0');
 define('HAUNTED_TECH_DIR', get_template_directory());
 define('HAUNTED_TECH_URI', get_template_directory_uri());
 
@@ -70,15 +70,18 @@ add_action('wp_enqueue_scripts', function () {
         HAUNTED_TECH_VERSION
     );
 
-    // Self-hosted Font Awesome 6.5.1 (Free). 1 css + 8 webfont files in
-    // assets/fontawesome/. ttf files are leftover fallbacks; browsers prefer
-    // woff2. Total bundle ~1 MB, but unicode-range gating + browser cache
-    // means a typical page costs ~150 KB on first load and ~0 KB thereafter.
+    // Self-hosted Font Awesome 6.5.1 (Free) — MINIMAL SUBSET.
+    // fa-used.css declares only the 19 icons the theme actually uses and points
+    // at fa-*-subset.woff2 (subset to just those glyphs, ~4 KB total) instead of
+    // the full all.min.css + full webfonts (~273 KB of fonts). To add an icon:
+    // add its class in a template, add a ::before rule + its codepoint to the
+    // BRANDS/SOLID lists in fa-used.css, then re-run the subset command in that
+    // file's header. The full all.min.css + webfonts stay in the repo for that.
     wp_enqueue_style(
         'font-awesome',
-        HAUNTED_TECH_URI . '/assets/fontawesome/all.min.css',
+        HAUNTED_TECH_URI . '/assets/fontawesome/fa-used.css',
         [],
-        '6.5.1'
+        HAUNTED_TECH_VERSION
     );
 
     wp_enqueue_style(

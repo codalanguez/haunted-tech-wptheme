@@ -1,13 +1,24 @@
 /*!
  * Font Awesome 6.5.1 — minimal subset for codalanguez.com
- * 11 brand icons + 6 solid icons (17 total).
- * Omits regular, light, thin, and duotone @font-face rules and all
- * unused class definitions. Saves ~900 KB vs loading all.min.css.
+ * 11 brand icons + 8 solid icons (19 total), served from subset webfonts
+ * (fa-*-subset.woff2) that contain ONLY these glyphs — ~4 KB total vs the
+ * ~273 KB full fa-solid-900 + fa-brands-400 webfonts, and vs ~1 MB all.min.css.
  *
  * Brands : patreon, discord, bluesky, instagram, tiktok, goodreads-g,
  *          amazon, threads, x-twitter, youtube, facebook
- * Solid  : book-open-reader, envelope-open-text, book-bookmark,
- *          palette, shirt, link
+ * Solid  : book-open-reader, envelope-open-text, book-bookmark, palette,
+ *          shirt, link, magnifying-glass, ghost
+ *
+ * NOTE: fa-bluesky (\e671) does NOT exist in the FA 6.5.1 brand font, so it
+ * renders blank (same as before this subset). To restore it, drop in a
+ * newer brand font (6.6.0+) and re-subset, or inline an SVG for that one.
+ *
+ * Regenerate the subset webfonts with:
+ *   SOLID=f5da,f658,e0bb,f53f,f553,f0c1,f002,f6e2
+ *   BRANDS=f3d9,f392,e671,f16d,e07b,f3a9,f270,e618,e61b,f167,f09a
+ *   python -m fontTools.subset webfonts/fa-solid-900.woff2  --unicodes=$SOLID  --flavor=woff2 --output-file=webfonts/fa-solid-900-subset.woff2  --no-hinting --desubroutinize --layout-features='' --notdef-outline
+ *   python -m fontTools.subset webfonts/fa-brands-400.woff2 --unicodes=$BRANDS --flavor=woff2 --output-file=webfonts/fa-brands-400-subset.woff2 --no-hinting --desubroutinize --layout-features='' --notdef-outline
+ *   (repeat without --flavor for the .ttf fallbacks)
  */
 
 @font-face {
@@ -15,8 +26,8 @@
   font-style:  normal;
   font-weight: 400;
   font-display: swap; /* FA uses PUA code points; fallback is invisible in all system fonts */
-  src: url("webfonts/fa-brands-400.woff2") format("woff2"),
-       url("webfonts/fa-brands-400.ttf")   format("truetype");
+  src: url("webfonts/fa-brands-400-subset.woff2") format("woff2"),
+       url("webfonts/fa-brands-400-subset.ttf")   format("truetype");
 }
 
 @font-face {
@@ -24,8 +35,8 @@
   font-style:  normal;
   font-weight: 900;
   font-display: swap; /* FA uses PUA code points; fallback is invisible in all system fonts */
-  src: url("webfonts/fa-solid-900.woff2") format("woff2"),
-       url("webfonts/fa-solid-900.ttf")   format("truetype");
+  src: url("webfonts/fa-solid-900-subset.woff2") format("woff2"),
+       url("webfonts/fa-solid-900-subset.ttf")   format("truetype");
 }
 
 .fa-brands,
@@ -47,7 +58,7 @@
  * ------------------------------------------------------------------------- */
 .fa-patreon::before     { content: "\f3d9"; }
 .fa-discord::before     { content: "\f392"; }
-.fa-bluesky::before     { content: "\e671"; }
+.fa-bluesky::before     { content: "\e671"; } /* not in 6.5.1 font — renders blank */
 .fa-instagram::before   { content: "\f16d"; }
 .fa-tiktok::before      { content: "\e07b"; }
 .fa-goodreads-g::before { content: "\f3a9"; }
@@ -66,3 +77,5 @@
 .fa-palette::before            { content: "\f53f"; }
 .fa-shirt::before              { content: "\f553"; }
 .fa-link::before               { content: "\f0c1"; }
+.fa-magnifying-glass::before   { content: "\f002"; }
+.fa-ghost::before              { content: "\f6e2"; }
