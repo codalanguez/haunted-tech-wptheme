@@ -232,9 +232,16 @@ function haunted_tech_get_newsletter_embed() {
         $base = rtrim(preg_replace('#/embed/?$#', '', $url), '/');
         $embed_src = $base . '/embed';
         /* Substack provides a sandboxed iframe widget that handles the form,
-         * confirmation, and double-opt-in. ~320px is enough for the input + button. */
+         * confirmation, and double-opt-in. ~320px is enough for the input + button.
+         *
+         * PERF: the section sits far below the fold, and Substack's embed is heavy
+         * (~9s to settle, and it holds the window load event open). So we emit the
+         * URL as data-src and let the small deferral script in ht_render_newsletter()
+         * swap it to src via IntersectionObserver just before it scrolls into view.
+         * A <noscript> copy keeps the real iframe for no-JS clients and crawlers. */
         return sprintf(
-            '<iframe src="%s" class="newsletter-embed-frame newsletter-embed-frame--substack" loading="lazy" frameborder="0" scrolling="no" referrerpolicy="no-referrer-when-downgrade" title="%s" style="width:100%%;border:1px solid var(--gold);background:var(--void);min-height:320px;"></iframe>',
+            '<iframe data-src="%1$s" class="newsletter-embed-frame newsletter-embed-frame--substack" loading="lazy" frameborder="0" scrolling="no" referrerpolicy="no-referrer-when-downgrade" title="%2$s" style="width:100%%;border:1px solid var(--gold);background:var(--void);min-height:320px;"></iframe>'
+            . '<noscript><iframe src="%1$s" class="newsletter-embed-frame newsletter-embed-frame--substack" frameborder="0" scrolling="no" referrerpolicy="no-referrer-when-downgrade" title="%2$s" style="width:100%%;border:1px solid var(--gold);background:var(--void);min-height:320px;"></iframe></noscript>',
             esc_url($embed_src),
             esc_attr__('Subscribe via Substack', 'haunted-tech')
         );

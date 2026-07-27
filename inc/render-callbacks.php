@@ -691,6 +691,41 @@ function ht_render_newsletter($attributes = []) {
       </div>
     </section>
     <?php
+    /* PERF: defer the (heavy, below-the-fold) Substack embed until the visitor
+     * is about to reach it. Loading data-src -> src just before it enters view
+     * keeps the ~9s iframe out of the initial page load / window load event,
+     * while staying seamless (no click needed) for anyone who scrolls down.
+     * Harmless no-op in placeholder / custom-embed modes (no iframe[data-src]). */
+    ?>
+    <script>
+    (function () {
+      var frame = document.querySelector('#newsletter iframe[data-src]');
+      if (!frame) return;
+      var load = function () {
+        if (!frame.dataset.src) return;
+        frame.src = frame.dataset.src;
+        frame.removeAttribute('data-src');
+      };
+      if ('IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) { load(); io.disconnect(); }
+          });
+        }, { rootMargin: '600px 0px' });
+        io.observe(frame.closest('.newsletter') || frame);
+      } else {
+        /* Old browsers: load on first scroll/pointer instead of on page load. */
+        var once = function () {
+          load();
+          window.removeEventListener('scroll', once);
+          window.removeEventListener('pointerdown', once);
+        };
+        window.addEventListener('scroll', once, { passive: true });
+        window.addEventListener('pointerdown', once, { passive: true });
+      }
+    })();
+    </script>
+    <?php
     return ob_get_clean();
 }
 
