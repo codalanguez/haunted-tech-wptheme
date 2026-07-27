@@ -4,18 +4,18 @@
  * (fa-*-subset.woff2) that contain ONLY these glyphs — ~4 KB total vs the
  * ~273 KB full fa-solid-900 + fa-brands-400 webfonts, and vs ~1 MB all.min.css.
  *
- * Brands : patreon, discord, bluesky, instagram, tiktok, goodreads-g,
- *          amazon, threads, x-twitter, youtube, facebook
+ * Brands : patreon, discord, instagram, tiktok, goodreads-g, amazon,
+ *          threads, x-twitter, youtube, facebook, github
  * Solid  : book-open-reader, envelope-open-text, book-bookmark, palette,
  *          shirt, link, magnifying-glass, ghost
  *
- * NOTE: fa-bluesky (\e671) does NOT exist in the FA 6.5.1 brand font, so it
- * renders blank (same as before this subset). To restore it, drop in a
- * newer brand font (6.6.0+) and re-subset, or inline an SVG for that one.
+ * NOTE: Civitai and Substack are NOT in Font Awesome 6.5.1, so the social
+ * walker renders those two as inline SVG (see Haunted_Tech_Social_Walker).
+ * Bluesky was dropped (unused, and \e671 isn't in the 6.5.1 brand font).
  *
  * Regenerate the subset webfonts with:
  *   SOLID=f5da,f658,e0bb,f53f,f553,f0c1,f002,f6e2
- *   BRANDS=f3d9,f392,e671,f16d,e07b,f3a9,f270,e618,e61b,f167,f09a
+ *   BRANDS=f3d9,f392,f16d,e07b,f3a9,f270,e618,e61b,f167,f09a,f09b
  *   python -m fontTools.subset webfonts/fa-solid-900.woff2  --unicodes=$SOLID  --flavor=woff2 --output-file=webfonts/fa-solid-900-subset.woff2  --no-hinting --desubroutinize --layout-features='' --notdef-outline
  *   python -m fontTools.subset webfonts/fa-brands-400.woff2 --unicodes=$BRANDS --flavor=woff2 --output-file=webfonts/fa-brands-400-subset.woff2 --no-hinting --desubroutinize --layout-features='' --notdef-outline
  *   (repeat without --flavor for the .ttf fallbacks)
@@ -58,7 +58,7 @@
  * ------------------------------------------------------------------------- */
 .fa-patreon::before     { content: "\f3d9"; }
 .fa-discord::before     { content: "\f392"; }
-.fa-bluesky::before     { content: "\e671"; } /* not in 6.5.1 font — renders blank */
+.fa-github::before      { content: "\f09b"; }
 .fa-instagram::before   { content: "\f16d"; }
 .fa-tiktok::before      { content: "\e07b"; }
 .fa-goodreads-g::before { content: "\f3a9"; }

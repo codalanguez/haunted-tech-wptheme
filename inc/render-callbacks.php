@@ -32,7 +32,7 @@ function ht_render_social_bar($attributes = []) {
             $defaults = [
                 'Substack'  => ['url' => '#', 'icon' => 'fa-solid fa-envelope-open-text'],
                 'Discord'   => ['url' => '#', 'icon' => 'fa-brands fa-discord'],
-                'Bluesky'   => ['url' => '#', 'icon' => 'fa-brands fa-bluesky'],
+                'GitHub'    => ['url' => '#', 'icon' => 'fa-brands fa-github'],
                 'Instagram' => ['url' => '#', 'icon' => 'fa-brands fa-instagram'],
                 'TikTok'    => ['url' => '#', 'icon' => 'fa-brands fa-tiktok'],
                 'Goodreads' => ['url' => '#', 'icon' => 'fa-brands fa-goodreads-g'],

@@ -20,7 +20,7 @@
 
 if (!defined('ABSPATH')) { exit; }
 
-define('HAUNTED_TECH_VERSION', '0.13.1');
+define('HAUNTED_TECH_VERSION', '0.13.2');
 define('HAUNTED_TECH_DIR', get_template_directory());
 define('HAUNTED_TECH_URI', get_template_directory_uri());
 
@@ -358,12 +358,32 @@ if (!class_exists('Haunted_Tech_Social_Walker')) {
         public function start_el(&$output, $item, $depth = 0, $args = null, $id = 0) {
             $url   = $item->url   ?? '#';
             $label = $item->title ?? '';
-            $icon  = self::icon_for($url, $label);
             $rel   = self::rel_for($url, $label);
+            /* Platforms FA 6.5.1 lacks (Civitai, Substack) render as inline SVG;
+             * everything else uses a Font Awesome glyph. */
+            $svg   = self::svg_for($url, $label);
+            $inner = ($svg !== '')
+                ? $svg
+                : sprintf('<i class="%s"></i>', esc_attr(self::icon_for($url, $label)));
             $output .= sprintf(
-                '<li><a href="%s" rel="%s" data-label="%s" aria-label="%s"><i class="%s"></i></a></li>',
-                esc_url($url), esc_attr($rel), esc_attr($label), esc_attr($label), esc_attr($icon)
+                '<li><a href="%s" rel="%s" data-label="%s" aria-label="%s">%s</a></li>',
+                esc_url($url), esc_attr($rel), esc_attr($label), esc_attr($label), $inner
             );
+        }
+        /* Inline-SVG marks for platforms not in Font Awesome 6.5.1 Free. Sized
+         * to 1em + fill:currentColor so they match the FA glyphs beside them and
+         * tint to var(--gold). Paths are the platforms' official logos (Civitai
+         * hexagon frame + C; Substack stacked bars). */
+        public static function svg_for($url, $label = '') {
+            $s = strtolower(($url ?: '') . ' ' . ($label ?: ''));
+            $open = '<svg class="social-svg" width="1em" height="1em" fill="currentColor" aria-hidden="true" focusable="false" style="display:block" ';
+            if (strpos($s, 'civitai') !== false) {
+                return $open . 'viewBox="-1 0 22.7 22.7"><path d="M10.2,4.7l5.9,3.4V15l-5.9,3.4L4.2,15V8.1L10.2,4.7 M10.2,1.6l-8.7,5v10l8.7,5l8.7-5v-10C18.8,6.6,10.2,1.6,10.2,1.6z"/><path d="M11.8,12.4l-1.7,1l-1.7-1v-1.9l1.7-1l1.7,1h2.1V9.3l-3.8-2.2L6.4,9.3v4.3l3.8,2.2l3.8-2.2v-1.2H11.8z"/></svg>';
+            }
+            if (strpos($s, 'substack') !== false) {
+                return $open . 'viewBox="0 0 24 24"><path d="M22.539 8.242H1.46V5.406h21.08v2.836zM1.46 10.812V24L12 18.11 22.54 24V10.812H1.46zM22.54 0H1.46v2.836h21.08V0z"/></svg>';
+            }
+            return '';
         }
         public function end_el(&$output, $item, $depth = 0, $args = null) { /* no-op */ }
         /* Commercial/affiliate outbound links get sponsored+nofollow; genuine
@@ -385,7 +405,7 @@ if (!class_exists('Haunted_Tech_Social_Walker')) {
                 'substack.com'   => 'fa-solid fa-envelope-open-text',
                 'discord.com'    => 'fa-brands fa-discord',
                 'discord.gg'     => 'fa-brands fa-discord',
-                'bsky.app'       => 'fa-brands fa-bluesky',
+                'github.com'     => 'fa-brands fa-github',
                 'instagram.com'  => 'fa-brands fa-instagram',
                 'tiktok.com'     => 'fa-brands fa-tiktok',
                 'goodreads.com'  => 'fa-brands fa-goodreads-g',
@@ -418,8 +438,7 @@ if (!class_exists('Haunted_Tech_Social_Walker')) {
                 'ream'      => 'fa-solid fa-book-open-reader',
                 'substack'  => 'fa-solid fa-envelope-open-text',
                 'discord'   => 'fa-brands fa-discord',
-                'bluesky'   => 'fa-brands fa-bluesky',
-                'bsky'      => 'fa-brands fa-bluesky',
+                'github'    => 'fa-brands fa-github',
                 'instagram' => 'fa-brands fa-instagram',
                 'tiktok'    => 'fa-brands fa-tiktok',
                 'goodreads' => 'fa-brands fa-goodreads-g',
