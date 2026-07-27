@@ -20,7 +20,7 @@
 
 if (!defined('ABSPATH')) { exit; }
 
-define('HAUNTED_TECH_VERSION', '0.13.0');
+define('HAUNTED_TECH_VERSION', '0.13.1');
 define('HAUNTED_TECH_DIR', get_template_directory());
 define('HAUNTED_TECH_URI', get_template_directory_uri());
 
@@ -111,6 +111,48 @@ add_action('wp_enqueue_scripts', function () {
         HAUNTED_TECH_VERSION,
         true
     );
+});
+
+/* ---------------------------------------------------------------------------
+ * 2b. Front-end performance tweaks
+ * ------------------------------------------------------------------------- */
+
+/* Preload the hero headline font (Forum, latin subset). It renders the LCP
+ * element (.hero h2) on the homepage, so starting its download in the <head>
+ * — instead of after the CSS parses — shaves the largest-text render delay.
+ * Only this one face is preloaded on purpose: preload ignores unicode-range,
+ * so preloading more here would fetch subsets the page may never use. */
+add_action('wp_head', function () {
+    if (!is_front_page() && !is_home()) { return; }
+    $forum_latin = HAUNTED_TECH_URI . '/assets/fonts/6aey4Ky-Vb8Ew8IROpI.woff2';
+    printf(
+        '<link rel="preload" href="%s" as="font" type="font/woff2" crossorigin>' . "\n",
+        esc_url($forum_latin)
+    );
+}, 1);
+
+/* Disable the WordPress emoji script + styles. The theme uses real Unicode
+ * (and Font Awesome) for glyphs, so the ~15 KB wp-emoji-release.min.js and its
+ * inline detection script are dead weight on every page load. */
+add_action('init', function () {
+    remove_action('wp_head', 'print_emoji_detection_script', 7);
+    remove_action('admin_print_scripts', 'print_emoji_detection_script');
+    remove_action('wp_print_styles', 'print_emoji_styles');
+    remove_action('admin_print_styles', 'print_emoji_styles');
+    remove_filter('the_content_feed', 'wp_staticize_emoji');
+    remove_filter('comment_text_rss', 'wp_staticize_emoji');
+    remove_filter('wp_mail', 'wp_staticize_emoji_for_email');
+    add_filter('tiny_mce_plugins', function ($plugins) {
+        return is_array($plugins) ? array_diff($plugins, ['wpemoji']) : [];
+    });
+    add_filter('wp_resource_hints', function ($urls, $type) {
+        if ('dns-prefetch' === $type) {
+            $urls = array_filter($urls, function ($u) {
+                return is_string($u) ? (strpos($u, 's.w.org') === false) : true;
+            });
+        }
+        return $urls;
+    }, 10, 2);
 });
 
 /* ---------------------------------------------------------------------------
