@@ -7,15 +7,24 @@
  * = "article"), verified live in the browser DOM on
  * /chapter/custodian-the-first-sin/. So Article schema itself was never
  * missing. What's missing is the one property that actually matters for a
- * chapter: `isPartOf` pointing at the parent webnovel. Rank Math's default
- * wires Article.isPartOf to the page's own WebPage node instead — accurate,
- * but not useful. This file overwrites that with a reference to the parent
- * webnovel (via the `webnovel` ACF field, a plain post ID), and adds
- * `position` from `chapter_number` since it's sitting right there.
+ * chapter: `isPartOf` pointing at the parent webnovel, not the page's own
+ * WebPage node.
  *
- * Same integration pattern as inc/book-schema.php: join Rank Math's existing
- * @graph via the `rank_math/json_ld` filter (no second <script>), with a
- * wp_head fallback if Rank Math is ever inactive.
+ * First attempt patched Rank Math's own Article node's `isPartOf` in place
+ * via the `rank_math/json_ld` filter. Deployed, cache-busted, verified live:
+ * it did not stick — `position` (a property Rank Math doesn't know about)
+ * came through fine, but `isPartOf` kept reverting to the WebPage @id. That
+ * points at Rank Math re-asserting isPartOf on its own Article/BlogPosting
+ * node in a later, internal step the `rank_math/json_ld` filter can't reach.
+ * book-schema.php sidesteps the identical problem for Book pages by fully
+ * removing Rank Math's node and inserting a fresh one under a new @id rather
+ * than editing Rank Math's in place — so this does the same: strip Rank
+ * Math's Article node and insert our own (same essential fields, correct
+ * isPartOf + position), same as the Book pattern.
+ *
+ * Same integration pattern as inc/book-schema.php otherwise: join Rank
+ * Math's existing @graph via the `rank_math/json_ld` filter (no second
+ * <script>), with a wp_head fallback if Rank Math is ever inactive.
  *
  * @package HauntedTech
  */
@@ -23,18 +32,36 @@
 if (!defined('ABSPATH')) { exit; }
 
 /**
- * Build the isPartOf + position enrichment for a chapter's Article node.
+ * Build the complete Article node for a chapter post.
  *
  * @param int $post_id
- * @return array  ['isPartOf' => array|null, 'position' => int|null]
+ * @return array|null
  */
-function ht_build_chapter_enrichment($post_id) {
-    $post_id     = (int) $post_id;
-    $webnovel_id = (int) get_post_meta($post_id, 'webnovel', true);
-    $isPartOf    = null;
+function ht_build_chapter_schema($post_id) {
+    $post_id = (int) $post_id;
+    if (!$post_id || get_post_type($post_id) !== 'chapter') { return null; }
 
+    $permalink = get_permalink($post_id);
+    $home      = home_url('/');
+
+    $article = [
+        '@type'           => 'Article',
+        '@id'             => $permalink . '#chapterArticle',
+        'headline'        => wp_strip_all_tags(get_the_title($post_id)),
+        'name'            => wp_strip_all_tags(get_the_title($post_id)),
+        'description'     => wp_strip_all_tags(get_the_excerpt($post_id)),
+        'datePublished'   => get_the_date('c', $post_id),
+        'dateModified'    => get_the_modified_date('c', $post_id),
+        'url'             => $permalink,
+        'inLanguage'      => 'en-US',
+        'author'          => ['@id' => $home . '#person'],
+        'publisher'       => ['@id' => $home . '#person'],
+        'mainEntityOfPage' => ['@id' => $permalink . '#webpage'],
+    ];
+
+    $webnovel_id = (int) get_post_meta($post_id, 'webnovel', true);
     if ($webnovel_id && get_post_type($webnovel_id) === 'webnovel') {
-        $isPartOf = [
+        $article['isPartOf'] = [
             '@type' => 'Book',
             '@id'   => get_permalink($webnovel_id) . '#book',
             'name'  => wp_strip_all_tags(get_the_title($webnovel_id)),
@@ -43,29 +70,36 @@ function ht_build_chapter_enrichment($post_id) {
     }
 
     $chapter_number = get_post_meta($post_id, 'chapter_number', true);
-    $position = ($chapter_number !== '' && $chapter_number !== null) ? (int) $chapter_number : null;
+    if ($chapter_number !== '' && $chapter_number !== null) {
+        $article['position'] = (int) $chapter_number;
+    }
 
-    return ['isPartOf' => $isPartOf, 'position' => $position];
+    return apply_filters('ht_chapter_schema', $article, $post_id);
 }
 
 /* ---------------------------------------------------------------------------
- * Preferred path: enrich the Article node Rank Math already put in the graph.
+ * Preferred path: strip Rank Math's own Article/BlogPosting node for this
+ * page and insert ours instead. Patching isPartOf on Rank Math's node in
+ * place (the first attempt) didn't survive — Rank Math reasserts isPartOf
+ * on its own Article node after the json_ld filter chain runs. A fresh node
+ * under a different @id isn't something that later step recognizes as
+ * "its" node, so it's left alone — same reason book-schema.php replaces
+ * rather than patches.
  * ------------------------------------------------------------------------- */
 add_filter('rank_math/json_ld', function ($data, $jsonld) {
     if (!is_singular('chapter')) { return $data; }
 
-    $enrich = ht_build_chapter_enrichment(get_queried_object_id());
-    if (!$enrich['isPartOf'] && !$enrich['position']) { return $data; }
-
-    foreach ($data as $key => $node) {
+    foreach ((array) $data as $key => $node) {
         if (is_array($node) && isset($node['@type'])) {
             $type = is_array($node['@type']) ? $node['@type'] : [$node['@type']];
-            if (in_array('Article', $type, true)) {
-                if ($enrich['isPartOf']) { $data[$key]['isPartOf'] = $enrich['isPartOf']; }
-                if ($enrich['position']) { $data[$key]['position'] = $enrich['position']; }
+            if (array_intersect(['Article', 'BlogPosting'], $type)) {
+                unset($data[$key]);
             }
         }
     }
+
+    $article = ht_build_chapter_schema(get_queried_object_id());
+    if ($article) { $data['chapter_article'] = $article; }
 
     return $data;
 }, 20, 2);
@@ -81,19 +115,8 @@ add_action('wp_head', function () {
     $post_id = get_queried_object_id();
     if (!$post_id) { return; }
 
-    $enrich = ht_build_chapter_enrichment($post_id);
-
-    $article = [
-        '@type'         => 'Article',
-        'headline'      => wp_strip_all_tags(get_the_title($post_id)),
-        'description'   => wp_strip_all_tags(get_the_excerpt($post_id)),
-        'datePublished' => get_the_date('c', $post_id),
-        'dateModified'  => get_the_modified_date('c', $post_id),
-        'url'           => get_permalink($post_id),
-        'inLanguage'    => 'en-US',
-    ];
-    if ($enrich['isPartOf']) { $article['isPartOf'] = $enrich['isPartOf']; }
-    if ($enrich['position']) { $article['position'] = $enrich['position']; }
+    $article = ht_build_chapter_schema($post_id);
+    if (!$article) { return; }
 
     $graph = [
         '@context' => 'https://schema.org',
