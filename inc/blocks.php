@@ -39,6 +39,7 @@ add_action('init', function () {
         ['slug' => 'monkii-modal',  'title' => 'MONKII Modal (singleton)', 'render' => 'ht_render_monkii_modal', 'icon' => 'fullscreen-alt'],
         ['slug' => 'lightbox',      'title' => 'Lightbox',       'render' => 'ht_render_lightbox',     'icon' => 'fullscreen-alt'],
         ['slug' => 'about-modal',   'title' => 'About Modal',    'render' => 'ht_render_about_modal',  'icon' => 'admin-users'],
+        ['slug' => 'about-page-hero', 'title' => 'About Page Hero', 'render' => 'ht_render_about_page_hero', 'icon' => 'admin-users'],
         ['slug' => 'single-book',           'title' => 'Single Book Layout',          'render' => 'ht_render_single_book',          'icon' => 'book-alt'],
         ['slug' => 'single-webnovel',       'title' => 'Single Web Novel Layout',     'render' => 'ht_render_single_webnovel',      'icon' => 'welcome-write-blog'],
         ['slug' => 'single-chapter',        'title' => 'Single Chapter Layout',       'render' => 'ht_render_single_chapter',       'icon' => 'text-page'],

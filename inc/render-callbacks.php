@@ -914,6 +914,36 @@ function ht_render_about_modal($attributes = []) {
 }
 
 /* ============================================================
+ * ABOUT PAGE HERO – portrait + name band at the top of the
+ * static /about/ page (page-about.html). Pulls the same
+ * featured-image portrait the about-modal singleton uses;
+ * the bio itself stays a plain wp:post-content block below so
+ * Internal Link Juicer's the_content() pass is untouched.
+ * ============================================================ */
+function ht_render_about_page_hero($attributes = []) {
+    $post_id  = get_the_ID();
+    $portrait = HAUNTED_TECH_URI . '/assets/coda-portrait.png';
+    $thumb_id = $post_id ? get_post_thumbnail_id($post_id) : 0;
+    if ($thumb_id) {
+        $src = wp_get_attachment_image_src($thumb_id, 'large');
+        if ($src) $portrait = $src[0];
+    }
+    $name = get_bloginfo('name');
+    ob_start(); ?>
+    <div class="about-page-hero">
+      <div class="about-page-portrait" style="background-image: url('<?php echo esc_url($portrait); ?>');"></div>
+      <div class="about-page-meta">
+        <div class="about-page-eyebrow">About the Author</div>
+        <h2 class="about-page-name" data-text="<?php echo esc_attr($name); ?>"><?php echo esc_html($name); ?></h2>
+        <div class="about-page-title">Software Engineer &middot; Author &middot; Geek Overlord</div>
+        <div class="about-page-divider"></div>
+      </div>
+    </div>
+    <?php
+    return ob_get_clean();
+}
+
+/* ============================================================
  * SINGLE BOOK – bespoke book hero matching mockup 14/15/16.
  * ============================================================ */
 function ht_render_single_book($attributes = []) {
