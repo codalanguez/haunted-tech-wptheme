@@ -146,8 +146,13 @@ function ht_render_hero_slider($attributes = []) {
               $cta_label = get_field('cta_label',    $slide->ID) ?: 'Read More';
               $cta_link  = get_field('cta_link',     $slide->ID) ?: '#';
               $combined  = trim($first . ' ' . $accent);
+              $bg_url    = get_the_post_thumbnail_url($slide->ID, 'hero_bg');
           ?>
-          <div class="hero-content<?php echo $i === 0 ? ' active' : ''; ?>" data-slide="<?php echo (int)$i; ?>">
+          <div class="hero-content<?php echo $i === 0 ? ' active' : ''; ?><?php echo $bg_url ? ' has-hero-bg' : ''; ?>" data-slide="<?php echo (int)$i; ?>">
+            <?php if ($bg_url): ?>
+              <div class="hero-slide-bg" style="background-image:url('<?php echo esc_url($bg_url); ?>');"></div>
+              <div class="hero-slide-scrim" aria-hidden="true"></div>
+            <?php endif; ?>
             <?php if ($eyebrow): ?><div class="hero-eyebrow"><?php echo esc_html($eyebrow); ?></div><?php endif; ?>
             <h2 data-text="<?php echo esc_attr($combined); ?>"><?php echo esc_html($first); ?> <span class="gold"><?php echo esc_html($accent); ?></span></h2>
             <?php if ($blurb): ?><p><?php echo esc_html($blurb); ?></p><?php endif; ?>

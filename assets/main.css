@@ -846,7 +846,7 @@
      slide. (Previously each slide was position:absolute, so a long blurb
      overflowed the fixed-height frame and collided with the controls once a
      second slide made them render.) */
-  .hero-frame { min-height: 480px; display: grid; align-content: center; }
+  .hero-frame { min-height: 480px; display: grid; align-content: center; overflow: hidden; }
   .hero-content {
     grid-area: 1 / 1;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -855,6 +855,7 @@
     transform: translateY(8px);
     pointer-events: none;
     text-align: center;
+    position: relative;
   }
   .hero-content.active {
     opacity: 1;
@@ -862,6 +863,42 @@
     pointer-events: auto;
   }
   /* Mobile hero spacing is handled by .hero-frame padding (see mobile block). */
+
+  /* Per-slide background photo — sits inside the ornate frame, behind the
+     glitching title. A dark scrim + the existing text-shadow glow keep the
+     copy legible over whatever the photo is doing. */
+  .hero-slide-bg {
+    position: absolute;
+    inset: -5rem -4rem; /* bleed out to the .hero-frame edge, under the deco corners */
+    background-size: cover;
+    background-position: center;
+    z-index: 0;
+    filter: grayscale(0.25) contrast(1.12) brightness(0.5) saturate(1.15);
+    transform: scale(1.08);
+    transition: transform 9s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .hero-content.has-hero-bg.active .hero-slide-bg { transform: scale(1); }
+  .hero-slide-scrim {
+    position: absolute;
+    inset: -5rem -4rem;
+    z-index: 1;
+    background:
+      linear-gradient(180deg, rgba(10,10,12,0.45) 0%, rgba(10,10,12,0.55) 45%, rgba(10,10,12,0.88) 100%),
+      radial-gradient(ellipse at 50% 38%, transparent 0%, rgba(10,10,12,0.55) 78%);
+  }
+  .hero-content.has-hero-bg .hero-eyebrow,
+  .hero-content.has-hero-bg h2,
+  .hero-content.has-hero-bg p,
+  .hero-content.has-hero-bg .cta {
+    position: relative;
+    z-index: 2;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero-slide-bg { transition: none; transform: scale(1); }
+  }
+  @media (max-width: 700px) {
+    .hero-slide-bg, .hero-slide-scrim { inset: -3rem -1.5rem; }
+  }
 
   /* Slide-specific eyebrow color accent — distinguishes the 3 update types */
   .hero-content[data-slide="0"] .hero-eyebrow { color: var(--gold); }

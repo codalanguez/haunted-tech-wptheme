@@ -20,7 +20,7 @@
 
 if (!defined('ABSPATH')) { exit; }
 
-define('HAUNTED_TECH_VERSION', '0.13.2');
+define('HAUNTED_TECH_VERSION', '0.13.3');
 define('HAUNTED_TECH_DIR', get_template_directory());
 define('HAUNTED_TECH_URI', get_template_directory_uri());
 
@@ -44,6 +44,10 @@ add_action('after_setup_theme', function () {
         'flex-height' => true,
         'flex-width'  => true,
     ]);
+
+    /* Hero slide background photo — cropped wide so it reads behind the
+     * glitching title regardless of the source image's own aspect ratio. */
+    add_image_size('hero_bg', 1600, 1000, true);
 
     register_nav_menus([
         'primary' => __('Primary Navigation', 'haunted-tech'),
@@ -175,7 +179,7 @@ add_action('init', function () {
         'rest_base'    => 'hero-updates',
         'menu_icon'    => 'dashicons-megaphone',
         'menu_position'=> 4,
-        'supports'     => ['title', 'editor', 'custom-fields'],
+        'supports'     => ['title', 'editor', 'thumbnail', 'custom-fields'],
         'has_archive'  => false,
     ]);
 
