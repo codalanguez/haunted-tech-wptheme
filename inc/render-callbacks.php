@@ -1135,6 +1135,32 @@ function ht_render_single_book($attributes = []) {
 }
 
 /* ============================================================
+ * BOOK CONTENT – the book's own post_content (About the Book,
+ * What to Expect, Tropes, Reading Order, Editions, Content
+ * Warnings, etc.). ht_render_single_book() above is ACF-only and
+ * never touches post_content, so on every existing book this full
+ * write-up was sitting in the database, fully written, completely
+ * invisible to visitors and crawlers. Runs through the_content so
+ * block markup renders the same as it does on any blog post.
+ * ============================================================ */
+function ht_render_book_content($attributes = []) {
+    $post_id = get_the_ID();
+    if (!$post_id || get_post_type($post_id) !== 'book') return '';
+    $post = get_post($post_id);
+    if (!$post || trim((string) $post->post_content) === '') return '';
+
+    $content = apply_filters('the_content', $post->post_content);
+    if (trim(wp_strip_all_tags($content)) === '') return '';
+
+    ob_start(); ?>
+    <section class="book-content-section">
+      <div class="book-content-body"><?php echo wp_kses_post($content); ?></div>
+    </section>
+    <?php
+    return ob_get_clean();
+}
+
+/* ============================================================
  * BOOK EXCERPT – chapter preview with drop-cap
  * ============================================================ */
 function ht_render_book_excerpt($attributes = []) {
@@ -1737,8 +1763,18 @@ function ht_render_single_chapter($attributes = []) {
     $is_gated     = in_array($access, ['early_access', 'patron_only', 'ream_premium', 'substack_paid', 'locked'], true);
 
     /* Auto-compute prev/next by chapter_number within the same series unless
-     * manually overridden via the prev_chapter / next_chapter fields. */
+     * manually overridden via the prev_chapter / next_chapter fields.
+     * Scoped by webnovel AND (when set) arc: an anthology webnovel like
+     * Letters Between Sex and Violence hosts more than one story under the
+     * same parent (Custodian is one arc of several planned) — each arc
+     * numbers its own chapters from 1, so scoping by webnovel alone would
+     * let a future second arc's chapters interleave into Custodian's chain
+     * the moment their chapter_numbers overlap. Single-story webnovels
+     * (Victoria, Taming Malice, Nobody Came Looking) have no arc value, so
+     * this clause is skipped for them and behavior is unchanged. */
     if ($wn_id && (!$prev_id || !$next_id)) {
+        $sibling_meta_query = [['key' => 'webnovel', 'value' => $wn_id]];
+        if ($arc) { $sibling_meta_query[] = ['key' => 'arc', 'value' => $arc]; }
         $siblings = get_posts([
             'post_type'      => 'chapter',
             'posts_per_page' => -1,
@@ -1746,7 +1782,7 @@ function ht_render_single_chapter($attributes = []) {
             'meta_key'       => 'chapter_number',
             'orderby'        => 'meta_value_num',
             'order'          => 'ASC',
-            'meta_query'     => [['key' => 'webnovel', 'value' => $wn_id]],
+            'meta_query'     => $sibling_meta_query,
             'fields'         => 'ids',
         ]);
         $pos = array_search($ch_id, $siblings, true);
@@ -1768,7 +1804,15 @@ function ht_render_single_chapter($attributes = []) {
 
           <div class="book-series-mark">
             <?php if ($arc): ?><?php echo esc_html($arc); ?> &middot; <?php endif; ?>
-            <?php if ($chapter_no): ?>Chapter <?php echo esc_html($chapter_no); ?><?php endif; ?>
+            <?php
+            /* chapter_number "0" is a Prologue, not "Chapter 0" — and PHP
+             * treats "0" as falsy, so a plain if($chapter_no) check (the
+             * previous behavior here) silently rendered nothing at all for
+             * it. Checked for non-empty-string instead so 0 still counts. */
+            if ($chapter_no !== '' && $chapter_no !== null):
+                echo ((int) $chapter_no === 0) ? 'Prologue' : 'Chapter ' . esc_html($chapter_no);
+            endif;
+            ?>
           </div>
 
           <h1 class="book-title" data-text="<?php echo esc_attr(get_the_title($ch_id)); ?>"><?php echo esc_html(get_the_title($ch_id)); ?></h1>

@@ -20,7 +20,7 @@
 
 if (!defined('ABSPATH')) { exit; }
 
-define('HAUNTED_TECH_VERSION', '0.13.7');
+define('HAUNTED_TECH_VERSION', '0.13.8');
 define('HAUNTED_TECH_DIR', get_template_directory());
 define('HAUNTED_TECH_URI', get_template_directory_uri());
 
@@ -481,6 +481,7 @@ require_once HAUNTED_TECH_DIR . '/inc/patterns.php';
 require_once HAUNTED_TECH_DIR . '/inc/rest.php';
 require_once HAUNTED_TECH_DIR . '/inc/commission-forms.php';
 require_once HAUNTED_TECH_DIR . '/inc/book-schema.php';
+require_once HAUNTED_TECH_DIR . '/inc/chapter-schema.php';
 if (is_admin()) {
     require_once HAUNTED_TECH_DIR . '/inc/onboarding.php';
 }

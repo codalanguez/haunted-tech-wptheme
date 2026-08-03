@@ -2773,6 +2773,12 @@
   .cw-list li::before { content: '◆ '; color: var(--red); font-size: 0.8em; }
   .cw-graphic li { border-color: var(--red); color: var(--red-bright); }
 
+  /* Book's own post_content (About the Book / Tropes / Reading Order / etc.) —
+     same reading column as the excerpt below it; heading/paragraph/list
+     typography comes from theme.json global styles, same as any blog post. */
+  .book-content-section { padding: 3.5rem 3rem 0; max-width: 760px; margin: 0 auto; position: relative; }
+  .book-content-body :where(h2, h3):first-child { margin-top: 0; }
+
   /* Excerpt */
   .book-excerpt-section { padding: 4rem 3rem; max-width: 760px; margin: 0 auto; position: relative; }
   .book-excerpt-section::before {
