@@ -150,7 +150,16 @@ function ht_render_hero_slider($attributes = []) {
           ?>
           <div class="hero-content<?php echo $i === 0 ? ' active' : ''; ?><?php echo $bg_url ? ' has-hero-bg' : ''; ?>" data-slide="<?php echo (int)$i; ?>">
             <?php if ($bg_url): ?>
-              <div class="hero-slide-bg" style="background-image:url('<?php echo esc_url($bg_url); ?>');"></div>
+              <?php /* Only the active slide's background loads eagerly (it's the
+                       likely LCP element). The rest sit in data-bg and get set by
+                       JS — on activation, or idle-preloaded shortly after first
+                       paint — so a cold homepage load doesn't fetch 3 hero
+                       images' worth of bytes for 1 visible slide. */ ?>
+              <?php if ($i === 0): ?>
+                <div class="hero-slide-bg" style="background-image:url('<?php echo esc_url($bg_url); ?>');"></div>
+              <?php else: ?>
+                <div class="hero-slide-bg" data-bg="<?php echo esc_url($bg_url); ?>"></div>
+              <?php endif; ?>
               <div class="hero-slide-scrim" aria-hidden="true"></div>
             <?php endif; ?>
             <?php if ($eyebrow): ?><div class="hero-eyebrow"><?php echo esc_html($eyebrow); ?></div><?php endif; ?>

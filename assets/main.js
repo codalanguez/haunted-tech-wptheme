@@ -206,8 +206,19 @@
     let paused = false;
     let rafId;
 
+    // Each slide's .hero-slide-bg either already has its background-image
+    // inlined (slide 0, loaded eagerly for LCP) or carries the URL in
+    // data-bg for slides 1+ — load it into style only once, on demand.
+    function loadSlideBg(slideEl) {
+      const bg = slideEl && slideEl.querySelector('.hero-slide-bg[data-bg]');
+      if (!bg) return;
+      bg.style.backgroundImage = 'url("' + bg.dataset.bg + '")';
+      bg.removeAttribute('data-bg');
+    }
+
     function go(n) {
       index = (n + total) % total;
+      loadSlideBg(slides[index]);
       slides.forEach((s, i) => s.classList.toggle('active', i === index));
       dots.forEach((d, i) => {
         d.classList.toggle('active', i === index);
@@ -241,6 +252,17 @@
       if (e.key === 'ArrowRight') go(index + 1);
     });
     tick();
+
+    // Idle-preload the other slides' backgrounds after first paint so
+    // autoplay/arrow/dot navigation doesn't have to fetch on demand —
+    // deliberately NOT during initial load, so they never compete with
+    // slide 0's image (the likely LCP element) for bandwidth.
+    const preloadRest = () => slides.forEach(loadSlideBg);
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(preloadRest, { timeout: 4000 });
+    } else {
+      setTimeout(preloadRest, 2500);
+    }
   })();
 
   // ===== Gallery: tabs + filter chips + pagination + lightbox =====
