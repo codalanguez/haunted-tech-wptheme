@@ -923,13 +923,10 @@ function ht_render_about_modal($attributes = []) {
 function ht_render_about_page_hero($attributes = []) {
     $post_id  = get_the_ID();
     $portrait = HAUNTED_TECH_URI . '/assets/coda-portrait.png';
-    $portrait_full = $portrait;
     $thumb_id = $post_id ? get_post_thumbnail_id($post_id) : 0;
     if ($thumb_id) {
         $src = wp_get_attachment_image_src($thumb_id, 'large');
         if ($src) $portrait = $src[0];
-        $src_full = wp_get_attachment_image_src($thumb_id, 'full');
-        if ($src_full) $portrait_full = $src_full[0];
     }
     $name = get_bloginfo('name');
     ob_start(); ?>
@@ -942,6 +939,31 @@ function ht_render_about_page_hero($attributes = []) {
         <div class="about-page-divider"></div>
       </div>
     </div>
+    <?php
+    return ob_get_clean();
+}
+
+/* ============================================================
+ * ABOUT PORTRAIT LIGHTBOX – singleton, included in footer part.
+ * MUST live outside any is-layout-constrained container: Gutenberg's
+ * constrained-layout CSS applies max-width + auto margins to direct
+ * children, which fights position:fixed;inset:0 on a modal (found
+ * this the hard way — it silently shrank the overlay to the parent
+ * <main>'s content width instead of covering the viewport). Same
+ * reason about-modal/monkii-modal/etc. all live in footer.html.
+ * ============================================================ */
+function ht_render_about_portrait_lightbox($attributes = []) {
+    $about_page = get_page_by_path('about');
+    $portrait_full = HAUNTED_TECH_URI . '/assets/coda-portrait.png';
+    if ($about_page) {
+        $thumb_id = get_post_thumbnail_id($about_page->ID);
+        if ($thumb_id) {
+            $src_full = wp_get_attachment_image_src($thumb_id, 'full');
+            if ($src_full) $portrait_full = $src_full[0];
+        }
+    }
+    $name = get_bloginfo('name');
+    ob_start(); ?>
     <div class="simple-lightbox" id="portrait-lightbox" role="dialog" aria-modal="true" aria-label="Full portrait of <?php echo esc_attr($name); ?>" aria-hidden="true" tabindex="-1">
       <div class="simple-lightbox-frame">
         <button class="simple-lightbox-close" aria-label="Close">&times;</button>
