@@ -923,20 +923,29 @@ function ht_render_about_modal($attributes = []) {
 function ht_render_about_page_hero($attributes = []) {
     $post_id  = get_the_ID();
     $portrait = HAUNTED_TECH_URI . '/assets/coda-portrait.png';
+    $portrait_full = $portrait;
     $thumb_id = $post_id ? get_post_thumbnail_id($post_id) : 0;
     if ($thumb_id) {
         $src = wp_get_attachment_image_src($thumb_id, 'large');
         if ($src) $portrait = $src[0];
+        $src_full = wp_get_attachment_image_src($thumb_id, 'full');
+        if ($src_full) $portrait_full = $src_full[0];
     }
     $name = get_bloginfo('name');
     ob_start(); ?>
     <div class="about-page-hero">
-      <div class="about-page-portrait" style="background-image: url('<?php echo esc_url($portrait); ?>');"></div>
+      <button type="button" class="about-page-portrait" data-open-portrait-lightbox style="background-image: url('<?php echo esc_url($portrait); ?>');" aria-label="View full portrait of <?php echo esc_attr($name); ?>"></button>
       <div class="about-page-meta">
         <div class="about-page-eyebrow">About the Author</div>
         <h2 class="about-page-name" data-text="<?php echo esc_attr($name); ?>"><?php echo esc_html($name); ?></h2>
         <div class="about-page-title">Software Engineer &middot; Author &middot; Geek Overlord</div>
         <div class="about-page-divider"></div>
+      </div>
+    </div>
+    <div class="simple-lightbox" id="portrait-lightbox" role="dialog" aria-modal="true" aria-label="Full portrait of <?php echo esc_attr($name); ?>" aria-hidden="true" tabindex="-1">
+      <div class="simple-lightbox-frame">
+        <button class="simple-lightbox-close" aria-label="Close">&times;</button>
+        <img class="simple-lightbox-img" src="<?php echo esc_url($portrait_full); ?>" alt="Portrait of <?php echo esc_attr($name); ?>" loading="lazy">
       </div>
     </div>
     <?php

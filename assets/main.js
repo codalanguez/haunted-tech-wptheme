@@ -105,6 +105,35 @@
     window.addEventListener('hashchange', () => { if (location.hash === '#about') open(); });
   })();
 
+  // ===== Simple portrait lightbox (static /about/ page): opens from
+  // [data-open-portrait-lightbox]. Single image, no prev/next — separate
+  // from the gallery's #lightbox, which is driven by gallery-item data. =====
+  (function(){
+    const modal = document.getElementById('portrait-lightbox');
+    if (!modal) return;
+    const trigger = document.querySelector('[data-open-portrait-lightbox]');
+    const closeBtn = modal.querySelector('.simple-lightbox-close');
+    const trap = htFocusTrap(modal);
+    function open() {
+      modal.classList.add('active');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('simple-lightbox-open');
+      trap.activate();
+    }
+    function close() {
+      modal.classList.remove('active');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('simple-lightbox-open');
+      trap.deactivate();
+    }
+    if (trigger) trigger.addEventListener('click', open);
+    closeBtn.addEventListener('click', close);
+    modal.addEventListener('click', e => { if (e.target === modal) close(); });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && modal.classList.contains('active')) close();
+    });
+  })();
+
   // ===== MONKII modal: open from any [data-open-monkii] OR any <a> whose href
   // resolves to #monkii (same delegated pattern as the About modal). Close on
   // Esc / × / backdrop. =====
