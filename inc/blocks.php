@@ -36,7 +36,7 @@ add_action('init', function () {
         ['slug' => 'gallery',       'title' => 'Gallery',        'render' => 'ht_render_gallery',      'icon' => 'format-gallery'],
         ['slug' => 'newsletter',    'title' => 'Newsletter',     'render' => 'ht_render_newsletter',   'icon' => 'email-alt'],
         ['slug' => 'lab',           'title' => 'The Lab',        'render' => 'ht_render_lab',          'icon' => 'admin-tools'],
-        ['slug' => 'monkii-modal',  'title' => 'MechApe Modal (singleton)', 'render' => 'ht_render_monkii_modal', 'icon' => 'fullscreen-alt'],
+        ['slug' => 'mechape-modal',  'title' => 'MechApe Modal (singleton)', 'render' => 'ht_render_mechape_modal', 'icon' => 'fullscreen-alt'],
         ['slug' => 'lightbox',      'title' => 'Lightbox',       'render' => 'ht_render_lightbox',     'icon' => 'fullscreen-alt'],
         ['slug' => 'about-modal',   'title' => 'About Modal',    'render' => 'ht_render_about_modal',  'icon' => 'admin-users'],
         ['slug' => 'about-page-hero', 'title' => 'About Page Hero', 'render' => 'ht_render_about_page_hero', 'icon' => 'admin-users'],
@@ -56,6 +56,25 @@ add_action('init', function () {
         ['slug' => 'back-to-top',           'title' => 'Back-to-Top Arrow',            'render' => 'ht_render_back_to_top',           'icon' => 'arrow-up-alt'],
     ];
 
+    /* Blocks that have been renamed. The old name stays registered and
+     * rendering, because a block name is baked into saved content: any
+     * template part edited in the Site Editor lives in the wp_template_part
+     * CPT, and that copy still says <!-- wp:haunted-tech/monkii-modal /-->.
+     * Dropping the old name would render it as nothing at all — the modal
+     * would simply vanish from the footer with no error. Hidden from the
+     * inserter so only existing content can reach it. */
+    $renamed = [
+        'monkii-modal' => 'mechape-modal',  // MONKII became MechApe, 2026-08
+    ];
+    foreach ($renamed as $old => $new) {
+        $match = wp_list_filter($blocks, ['slug' => $new]);
+        $b = reset($match);
+        if ($b) {
+            $blocks[] = ['slug' => $old, 'title' => $b['title'] . ' (retired name)',
+                         'render' => $b['render'], 'icon' => $b['icon'], 'inserter' => false];
+        }
+    }
+
     foreach ($blocks as $b) {
         register_block_type('haunted-tech/' . $b['slug'], [
             'api_version'     => 3,
@@ -66,7 +85,7 @@ add_action('init', function () {
             'supports'        => [
                 'html'      => false,
                 'reusable'  => false,
-                'inserter'  => true,
+                'inserter'  => $b['inserter'] ?? true,
             ],
             'render_callback' => $b['render'],
             'attributes'      => [

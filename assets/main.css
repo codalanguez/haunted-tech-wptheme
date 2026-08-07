@@ -3768,7 +3768,7 @@ body.commission-open .static-burst { display: none !important; }
   .lab-foot a:hover { color: var(--gold-bright); border-color: var(--gold-bright); text-shadow: 0 0 8px rgba(255,212,0,0.5); }
 
   /* ============ MECHAPE MODAL (singleton) ============ */
-  .monkii-modal {
+  .mechape-modal {
     position: fixed; inset: 0;
     background: rgba(0,0,0,0.94);
     z-index: 2100;
@@ -3778,15 +3778,15 @@ body.commission-open .static-burst { display: none !important; }
     padding: 2rem;
     backdrop-filter: blur(10px);
   }
-  .monkii-modal.active { display: flex; animation: lightbox-fade 0.4s ease-out; }
-  .monkii-modal::before {
+  .mechape-modal.active { display: flex; animation: lightbox-fade 0.4s ease-out; }
+  .mechape-modal::before {
     content: '';
     position: fixed; inset: 0;
     background: repeating-linear-gradient(0deg, transparent 0, transparent 2px, rgba(255,212,0,0.04) 2px, rgba(255,212,0,0.04) 3px);
     pointer-events: none;
     animation: scanline-drift 8s linear infinite;
   }
-  .monkii-frame {
+  .mechape-frame {
     position: relative;
     max-width: 1100px;
     max-height: 88vh;
@@ -3803,23 +3803,23 @@ body.commission-open .static-burst { display: none !important; }
     overflow: hidden;
   }
   @media (max-width: 900px) {
-    .monkii-frame {
+    .mechape-frame {
       grid-template-columns: 1fr;
       grid-template-rows: 260px 1fr;
       max-height: 92vh;
       height: 92vh;
     }
   }
-  .monkii-frame::before, .monkii-frame::after {
+  .mechape-frame::before, .mechape-frame::after {
     content: ''; position: absolute; width: 50px; height: 50px;
     border: 2px solid var(--gold);
     box-shadow: 0 0 16px rgba(255,212,0,0.4);
     z-index: 10;
     pointer-events: none;
   }
-  .monkii-frame::before { top: 8px; left: 8px; border-right: none; border-bottom: none; }
-  .monkii-frame::after { bottom: 8px; right: 8px; border-left: none; border-top: none; }
-  .monkii-visual {
+  .mechape-frame::before { top: 8px; left: 8px; border-right: none; border-bottom: none; }
+  .mechape-frame::after { bottom: 8px; right: 8px; border-left: none; border-top: none; }
+  .mechape-visual {
     background: var(--void);
     background-size: cover;
     background-position: left center;
@@ -3827,9 +3827,9 @@ body.commission-open .static-burst { display: none !important; }
     border-right: 1px solid var(--border-dim);
   }
   @media (max-width: 900px) {
-    .monkii-visual { border-right: none; border-bottom: 1px solid var(--border-dim); }
+    .mechape-visual { border-right: none; border-bottom: 1px solid var(--border-dim); }
   }
-  .monkii-visual::after {
+  .mechape-visual::after {
     content: '';
     position: absolute; inset: 0;
     background:
@@ -3837,7 +3837,7 @@ body.commission-open .static-burst { display: none !important; }
       repeating-linear-gradient(0deg, transparent 0, transparent 3px, rgba(0,0,0,0.18) 3px, rgba(0,0,0,0.18) 4px);
     pointer-events: none;
   }
-  .monkii-visual-caption {
+  .mechape-visual-caption {
     position: absolute; left: 0; right: 0; bottom: 0;
     padding: 0.8rem 1.2rem;
     font-family: 'Courier New', monospace;
@@ -3848,7 +3848,7 @@ body.commission-open .static-burst { display: none !important; }
     background: linear-gradient(0deg, rgba(0,0,0,0.85), transparent);
     z-index: 2;
   }
-  .monkii-meta {
+  .mechape-meta {
     padding: 3rem 2.5rem;
     display: flex;
     flex-direction: column;
@@ -3857,9 +3857,9 @@ body.commission-open .static-burst { display: none !important; }
     min-height: 0;
     position: relative;
   }
-  @media (max-width: 900px) { .monkii-meta { padding: 2rem 1.8rem; } }
-  .monkii-meta-head { flex-shrink: 0; }
-  .monkii-eyebrow {
+  @media (max-width: 900px) { .mechape-meta { padding: 2rem 1.8rem; } }
+  .mechape-meta-head { flex-shrink: 0; }
+  .mechape-eyebrow {
     display: flex; align-items: center; gap: 0.7rem;
     font-family: 'Forum', serif;
     font-size: 0.7rem;
@@ -3869,12 +3869,12 @@ body.commission-open .static-burst { display: none !important; }
     margin-bottom: 0.6rem;
     text-shadow: 0 0 6px rgba(229,9,20,0.4);
   }
-  .monkii-badge {
+  .mechape-badge {
     width: 34px; height: 34px;
     border-radius: 8px;
     box-shadow: 0 0 0 1px var(--border), 0 0 12px rgba(255,212,0,0.3);
   }
-  .monkii-name {
+  .mechape-name {
     font-family: 'Forum', serif;
     font-size: 2.4rem;
     color: var(--gold);
@@ -3886,14 +3886,14 @@ body.commission-open .static-burst { display: none !important; }
     display: inline-block;
     animation: glitch-tear 4s infinite;
   }
-  .monkii-name::before, .monkii-name::after {
+  .mechape-name::before, .mechape-name::after {
     content: attr(data-text);
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
     overflow: hidden; mix-blend-mode: screen;
   }
-  .monkii-name::before { color: var(--red); animation: glitch-clip-1 3s infinite linear; }
-  .monkii-name::after { color: var(--cyan); animation: glitch-clip-2 3s infinite linear; }
-  .monkii-title {
+  .mechape-name::before { color: var(--red); animation: glitch-clip-1 3s infinite linear; }
+  .mechape-name::after { color: var(--cyan); animation: glitch-clip-2 3s infinite linear; }
+  .mechape-title {
     font-family: 'Cormorant Garamond', serif;
     font-style: italic;
     color: var(--bone-dim);
@@ -3902,14 +3902,14 @@ body.commission-open .static-burst { display: none !important; }
     text-transform: uppercase;
     margin-bottom: 1.2rem;
   }
-  .monkii-divider {
+  .mechape-divider {
     height: 1px;
     background: linear-gradient(90deg, transparent, var(--gold), transparent);
     opacity: 0.4;
     margin: 0 0 1.4rem;
   }
-  .monkii-body-wrap { flex: 1 1 auto; min-height: 0; display: flex; }
-  .monkii-body {
+  .mechape-body-wrap { flex: 1 1 auto; min-height: 0; display: flex; }
+  .mechape-body {
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.1rem;
     color: var(--bone);
@@ -3920,46 +3920,46 @@ body.commission-open .static-burst { display: none !important; }
     padding-right: 1rem;
     margin-right: -0.5rem;
   }
-  .monkii-body p { margin-bottom: 1rem; }
-  .monkii-body::-webkit-scrollbar { width: 6px; }
-  .monkii-body::-webkit-scrollbar-track { background: rgba(255,212,0,0.04); }
-  .monkii-body::-webkit-scrollbar-thumb {
+  .mechape-body p { margin-bottom: 1rem; }
+  .mechape-body::-webkit-scrollbar { width: 6px; }
+  .mechape-body::-webkit-scrollbar-track { background: rgba(255,212,0,0.04); }
+  .mechape-body::-webkit-scrollbar-thumb {
     background: var(--gold);
     box-shadow: 0 0 6px rgba(255,212,0,0.5);
   }
-  .monkii-features { list-style: none; margin: 0 0 1rem; padding: 0; }
-  .monkii-features li {
+  .mechape-features { list-style: none; margin: 0 0 1rem; padding: 0; }
+  .mechape-features li {
     padding: 0.35rem 0 0.35rem 1.4rem;
     position: relative;
   }
-  .monkii-features li::before {
+  .mechape-features li::before {
     content: '\25C6';
     position: absolute; left: 0; top: 0.45rem;
     color: var(--gold);
     font-size: 0.6em;
     text-shadow: 0 0 6px rgba(255,212,0,0.5);
   }
-  .monkii-features strong { color: var(--gold); font-weight: 600; }
-  .monkii-features code {
+  .mechape-features strong { color: var(--gold); font-weight: 600; }
+  .mechape-features code {
     font-family: 'Courier New', monospace;
     color: var(--cyan);
     font-size: 0.85em;
     border: 1px solid var(--border-dim);
     padding: 0 0.35em;
   }
-  .monkii-fine {
+  .mechape-fine {
     font-size: 0.95rem;
     font-style: italic;
     color: var(--bone-dim);
   }
-  .monkii-fine a { color: var(--gold); text-decoration: none; }
-  .monkii-fine a:hover { color: var(--gold-bright); }
-  .monkii-meta-foot {
+  .mechape-fine a { color: var(--gold); text-decoration: none; }
+  .mechape-fine a:hover { color: var(--gold-bright); }
+  .mechape-meta-foot {
     flex-shrink: 0;
     display: flex; flex-wrap: wrap; gap: 0.8rem;
     padding-top: 1.4rem;
   }
-  .monkii-close {
+  .mechape-close {
     position: absolute; top: -1px; right: -1px;
     width: 48px; height: 48px;
     background: var(--void);
@@ -3971,11 +3971,11 @@ body.commission-open .static-burst { display: none !important; }
     z-index: 11;
     transition: all 0.3s;
   }
-  .monkii-close:hover { background: var(--red); color: var(--bone); border-color: var(--red); text-shadow: 0 0 8px var(--red); }
-  body.monkii-open { overflow: hidden; }
+  .mechape-close:hover { background: var(--red); color: var(--bone); border-color: var(--red); text-shadow: 0 0 8px var(--red); }
+  body.mechape-open { overflow: hidden; }
 
   /* Focus-trap fallback target (tabindex="-1") — suppress the outline on the
    * modal shell itself; real focus rings stay on the interactive elements
    * inside it. Only visible in the rare case a modal has no focusable
    * content yet (e.g. book/webnovel modal before REST content loads). */
-  .about-modal:focus, .monkii-modal:focus, .lightbox:focus, .book-modal:focus { outline: none; }
+  .about-modal:focus, .mechape-modal:focus, .lightbox:focus, .book-modal:focus { outline: none; }

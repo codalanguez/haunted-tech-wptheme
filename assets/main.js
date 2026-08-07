@@ -4,7 +4,7 @@
   // moves focus into the modal, and traps Tab/Shift+Tab inside it. Call
   // deactivate() right after closing: it releases the trap and restores focus
   // to whatever triggered the modal (button, spine, card, etc.). Every modal
-  // root (#about-modal, #monkii-modal, #lightbox, #book-modal, #webnovel-modal)
+  // root (#about-modal, #mechape-modal, #lightbox, #book-modal, #webnovel-modal)
   // needs tabindex="-1" so it's a valid fallback focus target when it has no
   // focusable children yet (e.g. book/webnovel modals before REST content loads).
   const HT_FOCUSABLE = 'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -134,18 +134,25 @@
     });
   })();
 
-  // ===== MechApe modal: open from any [data-open-monkii] OR any <a> whose href
-  // resolves to #monkii (same delegated pattern as the About modal). Close on
-  // Esc / × / backdrop. =====
+  // ===== MechApe modal: open from any [data-open-mechape] OR any <a> whose href
+  // resolves to #mechape (same delegated pattern as the About modal). Close on
+  // Esc / × / backdrop.
+  //
+  // #monkii is still honoured everywhere #mechape is. The product was renamed
+  // in 2026-08 and that fragment shipped in published links; a fragment is
+  // never sent to the server, so the /monkii/ redirect in inc/redirects.php
+  // cannot catch it — the only place it can be handled is here. =====
   (function(){
-    const modal = document.getElementById('monkii-modal');
+    const HASHES = ['#mechape', '#monkii'];
+    const isOurHash = h => HASHES.indexOf(h) !== -1;
+    const modal = document.getElementById('mechape-modal');
     if (!modal) return;
-    const closeBtn = modal.querySelector('.monkii-close');
+    const closeBtn = modal.querySelector('.mechape-close');
     const trap = htFocusTrap(modal);
     function open() {
       modal.classList.add('active');
       modal.setAttribute('aria-hidden', 'false');
-      document.body.classList.add('monkii-open');
+      document.body.classList.add('mechape-open');
       trap.activate();
       // Close conflicting modals
       const about = document.getElementById('about-modal');
@@ -158,19 +165,19 @@
     function close() {
       modal.classList.remove('active');
       modal.setAttribute('aria-hidden', 'true');
-      document.body.classList.remove('monkii-open');
+      document.body.classList.remove('mechape-open');
       trap.deactivate();
-      if (location.hash === '#monkii') {
+      if (isOurHash(location.hash)) {
         history.replaceState(null, '', location.pathname + location.search);
       }
     }
     document.addEventListener('click', function(e){
-      const a = e.target.closest('a, [data-open-monkii]');
+      const a = e.target.closest('a, [data-open-mechape], [data-open-monkii]');
       if (!a) return;
-      const isMonkiiTrigger =
-        a.hasAttribute('data-open-monkii') ||
-        (a.tagName === 'A' && (a.getAttribute('href') || '').match(/(^\/|\/)#monkii$/));
-      if (!isMonkiiTrigger) return;
+      const isMechapeTrigger =
+        a.hasAttribute('data-open-mechape') || a.hasAttribute('data-open-monkii') ||
+        (a.tagName === 'A' && (a.getAttribute('href') || '').match(/(^\/|\/)#(mechape|monkii)$/));
+      if (!isMechapeTrigger) return;
       // Same-page: open the modal without navigating.
       if (a.tagName !== 'A' || a.pathname === location.pathname || a.getAttribute('href').charAt(0) === '#') {
         e.preventDefault();
@@ -182,9 +189,9 @@
     document.addEventListener('keydown', e => {
       if (e.key === 'Escape' && modal.classList.contains('active')) close();
     });
-    // Open on direct hash load (#monkii) or any hashchange to #monkii.
-    if (location.hash === '#monkii') open();
-    window.addEventListener('hashchange', () => { if (location.hash === '#monkii') open(); });
+    // Open on direct hash load, or any hashchange to one of ours.
+    if (isOurHash(location.hash)) open();
+    window.addEventListener('hashchange', () => { if (isOurHash(location.hash)) open(); });
   })();
 
   // ===== Hero slider — auto-rotate w/ pause on hover, arrows + dots + progress =====

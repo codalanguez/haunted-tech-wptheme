@@ -25,7 +25,9 @@ if (!defined('ABSPATH')) {
  */
 function haunted_tech_retired_paths() {
     return [
-        '/monkii' => '/mechape/',   // renamed 2026-08: MONKII became MechApe
+        // renamed 2026-08, when MONKII became MechApe
+        '/monkii'                          => '/mechape/',
+        '/monkii-local-private-llm-studio' => '/mechape-local-private-llm-studio/',
     ];
 }
 
