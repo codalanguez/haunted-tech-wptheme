@@ -757,15 +757,15 @@ function ht_render_lab($attributes = []) {
       <div class="services-grid lab-grid">
         <div class="service-card lab-card" id="lab-monkii">
           <div class="service-icon-area lab-icon-area">
-            <img class="lab-icon" src="<?php echo esc_url($monkii_icon); ?>" alt="MONKII app icon" loading="lazy" width="256" height="256">
+            <img class="lab-icon" src="<?php echo esc_url($monkii_icon); ?>" alt="MechApe app icon" loading="lazy" width="256" height="256">
           </div>
           <div class="service-meta">
             <div class="service-eyebrow">Local &middot; Private &middot; Yours</div>
-            <div class="service-title">MONKII</div>
-            <div class="service-desc">A local, private LLM studio for Ollama &mdash; projects, Claude-style skills, and live file knowledge. Out of the box, not one syllable of your conversations ever leaves your machine.</div>
+            <div class="service-title">MechApe</div>
+            <div class="service-desc">A local, private LLM studio that brings its own engine &mdash; projects, Claude-style skills, and live file knowledge. Out of the box, not one syllable of your conversations ever leaves your machine.</div>
             <div class="lab-actions">
               <a href="#monkii" class="service-btn" data-open-monkii>Enter the Studio</a>
-              <a href="https://github.com/codalanguez/Monkii" class="service-btn lab-btn-ghost" target="_blank" rel="noopener">GitHub</a>
+              <a href="https://github.com/codalanguez/MechApe" class="service-btn lab-btn-ghost" target="_blank" rel="noopener">GitHub</a>
             </div>
           </div>
         </div>
@@ -790,8 +790,10 @@ function ht_render_lab($attributes = []) {
 }
 
 /* ============================================================
- * MONKII MODAL — singleton, included in footer part.
- * Opens from any [data-open-monkii] trigger or the #monkii hash.
+ * MECHAPE MODAL — singleton, included in footer part.
+ * Opens from any [data-open-monkii] trigger or the #monkii hash. Those hooks
+ * keep the old product name on purpose: the block slug is recorded in the
+ * saved footer template part, and the #monkii hash is a published URL.
  * ============================================================ */
 function ht_render_monkii_modal($attributes = []) {
     $icon = HAUNTED_TECH_URI . '/assets/monkii-icon.png';
@@ -799,15 +801,15 @@ function ht_render_monkii_modal($attributes = []) {
     ob_start(); ?>
     <div class="monkii-modal" id="monkii-modal" role="dialog" aria-modal="true" aria-labelledby="monkii-name" aria-hidden="true" tabindex="-1">
       <div class="monkii-frame">
-        <button class="monkii-close" aria-label="Close MONKII studio">&times;</button>
+        <button class="monkii-close" aria-label="Close MechApe studio">&times;</button>
         <div class="monkii-visual" style="background-image: url('<?php echo esc_url($shot); ?>');">
           <div class="monkii-visual-caption">// broadcasting from a machine near you</div>
         </div>
         <div class="monkii-meta">
           <div class="monkii-meta-head">
             <div class="monkii-eyebrow"><img class="monkii-badge" src="<?php echo esc_url($icon); ?>" alt="" aria-hidden="true" width="256" height="256"><span>From the Lab</span></div>
-            <h2 class="monkii-name" id="monkii-name" data-text="MONKII">MONKII</h2>
-            <div class="monkii-title">A Local, Private LLM Studio for Ollama</div>
+            <h2 class="monkii-name" id="monkii-name" data-text="MechApe">MechApe</h2>
+            <div class="monkii-title">A Local, Private LLM Studio &mdash; No Separate Install</div>
             <div class="monkii-divider"></div>
           </div>
           <div class="monkii-body-wrap">
@@ -817,15 +819,15 @@ function ht_render_monkii_modal($attributes = []) {
                 <li><strong>Projects</strong> &mdash; instructions, knowledge files, skills &amp; chats bundled per obsession, each with its own model memory</li>
                 <li><strong>Skills</strong> &mdash; Claude-format SKILL.md instruction sets; toggle per project or summon mid-message with <code>/</code></li>
                 <li><strong>Live file knowledge</strong> &mdash; attach files or folders, read fresh from disk, indexed with on-device embeddings</li>
-                <li><strong>Ollama, domesticated</strong> &mdash; auto-detection, one-click model switching, honest health indicator</li>
+                <li><strong>Its own engine</strong> &mdash; llama.cpp ships inside; GPU auto-detection, one-click model switching, honest health indicator</li>
                 <li><strong>Seven themes</strong> &mdash; four dark, three light, all WCAG AA</li>
                 <li><strong>Remote models</strong> &mdash; strictly opt-in OpenRouter support, loudly badged, mildly judged</li>
               </ul>
-              <p class="monkii-fine">Free &middot; MIT licensed &middot; Node.js 18+ and <a href="https://ollama.com" target="_blank" rel="noopener">Ollama</a> required</p>
+              <p class="monkii-fine">Free &middot; MIT licensed &middot; Node.js 18+ required &middot; the model engine comes with it</p>
             </div>
           </div>
           <div class="monkii-meta-foot">
-            <a class="service-btn" href="https://github.com/codalanguez/Monkii" target="_blank" rel="noopener">Get it on GitHub</a>
+            <a class="service-btn" href="https://github.com/codalanguez/MechApe" target="_blank" rel="noopener">Get it on GitHub</a>
             <a class="service-btn lab-btn-ghost" href="<?php echo esc_url(home_url('/monkii/')); ?>">Take the Full Tour</a>
           </div>
         </div>

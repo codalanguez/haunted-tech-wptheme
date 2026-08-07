@@ -36,7 +36,7 @@ add_action('init', function () {
         ['slug' => 'gallery',       'title' => 'Gallery',        'render' => 'ht_render_gallery',      'icon' => 'format-gallery'],
         ['slug' => 'newsletter',    'title' => 'Newsletter',     'render' => 'ht_render_newsletter',   'icon' => 'email-alt'],
         ['slug' => 'lab',           'title' => 'The Lab',        'render' => 'ht_render_lab',          'icon' => 'admin-tools'],
-        ['slug' => 'monkii-modal',  'title' => 'MONKII Modal (singleton)', 'render' => 'ht_render_monkii_modal', 'icon' => 'fullscreen-alt'],
+        ['slug' => 'monkii-modal',  'title' => 'MechApe Modal (singleton)', 'render' => 'ht_render_monkii_modal', 'icon' => 'fullscreen-alt'],
         ['slug' => 'lightbox',      'title' => 'Lightbox',       'render' => 'ht_render_lightbox',     'icon' => 'fullscreen-alt'],
         ['slug' => 'about-modal',   'title' => 'About Modal',    'render' => 'ht_render_about_modal',  'icon' => 'admin-users'],
         ['slug' => 'about-page-hero', 'title' => 'About Page Hero', 'render' => 'ht_render_about_page_hero', 'icon' => 'admin-users'],

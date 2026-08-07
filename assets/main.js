@@ -134,7 +134,7 @@
     });
   })();
 
-  // ===== MONKII modal: open from any [data-open-monkii] OR any <a> whose href
+  // ===== MechApe modal: open from any [data-open-monkii] OR any <a> whose href
   // resolves to #monkii (same delegated pattern as the About modal). Close on
   // Esc / × / backdrop. =====
   (function(){

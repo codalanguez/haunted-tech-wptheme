@@ -3767,7 +3767,7 @@ body.commission-open .static-burst { display: none !important; }
   .lab-foot a { color: var(--gold); text-decoration: none; border-bottom: 1px solid var(--border); }
   .lab-foot a:hover { color: var(--gold-bright); border-color: var(--gold-bright); text-shadow: 0 0 8px rgba(255,212,0,0.5); }
 
-  /* ============ MONKII MODAL (singleton) ============ */
+  /* ============ MECHAPE MODAL (singleton) ============ */
   .monkii-modal {
     position: fixed; inset: 0;
     background: rgba(0,0,0,0.94);

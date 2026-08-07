@@ -4,7 +4,7 @@
 
 set -e
 
-REPO="codemonkeyarts/haunted-tech-wptheme"
+REPO="codalanguez/haunted-tech-wptheme"
 WORKFLOW="deploy.yml"
 BRANCH="main"
 
