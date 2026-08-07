@@ -828,7 +828,7 @@ function ht_render_monkii_modal($attributes = []) {
           </div>
           <div class="monkii-meta-foot">
             <a class="service-btn" href="https://github.com/codalanguez/MechApe" target="_blank" rel="noopener">Get it on GitHub</a>
-            <a class="service-btn lab-btn-ghost" href="<?php echo esc_url(home_url('/monkii/')); ?>">Take the Full Tour</a>
+            <a class="service-btn lab-btn-ghost" href="<?php echo esc_url(home_url('/mechape/')); ?>">Take the Full Tour</a>
           </div>
         </div>
       </div>
