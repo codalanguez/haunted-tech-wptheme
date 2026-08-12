@@ -101,11 +101,15 @@ function haunted_tech_links_host_route($wp) {
     }
 
     if ($path !== '/' && $path !== '/' . haunted_tech_links_slug()) {
-        $target = home_url($path === '/' ? '/' : $path . '/');
+        // Keep a trailing slash off anything that looks like a file:
+        // /robots.txt/ is not /robots.txt.
+        $suffix = preg_match('#\.[a-z0-9]{2,5}$#i', $path) ? '' : '/';
+        $target = home_url($path . $suffix);
         $query  = wp_parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_QUERY);
         if ($query) {
             $target .= '?' . $query;
         }
+        haunted_tech_links_host_own_redirect(true);
         wp_safe_redirect($target, 301);
         exit;
     }
@@ -131,6 +135,81 @@ function haunted_tech_links_host_route($wp) {
 add_filter('redirect_canonical', 'haunted_tech_links_host_no_canonical_redirect', 10, 2);
 function haunted_tech_links_host_no_canonical_redirect($redirect_url, $requested_url) {
     return haunted_tech_is_links_host() ? false : $redirect_url;
+}
+
+/**
+ * Marks the one redirect this file legitimately issues (a stray path handed
+ * back to the canonical domain) so the guard below does not cancel it.
+ * Call with true to arm; call with no argument to read.
+ */
+function haunted_tech_links_host_own_redirect($set = null) {
+    static $own = false;
+    if ($set !== null) {
+        $own = (bool) $set;
+    }
+    return $own;
+}
+
+/**
+ * Cancel anything else that tries to bounce this host to the canonical domain.
+ *
+ * redirect_canonical() is not the only thing with an opinion about which
+ * hostname the site answers on. The host's own optimizer plugin renders the
+ * page in full and *then* attaches a 302 to the same path on the primary
+ * domain — the observed symptom was a complete, correct bio page arriving
+ * with a Location header stapled to it, so the browser threw the page away
+ * and followed the header to the homepage. It only did this to responses it
+ * had optimized; a HEAD request, which it skips, came back a clean 200.
+ *
+ * Two interception points because the mechanism is somebody else's code and
+ * may change:
+ *
+ *   1. The wp_redirect filter, which catches it if the redirect goes through
+ *      WordPress. Returning false makes wp_redirect() a no-op. That is only
+ *      safe because this particular caller does not exit afterwards — the
+ *      page is already rendered, which is how we know.
+ *   2. A shutdown pass that strips a Location header still standing at the
+ *      end of the request. Belt and braces; if the header is set from inside
+ *      an output-buffer callback this will be too early to catch it.
+ *
+ * Both are scoped to the vanity host and to redirects aimed at the canonical
+ * domain, so nothing else on the site is affected. If the host ever fixes
+ * alias handling properly, this becomes dead weight rather than a hazard.
+ */
+add_filter('wp_redirect', 'haunted_tech_links_host_block_bounce', PHP_INT_MAX, 2);
+function haunted_tech_links_host_block_bounce($location, $status) {
+    if (!haunted_tech_is_links_host() || haunted_tech_links_host_own_redirect()) {
+        return $location;
+    }
+    return haunted_tech_links_host_targets_canonical($location) ? false : $location;
+}
+
+add_action('shutdown', 'haunted_tech_links_host_strip_bounce', PHP_INT_MAX);
+function haunted_tech_links_host_strip_bounce() {
+    if (!haunted_tech_is_links_host() || haunted_tech_links_host_own_redirect() || headers_sent()) {
+        return;
+    }
+    foreach (headers_list() as $header) {
+        if (stripos($header, 'location:') !== 0) {
+            continue;
+        }
+        if (haunted_tech_links_host_targets_canonical(trim(substr($header, 9)))) {
+            header_remove('Location');
+            status_header(200);
+        }
+        return;
+    }
+}
+
+/** Does this redirect target point at the canonical domain? */
+function haunted_tech_links_host_targets_canonical($location) {
+    if (!is_string($location) || $location === '') {
+        return false;
+    }
+    $to   = strtolower((string) wp_parse_url($location, PHP_URL_HOST));
+    $home = strtolower((string) wp_parse_url(home_url('/'), PHP_URL_HOST));
+
+    return $to !== '' && $home !== '' && $to === $home;
 }
 
 /**
