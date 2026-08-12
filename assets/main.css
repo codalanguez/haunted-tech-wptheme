@@ -3171,6 +3171,25 @@
   .block-linktree { max-width: 560px; margin: 0 auto; padding: 3rem 1.25rem 5rem; }
   .linktree-card { position: relative; z-index: 1; }
 
+  /* ---- Undo the site chrome ----
+   * main.css styles bare `section`, `header` and `nav a` for the main site:
+   * 6rem section gutters, the sticky masthead, the animated underline on nav
+   * links. This page reuses those elements for completely different
+   * furniture, so a bare-element rule lands on it uninvited — the section
+   * gutter alone was taking 96px off both sides of every tile, which on a
+   * 375px phone is a third of the card. Reset before styling. */
+  .block-linktree section { padding: 0; max-width: none; }
+  .block-linktree header {
+    position: relative;
+    z-index: auto;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .block-linktree header::before { content: none; }
+  .block-linktree nav a { padding: 0; letter-spacing: normal; text-transform: none; }
+  .block-linktree nav a::after { content: none; }
+  .block-linktree nav a:hover { text-shadow: none; animation: none; }
+
   /* ---- Header plate ---- */
   .lt-head {
     position: relative;
