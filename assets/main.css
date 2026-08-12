@@ -463,17 +463,86 @@
     box-shadow: 0 0 16px rgba(229,9,20,0.3);
     animation: glitch-shift-fast 0.4s;
   }
-  /* Tooltip on hover */
-  .social-list a::after {
+  /* ---- Social label tooltip ----
+   * Shared by the header bar and the bio page's social row. Same furniture as
+   * .spine-tip on the book / web-novel listings — void panel, gold hairline,
+   * a rotated square for the caret, Forum uppercase — so an icon names its
+   * platform the same way a spine names its book.
+   *
+   * The name is already on the anchor as data-label, and as aria-label, so
+   * screen readers have always had it; this is the sighted equivalent. Shown
+   * on focus as well as hover, per the .spine-tip convention, so it is
+   * reachable by keyboard.
+   *
+   * The icons are the only thing on either bar with no text of its own, and a
+   * row of eleven unlabelled glyphs asks the visitor to recognise Civitai and
+   * BookBub by silhouette. */
+  .social-list a::after,
+  .block-linktree .lt-social a::after {
     content: attr(data-label);
-    position: absolute; top: 100%; left: 50%; transform: translateX(-50%) translateY(8px);
-    font-family: 'Forum', serif; font-size: 0.65rem; letter-spacing: 0.3em;
-    text-transform: uppercase; color: var(--gold); white-space: nowrap;
-    background: var(--void); border: 1px solid var(--gold); padding: 0.3rem 0.6rem;
-    opacity: 0; pointer-events: none; transition: opacity 0.2s;
+    position: absolute; top: 100%; left: 50%;
+    transform: translateX(-50%) translateY(12px);
+    font-family: 'Forum', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    white-space: nowrap;
+    background: var(--void);
+    border: 1px solid var(--gold);
+    box-shadow: 0 0 20px rgba(0,0,0,0.7);
+    padding: 0.32rem 0.7rem;
+    padding-right: calc(0.7rem - 0.3em); /* absorb the trailing letter-space */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s, transform 0.2s;
     z-index: 100;
   }
-  .social-list a:hover::after { opacity: 1; }
+  /* Caret. Drawn over the panel's top edge, with its own void fill hiding the
+     border behind it — the same trick as .spine-tip::after, flipped to point
+     up because these tooltips hang below the icon rather than above it. */
+  .social-list a::before,
+  .block-linktree .lt-social a::before {
+    content: '';
+    position: absolute; top: 100%; left: 50%;
+    transform: translateX(-50%) translateY(9px) rotate(45deg);
+    width: 8px; height: 8px;
+    background: var(--void);
+    border-left: 1px solid var(--gold);
+    border-top: 1px solid var(--gold);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s, transform 0.2s;
+    z-index: 101;
+  }
+  .social-list a:hover::after,
+  .social-list a:focus-visible::after,
+  .block-linktree .lt-social a:hover::after,
+  .block-linktree .lt-social a:focus-visible::after {
+    opacity: 1;
+    transform: translateX(-50%) translateY(9px);
+  }
+  .social-list a:hover::before,
+  .social-list a:focus-visible::before,
+  .block-linktree .lt-social a:hover::before,
+  .block-linktree .lt-social a:focus-visible::before {
+    opacity: 1;
+    transform: translateX(-50%) translateY(6px) rotate(45deg);
+  }
+  /* Park the tooltip at its visible position so only the fade is left to
+     animate — the slide was the only motion here. */
+  @media (prefers-reduced-motion: reduce) {
+    .social-list a::after,
+    .block-linktree .lt-social a::after {
+      transition: opacity 0.2s;
+      transform: translateX(-50%) translateY(9px);
+    }
+    .social-list a::before,
+    .block-linktree .lt-social a::before {
+      transition: opacity 0.2s;
+      transform: translateX(-50%) translateY(6px) rotate(45deg);
+    }
+  }
 
   /* ============ HERO ============ */
   .hero { padding: 8rem 3rem 7rem; position: relative; overflow: hidden; border-bottom: 1px solid var(--border); background: var(--void); }
@@ -3403,6 +3472,10 @@
   .lt-social li { list-style: none; }
   .lt-social a {
     display: inline-flex; align-items: center; justify-content: center;
+    /* The tooltip below is absolutely positioned against this. The theme's
+       bare `nav a` rule happens to set position:relative too, but that is the
+       site chrome this block deliberately resets — don't inherit from it. */
+    position: relative;
     width: 44px; height: 44px;
     border-radius: 50%;
     color: var(--gold);
