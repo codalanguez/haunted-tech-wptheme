@@ -3166,6 +3166,17 @@
     opacity: 0.085;
     pointer-events: none;
     z-index: 0;
+    animation: lt-damask-fault 13s infinite steps(1);
+  }
+  /* The wallpaper takes a hit every thirteen seconds — brightens, tears a
+     couple of pixels sideways, drops out. steps(1) so it snaps rather than
+     eases; a damask that fades in and out reads as a slideshow, not a fault. */
+  @keyframes lt-damask-fault {
+    0%, 90%, 100% { opacity: 0.085; transform: translate(0); }
+    91%           { opacity: 0.16;  transform: translate(-3px, 1px); }
+    92%           { opacity: 0.05;  transform: translate(3px, -1px); }
+    93%           { opacity: 0.13;  transform: translate(-1px, 0); }
+    94%           { opacity: 0.085; transform: translate(0); }
   }
 
   .block-linktree { max-width: 560px; margin: 0 auto; padding: 3rem 1.25rem 5rem; }
@@ -3207,10 +3218,71 @@
     border: 2px solid var(--gold);
     box-shadow: 0 0 12px rgba(255,212,0,0.35), inset 0 0 6px rgba(229,9,20,0.25);
   }
+  .lt-corner {
+    z-index: 4;
+  }
   .lt-corner.tl { top: -1px; left: -1px;  border-right: none; border-bottom: none; }
   .lt-corner.tr { top: -1px; right: -1px; border-left: none;  border-bottom: none; }
   .lt-corner.bl { bottom: -1px; left: -1px;  border-right: none; border-top: none; }
   .lt-corner.br { bottom: -1px; right: -1px; border-left: none;  border-top: none; }
+
+  /* ---- Header backdrop ----
+   * The About page portrait, run through the brand palette and buried under
+   * a scrim: gold type on a photograph is unreadable at any opacity that
+   * still lets you see the photograph, so the image is there to be felt
+   * rather than looked at. The avatar carries the actual likeness. */
+  .lt-head-bg {
+    position: absolute; inset: 0;
+    overflow: hidden;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .lt-head-bg img {
+    display: block;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: 50% 22%;
+    opacity: 0.42;
+    filter: grayscale(0.45) contrast(1.15) saturate(0.75) sepia(0.25);
+    transform: scale(1.03);
+    animation: lt-head-tear 9s infinite;
+  }
+  /* Scrim: dark at the bottom where the tagline and social row sit, lighter
+     at the top so the portrait still reads behind the avatar. */
+  .lt-head-bg::after {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse at 50% 8%, rgba(255,212,0,0.10), transparent 58%),
+      linear-gradient(180deg, rgba(5,4,3,0.58) 0%, rgba(5,4,3,0.72) 42%, rgba(0,0,0,0.93) 100%);
+  }
+  /* Interlace lines over the portrait only — the page already has global
+     scanlines, these are tighter and sit close enough to read as a CRT. */
+  .lt-head-bg::before {
+    content: '';
+    position: absolute; inset: 0;
+    z-index: 2;
+    background: repeating-linear-gradient(0deg, transparent 0, transparent 2px, rgba(0,0,0,0.35) 2px, rgba(0,0,0,0.35) 3px);
+    mix-blend-mode: multiply;
+  }
+  /* VHS tracking fault: slices of the portrait shear sideways and the colour
+     shifts, three times a cycle, for a couple of frames each. */
+  @keyframes lt-head-tear {
+    0%, 22%, 100% { transform: scale(1.03) translate(0); filter: grayscale(0.45) contrast(1.15) saturate(0.75) sepia(0.25); clip-path: inset(0); }
+    23%  { transform: scale(1.03) translate(-9px, 0) skewX(-1.2deg); filter: grayscale(0.2) contrast(1.3) saturate(1.6) hue-rotate(-25deg); clip-path: inset(18% 0 58% 0); }
+    24%  { transform: scale(1.03) translate(7px, 0); filter: grayscale(0.45) contrast(1.15) saturate(0.75) sepia(0.25); clip-path: inset(52% 0 22% 0); }
+    25%  { transform: scale(1.03) translate(0); clip-path: inset(0); }
+    58%  { transform: scale(1.03) translate(6px, -2px) skewX(0.8deg); filter: grayscale(0.1) contrast(1.25) saturate(1.8) hue-rotate(140deg); clip-path: inset(38% 0 40% 0); }
+    59%  { transform: scale(1.03) translate(0); filter: grayscale(0.45) contrast(1.15) saturate(0.75) sepia(0.25); clip-path: inset(0); }
+    86%  { transform: scale(1.06) translate(-4px, 1px); filter: grayscale(0.6) contrast(1.5) brightness(1.25); clip-path: inset(6% 0 74% 0); }
+    87%  { transform: scale(1.03) translate(0); filter: grayscale(0.45) contrast(1.15) saturate(0.75) sepia(0.25); clip-path: inset(0); }
+  }
+
+  /* Header content rides above the backdrop. */
+  .lt-head > .lt-avatar-link,
+  .lt-head > .lt-name,
+  .lt-head > .lt-tagline,
+  .lt-head > .lt-social { position: relative; z-index: 3; }
 
   /* ---- Avatar ---- */
   .lt-avatar-link {
@@ -3238,6 +3310,43 @@
   .lt-avatar-link:hover .lt-avatar { box-shadow: 0 0 0 5px var(--void), 0 0 40px rgba(255,212,0,0.7); }
   .lt-avatar-link:hover .lt-avatar-ring { border-color: rgba(229,9,20,0.6); }
   @keyframes lt-ring { to { transform: rotate(360deg); } }
+
+  /* Chroma split. Two tinted copies of the same (already cached) logo sit on
+     top of the portrait, transparent except during a burst — hue-rotating a
+     sepia base is how you force an arbitrary image to a single channel. */
+  .lt-avatar-ghost {
+    position: absolute; inset: 2px;
+    border-radius: 50%;
+    background-image: var(--lt-avatar);
+    background-size: cover;
+    background-position: center;
+    mix-blend-mode: screen;
+    pointer-events: none;
+    opacity: 0;
+  }
+  .lt-avatar-ghost.r { filter: sepia(1) saturate(7) hue-rotate(-40deg); animation: lt-chroma-r 6.5s infinite linear; }
+  .lt-avatar-ghost.c { filter: sepia(1) saturate(7) hue-rotate(150deg);  animation: lt-chroma-c 6.5s infinite linear; }
+
+  /* Shared by the avatar ghosts and the section-heading RGB split. Idle for
+     most of the cycle: a glitch that never rests stops reading as a glitch. */
+  @keyframes lt-chroma-r {
+    0%, 15%, 100% { opacity: 0; transform: translate(0); clip-path: inset(0); }
+    16%   { opacity: 0.75; transform: translate(-5px, 2px); clip-path: inset(14% 0 66% 0); }
+    17.5% { opacity: 0.75; transform: translate(4px, -1px); clip-path: inset(58% 0 16% 0); }
+    19%   { opacity: 0; transform: translate(0); }
+    61%   { opacity: 0; }
+    62%   { opacity: 0.6; transform: translate(6px, 0); clip-path: inset(34% 0 44% 0); }
+    63.5% { opacity: 0; transform: translate(0); }
+  }
+  @keyframes lt-chroma-c {
+    0%, 15%, 100% { opacity: 0; transform: translate(0); clip-path: inset(0); }
+    16%   { opacity: 0.75; transform: translate(5px, -2px); clip-path: inset(48% 0 30% 0); }
+    17.5% { opacity: 0.75; transform: translate(-4px, 1px); clip-path: inset(10% 0 76% 0); }
+    19%   { opacity: 0; transform: translate(0); }
+    61%   { opacity: 0; }
+    62%   { opacity: 0.6; transform: translate(-6px, 0); clip-path: inset(30% 0 48% 0); }
+    63.5% { opacity: 0; transform: translate(0); }
+  }
 
   /* ---- Name + tagline ---- */
   .lt-name {
@@ -3271,6 +3380,7 @@
     padding-left: 0.38em; /* optical centring against the trailing letter-space */
     max-width: 26em;
     line-height: 1.9;
+    animation: flicker 8s infinite;
   }
   .lt-tagline::before, .lt-tagline::after {
     content: '';
@@ -3330,7 +3440,27 @@
     vertical-align: 0.1em;
     letter-spacing: 0;
     text-shadow: 0 0 8px rgba(229,9,20,0.55);
+    animation: flicker 5s infinite;
   }
+  .lt-section-title::after { animation-delay: 1.7s; }
+
+  /* RGB split on the heading text. Each section runs the same pair of
+     keyframes on a different delay so they never fault in unison. */
+  .lt-glitch { position: relative; display: inline-block; }
+  .lt-glitch::before, .lt-glitch::after {
+    content: attr(data-text);
+    position: absolute; top: 0; left: 0;
+    width: 100%;
+    overflow: hidden;
+    mix-blend-mode: screen;
+    pointer-events: none;
+  }
+  .lt-glitch::before { color: var(--red);  animation: lt-chroma-r 6.5s infinite linear; }
+  .lt-glitch::after  { color: var(--cyan); animation: lt-chroma-c 6.5s infinite linear; }
+  .lt-section:nth-of-type(2n)   .lt-glitch::before,
+  .lt-section:nth-of-type(2n)   .lt-glitch::after  { animation-delay: 2.1s; }
+  .lt-section:nth-of-type(3n)   .lt-glitch::before,
+  .lt-section:nth-of-type(3n)   .lt-glitch::after  { animation-delay: 4.3s; }
   .lt-stack { display: flex; flex-direction: column; gap: 0.6rem; }
 
   /* ---- Featured tiles ----
@@ -3362,6 +3492,26 @@
     position: absolute; inset: 0;
     background: linear-gradient(100deg, rgba(0,0,0,0.94) 22%, rgba(5,4,3,0.78) 58%, rgba(0,0,0,0.55) 100%);
   }
+  /* A CRT band crawls down each featured tile — the same idea as the
+     page-level .crt-band, scoped to the poster so it reads as the tile
+     being on a screen rather than the whole page rolling. */
+  .lt-hero-tile::before {
+    content: '';
+    position: absolute; left: 0; right: 0;
+    height: 34%;
+    z-index: 4;
+    background: linear-gradient(180deg,
+      transparent 0%,
+      rgba(0,255,224,0.07) 38%,
+      rgba(255,212,0,0.14) 50%,
+      rgba(229,9,20,0.08) 62%,
+      transparent 100%);
+    mix-blend-mode: screen;
+    pointer-events: none;
+    animation: lt-sweep 7s linear infinite;
+  }
+  .lt-stack--hero > .lt-hero-tile:nth-child(2)::before { animation-delay: 3.4s; }
+  @keyframes lt-sweep { 0% { top: -36%; } 100% { top: 104%; } }
   .lt-hero-inner {
     position: relative; z-index: 2;
     display: grid;
@@ -3434,6 +3584,11 @@
   }
   .lt-hero-tile:hover .lt-hero-bleed { opacity: 0.42; transform: scale(1.08); }
   .lt-hero-tile:hover .lt-hero-cta { background: var(--gold-bright); box-shadow: 0 0 22px rgba(255,212,0,0.6); }
+  .lt-hero-tile:hover .lt-hero-title {
+    text-shadow: -2px 0 var(--red), 2px 0 var(--cyan), 0 0 18px rgba(255,212,0,0.3);
+    animation: glitch-shift-fast 0.45s;
+  }
+  .lt-hero-tile:hover .lt-hero-cover img { animation: glitch-tear 0.5s; }
 
   /* ---- Link rows ----
    * Sharp-cornered rather than pill-shaped (this is a deco theme, not a
@@ -3521,6 +3676,11 @@
     transition: opacity 0.24s, transform 0.24s;
   }
   .lt-tile:hover .lt-tile-cta { opacity: 1; transform: translateX(3px); }
+  .lt-tile:hover .lt-tile-title, .lt-tile:focus-visible .lt-tile-title {
+    text-shadow: -2px 0 var(--red), 2px 0 var(--cyan);
+    animation: glitch-shift-fast 0.4s;
+  }
+  .lt-tile:hover .lt-tile-art img { animation: glitch-tear 0.45s; }
 
   /* Rows with no cover art (newsletter, commissions, the Lab) — the glyph
      box would read as a missing image at 2/3 portrait, so square it off. */
@@ -3582,11 +3742,33 @@
     .lt-tile-sub { font-size: 0.8rem; }
   }
 
+  /* Every effect on this page is decoration — none of it carries meaning, so
+     all of it goes when the visitor has asked for less motion. The chroma
+     ghosts and heading splits are removed rather than paused: paused mid-burst
+     would leave a permanently torn portrait and doubled headings. */
   @media (prefers-reduced-motion: reduce) {
-    .lt-avatar-ring { animation: none; }
-    .lt-name { animation: none; }
-    .lt-name::before, .lt-name::after { display: none; }
+    .lt-damask,
+    .lt-avatar-ring,
+    .lt-name,
+    .lt-tagline,
+    .lt-section-title::before,
+    .lt-section-title::after,
+    .lt-head-bg img,
+    .lt-hero-tile::before { animation: none; }
+
+    .lt-damask { transform: none; opacity: 0.085; }
+    .lt-head-bg img { transform: scale(1.03); clip-path: none; }
+
+    .lt-name::before, .lt-name::after,
+    .lt-glitch::before, .lt-glitch::after,
+    .lt-avatar-ghost,
+    .lt-hero-tile::before { display: none; }
+
     .lt-hero-bleed, .lt-hero-tile, .lt-tile { transition: none; }
+    .lt-tile:hover .lt-tile-title,
+    .lt-hero-tile:hover .lt-hero-title { animation: none; text-shadow: none; }
+    .lt-tile:hover .lt-tile-art img,
+    .lt-hero-tile:hover .lt-hero-cover img { animation: none; }
   }
 
 

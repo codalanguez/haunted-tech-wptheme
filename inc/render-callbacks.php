@@ -2064,6 +2064,18 @@ function ht_linktree_hero_tile($args) {
     return ob_get_clean();
 }
 
+/**
+ * Wrap text so it can carry the RGB-split glitch.
+ *
+ * The effect needs two copies of the string in ::before/::after content, and
+ * the element they hang off must be inline-block for the clip-path slices to
+ * line up. The section heading's own pseudo-elements are already spoken for
+ * by the diamond ornaments, hence the extra span.
+ */
+function ht_linktree_glitch_text($text) {
+    return '<span class="lt-glitch" data-text="' . esc_attr($text) . '">' . esc_html($text) . '</span>';
+}
+
 /** Short one-liner under a tile title — tagline, then blurb, then excerpt. */
 function ht_linktree_sub($post_id, $words = 13) {
     $text = '';
@@ -2075,6 +2087,23 @@ function ht_linktree_sub($post_id, $words = 13) {
     return $text ? wp_trim_words($text, $words, '…') : '';
 }
 
+/**
+ * The image behind the header plate.
+ *
+ * Follows the About page's featured image rather than naming an attachment,
+ * so the bio page and the About page always show the same portrait — change
+ * it in one place and both move. Filterable for anyone who wants them to
+ * differ.
+ */
+function ht_linktree_backdrop_id() {
+    $id    = 0;
+    $about = get_page_by_path('about');
+    if ($about) {
+        $id = (int) get_post_thumbnail_id($about->ID);
+    }
+    return (int) apply_filters('haunted_tech_linktree_backdrop_id', $id);
+}
+
 /** Section wrapper: ornamented title, the first N tiles, rest folded away. */
 function ht_linktree_section($title, $tiles, $visible, $more_label) {
     if (empty($tiles)) { return ''; }
@@ -2082,7 +2111,7 @@ function ht_linktree_section($title, $tiles, $visible, $more_label) {
     $folded = array_slice($tiles, $visible);
     ob_start(); ?>
     <section class="lt-section">
-      <h2 class="lt-section-title"><?php echo esc_html($title); ?></h2>
+      <h2 class="lt-section-title"><?php echo ht_linktree_glitch_text($title); ?></h2>
       <div class="lt-stack"><?php echo implode('', $shown); ?></div>
       <?php if (!empty($folded)): ?>
         <details class="lt-more">
@@ -2148,24 +2177,49 @@ function ht_render_linktree($attributes = []) {
         ]);
     }
 
-    $tagline = get_bloginfo('description');
-    $avatar  = haunted_tech_logo_url();
-    $name    = get_bloginfo('name');
+    $tagline  = get_bloginfo('description');
+    $avatar   = haunted_tech_logo_url();
+    $name     = get_bloginfo('name');
+    $backdrop = ht_linktree_backdrop_id();
 
     ob_start(); ?>
     <section class="block-linktree">
       <div class="lt-damask" aria-hidden="true"></div>
+      <?php echo ht_render_overlays(); ?>
 
       <div class="linktree-card">
         <header class="lt-head">
+          <?php if ($backdrop): ?>
+            <span class="lt-head-bg" aria-hidden="true">
+              <?php
+              /* A real <img> rather than a CSS background: it gets a srcset,
+               * so a phone does not download the 1024px portrait, and the
+               * optimizer can rewrite it. The glitch runs on this element
+               * directly — duplicating it for a chroma split would mean
+               * downloading the portrait twice. */
+              echo wp_get_attachment_image($backdrop, 'large', false, [
+                  'alt'      => '',
+                  'loading'  => 'eager',
+                  'decoding' => 'async',
+                  'sizes'    => '(max-width: 600px) 100vw, 560px',
+              ]);
+              ?>
+            </span>
+          <?php endif; ?>
+
           <span class="lt-corner tl" aria-hidden="true"></span>
           <span class="lt-corner tr" aria-hidden="true"></span>
           <span class="lt-corner bl" aria-hidden="true"></span>
           <span class="lt-corner br" aria-hidden="true"></span>
 
-          <a href="<?php echo esc_url(home_url('/')); ?>" class="lt-avatar-link" aria-label="<?php echo esc_attr($name); ?> &mdash; home">
+          <a href="<?php echo esc_url(home_url('/')); ?>" class="lt-avatar-link" aria-label="<?php echo esc_attr($name); ?> &mdash; home"
+             style="--lt-avatar:url('<?php echo esc_url($avatar); ?>')">
             <span class="lt-avatar-ring" aria-hidden="true"></span>
             <img class="lt-avatar" src="<?php echo esc_url($avatar); ?>" alt="<?php echo esc_attr($name); ?>" width="132" height="132">
+            <?php /* Chroma-split ghosts: the same (small) logo as a background,
+                   * tinted red and cyan, invisible except during glitch bursts. */ ?>
+            <span class="lt-avatar-ghost r" aria-hidden="true"></span>
+            <span class="lt-avatar-ghost c" aria-hidden="true"></span>
           </a>
 
           <h1 class="lt-name" data-text="<?php echo esc_attr($name); ?>"><?php echo esc_html($name); ?></h1>
@@ -2188,7 +2242,7 @@ function ht_render_linktree($attributes = []) {
 
         <?php if ($featured_html): ?>
           <section class="lt-section lt-section--featured">
-            <h2 class="lt-section-title">Start here</h2>
+            <h2 class="lt-section-title"><?php echo ht_linktree_glitch_text('Start here'); ?></h2>
             <div class="lt-stack lt-stack--hero"><?php echo $featured_html; ?></div>
           </section>
         <?php endif; ?>
@@ -2199,7 +2253,7 @@ function ht_render_linktree($attributes = []) {
         ?>
 
         <section class="lt-section">
-          <h2 class="lt-section-title">Elsewhere</h2>
+          <h2 class="lt-section-title"><?php echo ht_linktree_glitch_text('Elsewhere'); ?></h2>
           <div class="lt-stack">
             <?php
             echo ht_linktree_tile([
