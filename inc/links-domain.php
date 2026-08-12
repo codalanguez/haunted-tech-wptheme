@@ -151,30 +151,34 @@ function haunted_tech_links_host_own_redirect($set = null) {
 }
 
 /**
- * Cancel anything else that tries to bounce this host to the canonical domain.
+ * Cancel anything else in WordPress that tries to bounce this host to the
+ * canonical domain. redirect_canonical() is not the only thing with an
+ * opinion about which hostname the site answers on, and a plugin that grows
+ * one later should not silently undo this file.
  *
- * redirect_canonical() is not the only thing with an opinion about which
- * hostname the site answers on. The host's own optimizer plugin renders the
- * page in full and *then* attaches a 302 to the same path on the primary
- * domain — the observed symptom was a complete, correct bio page arriving
- * with a Location header stapled to it, so the browser threw the page away
- * and followed the header to the homepage. It only did this to responses it
- * had optimized; a HEAD request, which it skips, came back a clean 200.
+ * KNOWN LIMIT — this cannot fix the redirect you are probably here about.
  *
- * Two interception points because the mechanism is somebody else's code and
- * may change:
+ * When the subdomain first went live it served the bio page correctly and the
+ * browser still landed on the homepage. Measured at the wire:
  *
- *   1. The wp_redirect filter, which catches it if the redirect goes through
- *      WordPress. Returning false makes wp_redirect() a no-op. That is only
- *      safe because this particular caller does not exit afterwards — the
- *      page is already rendered, which is how we know.
- *   2. A shutdown pass that strips a Location header still standing at the
- *      end of the request. Belt and braces; if the header is set from inside
- *      an output-buffer callback this will be too early to catch it.
+ *     GET  /            302 -> https://codalanguez.com/     (+ the full,
+ *                                                             correct page
+ *                                                             as the body)
+ *     HEAD /            200, correct page
+ *     POST /            200, correct page
+ *     GET  /robots.txt  301 -> canonical  (this file's own redirect, running)
  *
- * Both are scoped to the vanity host and to redirects aimed at the canonical
- * domain, so nothing else on the site is affected. If the host ever fixes
- * alias handling properly, this becomes dead weight rather than a hazard.
+ * PHP is answering 200. Only cacheable GETs carry the Location header, and it
+ * arrives attached to a body PHP had already finished rendering. That places
+ * it in the edge cache in front of WordPress — downstream of every hook here,
+ * where no amount of header_remove() can reach it. It is the platform
+ * redirecting alias hostnames to the primary domain, and it has to be turned
+ * off in the hosting panel or by the host's support.
+ *
+ * Everything on this side is verified working: routing, the killed canonical
+ * redirect, and the asset-host rewrite (all stylesheet and font URLs come
+ * back on the subdomain, so the woff2 CORS problem this file exists to avoid
+ * does not occur).
  */
 add_filter('wp_redirect', 'haunted_tech_links_host_block_bounce', PHP_INT_MAX, 2);
 function haunted_tech_links_host_block_bounce($location, $status) {
@@ -182,23 +186,6 @@ function haunted_tech_links_host_block_bounce($location, $status) {
         return $location;
     }
     return haunted_tech_links_host_targets_canonical($location) ? false : $location;
-}
-
-add_action('shutdown', 'haunted_tech_links_host_strip_bounce', PHP_INT_MAX);
-function haunted_tech_links_host_strip_bounce() {
-    if (!haunted_tech_is_links_host() || haunted_tech_links_host_own_redirect() || headers_sent()) {
-        return;
-    }
-    foreach (headers_list() as $header) {
-        if (stripos($header, 'location:') !== 0) {
-            continue;
-        }
-        if (haunted_tech_links_host_targets_canonical(trim(substr($header, 9)))) {
-            header_remove('Location');
-            status_header(200);
-        }
-        return;
-    }
 }
 
 /** Does this redirect target point at the canonical domain? */
