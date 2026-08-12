@@ -481,6 +481,16 @@
   .block-linktree .lt-social a::after {
     content: attr(data-label);
     position: absolute; top: 100%; left: 50%;
+    /* Explicit, because the bio page's social row is a <nav> and the theme's
+       `nav a::after` is the animated underline for site navigation:
+       bottom:0, width:0, height:1px, widening to 100% on hover. Resetting
+       only its `content` is not enough — the moment this rule sets content
+       back, every other property in that rule applies again, and the tooltip
+       renders as a 1px-tall zero-width box with the label spilling out of it.
+       The header bar is not inside a <nav>, which is why it looked correct
+       while this did not. */
+    right: auto; bottom: auto;
+    width: auto; height: auto;
     transform: translateX(-50%) translateY(12px);
     font-family: 'Forum', serif;
     font-size: 0.65rem;
