@@ -1936,18 +1936,31 @@ function ht_render_site_footer($attributes = []) {
 /**
  * Cover image for a book/web-novel tile.
  *
- * The ACF `cover` field returns an array when it is configured to return an
- * object and a bare URL string when it is not, and neither is guaranteed to
- * be set — fall back to the featured image, then to nothing.
+ * All three ACF return formats turn up here: the `book` field group returns
+ * an image *array*, the `webnovel` one returns a bare attachment *ID*, and a
+ * plain URL string is what a hand-edited field or a different install gives
+ * back. An ID is the one that fails quietly if you forget it — esc_url(1376)
+ * is the perfectly valid URL "http://1376", so the markup looks fine and the
+ * browser resolves 1376 as an IP address. Check numerics before strings:
+ * get_field() can hand back an ID as either an int or a numeric string.
+ *
+ * Falls back to the featured image, then to nothing (the tile draws a glyph).
  */
 function ht_linktree_cover_url($post_id) {
     $cover = function_exists('get_field') ? get_field('cover', $post_id) : null;
+
     if (is_array($cover) && !empty($cover['url'])) {
         return $cover['url'];
     }
-    if (is_string($cover) && $cover !== '') {
+    if (is_numeric($cover)) {
+        $url = wp_get_attachment_image_url((int) $cover, 'medium');
+        if ($url) {
+            return $url;
+        }
+    } elseif (is_string($cover) && $cover !== '') {
         return $cover;
     }
+
     return has_post_thumbnail($post_id) ? get_the_post_thumbnail_url($post_id, 'medium') : '';
 }
 
