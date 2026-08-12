@@ -3354,10 +3354,16 @@
   .lt-head > .lt-social { position: relative; z-index: 3; }
 
   /* ---- Avatar ---- */
+  /* Block, not inline-block. .lt-name has to be inline-block for the glitch
+     ghosts to sit exactly over the text, and two inline-blocks in a
+     text-align:center parent flow onto the same line as soon as the card is
+     wide enough to hold both — avatar left, name beside it. Narrow phones
+     wrapped and looked correct, which is why this survived testing. */
   .lt-avatar-link {
     position: relative;
-    display: inline-block;
-    margin-bottom: 1.15rem;
+    display: block;
+    width: fit-content;
+    margin: 0 auto 1.15rem;
     line-height: 0;
   }
   .lt-avatar-ring {
@@ -3428,7 +3434,10 @@
     margin: 0 0 0.75rem;
     text-shadow: 0 0 24px rgba(255,212,0,0.4), 0 0 48px rgba(229,9,20,0.2);
     position: relative;
-    display: inline-block;
+    /* Block so it owns its own line (see .lt-avatar-link). The ghosts below
+       span the full width and inherit text-align:center, same as the real
+       text, so they still land exactly on top of it. */
+    display: block;
     animation: glitch-tear 3s infinite;
   }
   .lt-name::before, .lt-name::after {
@@ -3466,7 +3475,13 @@
     list-style: none;
     display: flex; flex-wrap: wrap;
     justify-content: center;
-    gap: 0.55rem;
+    /* Eleven 44px targets do not fit one line, so the row wraps and each
+       label needs somewhere to go: the tooltip hangs ~32px below its icon
+       and would otherwise land in the next row. Keeping the icons at 44px
+       (the minimum comfortable tap target) and buying the space in row-gap
+       is the right trade — shrinking them to fit one line is not. */
+    column-gap: 0.55rem;
+    row-gap: 2.5rem;
     padding: 0; margin: 0;
   }
   .lt-social li { list-style: none; }
