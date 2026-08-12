@@ -14,6 +14,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # A parse error in a theme file is a white screen on the live site, and
+      # there is no PHP binary on the authoring machine to catch it first.
+      # ubuntu-latest ships one, so lint here — a failure stops the rsync.
+      - name: Lint PHP
+        run: find . -path ./.git -prune -o -name '*.php' -print0 | xargs -0 -n1 -P4 php -l
+
       - name: Write SSH key
         run: |
           mkdir -p ~/.ssh
