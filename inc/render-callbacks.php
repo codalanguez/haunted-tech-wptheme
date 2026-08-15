@@ -1993,6 +1993,34 @@ function ht_linktree_tile($args) {
 }
 
 /**
+ * Lantern Serials referral CTA — the one banner on this page that asks for
+ * something rather than offering something, so it gets its own treatment
+ * (gold plate, brand mark, filled hover) instead of another .lt-tile in a
+ * stack. It sits directly under "Start here": high enough to be seen, but
+ * behind the catalogue links the page actually exists for.
+ *
+ * The URL is the /go/joinlantern Pretty Link, which carries the ref code —
+ * point the Pretty Link somewhere else and this follows, no deploy needed.
+ * rel is sponsored+nofollow because it is a referral link, and the small
+ * print says so out loud.
+ */
+function ht_linktree_lantern_cta() {
+    ob_start(); ?>
+    <a class="lt-cta" href="https://codalanguez.com/go/joinlantern" target="_blank" rel="sponsored nofollow noopener">
+      <span class="lt-cta-mark" aria-hidden="true"><?php echo ht_lantern_mark('lt-cta-svg'); ?></span>
+      <span class="lt-cta-body">
+        <span class="lt-cta-eyebrow">Serial fiction &middot; Invite only</span>
+        <span class="lt-cta-title">Join me on Lantern</span>
+        <span class="lt-cta-sub">A quieter home for serialized fiction. Request an invite through my link.</span>
+        <span class="lt-cta-note">Referral link</span>
+      </span>
+      <span class="lt-cta-arrow" aria-hidden="true">&rarr;</span>
+    </a>
+    <?php
+    return ob_get_clean();
+}
+
+/**
  * The two hero tiles at the top of the card — the links the page exists to
  * push. Chosen by rule rather than hardcoded so they follow the catalogue:
  * the newest serial (something to follow) and the newest free book (something
@@ -2246,6 +2274,8 @@ function ht_render_linktree($attributes = []) {
             <div class="lt-stack lt-stack--hero"><?php echo $featured_html; ?></div>
           </section>
         <?php endif; ?>
+
+        <?php echo ht_linktree_lantern_cta(); ?>
 
         <?php
         echo ht_linktree_section('Web Novels', $novel_tiles, $visible, 'All %d serials');

@@ -20,7 +20,7 @@
 
 if (!defined('ABSPATH')) { exit; }
 
-define('HAUNTED_TECH_VERSION', '0.16.5');
+define('HAUNTED_TECH_VERSION', '0.17.0');
 define('HAUNTED_TECH_DIR', get_template_directory());
 define('HAUNTED_TECH_URI', get_template_directory_uri());
 
@@ -353,6 +353,56 @@ function haunted_tech_default_primary_menu() {
     echo '</ul>';
 }
 
+/**
+ * Lantern Serials' lighthouse mark, as inline SVG.
+ *
+ * Font Awesome 6.5.1 Free has no lantern/lighthouse glyph (fa-tower-observation
+ * is the nearest and it reads as a fire tower), and assets/fontawesome is a
+ * SUBSET — pulling in a new FA class means regenerating the woff2, which is a
+ * lot of ceremony for one icon. So Lantern joins Civitai and Substack on the
+ * inline-SVG path instead: no subset rebuild, and it is the actual brand mark
+ * rather than an approximation.
+ *
+ * viewBox is 2:3 (tall). At a flat 1em it reads noticeably smaller than the
+ * square glyphs beside it — a narrow shape carries less optical mass at the
+ * same height — so `.social-svg--tall` gives it 1.3em of height and lets the
+ * width follow. Checked against the Substack mark at 36px and 44px; 1em was
+ * visibly light, 1.3em matches.
+ *
+ * Positive mark, not the brand's knockout plate: rendered as a filled plate
+ * with the lighthouse punched out, it turns into a gold blob below ~48px and
+ * reads as a badge among ten line glyphs. The plate is the better lockup at
+ * poster size and the wrong one here.
+ *
+ * Holes (windows, the gallery railing) are punched with fill-rule="evenodd",
+ * so no shape may overlap another — the parts abut on shared edges by design.
+ *
+ * @param string $class Class for the <svg> element.
+ */
+function ht_lantern_mark($class = 'social-svg social-svg--tall') {
+    return '<svg class="' . esc_attr($class) . '" width="1em" height="1em" fill="currentColor" '
+         . 'aria-hidden="true" focusable="false" style="display:block" viewBox="0 -1.5 24.5 39">'
+         /* beam */
+         . '<path d="M2.4 .5 14.4 5.6 .2 9.8 1.2 1.4Q1.5 .4 2.4 .5Z"/>'
+         /* finial + dome */
+         . '<circle cx="17.55" cy=".95" r=".85"/>'
+         . '<path d="M14.45 4Q14.45 1.8 17.55 1.8 20.65 1.8 20.65 4Z"/>'
+         /* gallery lip under the dome */
+         . '<rect x="13.55" y="4" width="8" height=".8" rx=".25"/>'
+         /* lantern room + its window */
+         . '<path fill-rule="evenodd" d="M14.45 4.8H20.65V7.6H14.45ZM15.15 5.3H19.95V7.1H15.15Z"/>'
+         /* balcony + the two railing gaps */
+         . '<path fill-rule="evenodd" d="M12.9 7.6H22.2A.6.6 0 0 1 22.8 8.2V10.2A.6.6 0 0 1 22.2 10.8H12.9A.6.6 0 0 1 12.3 10.2V8.2A.6.6 0 0 1 12.9 7.6Z'
+         . 'M13.1 8.3H14.6V9.7H13.1ZM20.5 8.3H22V9.7H20.5Z"/>'
+         /* tower + its two arched windows */
+         . '<path fill-rule="evenodd" d="M13.4 10.8H21.7L23 34H12.1Z'
+         . 'M16.8 16.2V14.3A.75.75 0 0 1 18.3 14.3V16.2Z'
+         . 'M16.7 23V21.05A.85.85 0 0 1 18.4 21.05V23Z"/>'
+         /* plinth */
+         . '<rect x="10.9" y="34" width="13.3" height="2" rx=".35"/>'
+         . '</svg>';
+}
+
 /* ---------------------------------------------------------------------------
  * 6. Walker that renders nav-menu items as Font Awesome icons (used by the
  *    social bar block when the user assigns a menu to the 'social' location).
@@ -363,8 +413,8 @@ if (!class_exists('Haunted_Tech_Social_Walker')) {
             $url   = $item->url   ?? '#';
             $label = $item->title ?? '';
             $rel   = self::rel_for($url, $label);
-            /* Platforms FA 6.5.1 lacks (Civitai, Substack) render as inline SVG;
-             * everything else uses a Font Awesome glyph. */
+            /* Platforms FA 6.5.1 lacks (Civitai, Substack, Lantern) render as
+             * inline SVG; everything else uses a Font Awesome glyph. */
             $svg   = self::svg_for($url, $label);
             $inner = ($svg !== '')
                 ? $svg
@@ -377,10 +427,15 @@ if (!class_exists('Haunted_Tech_Social_Walker')) {
         /* Inline-SVG marks for platforms not in Font Awesome 6.5.1 Free. Sized
          * to 1em + fill:currentColor so they match the FA glyphs beside them and
          * tint to var(--gold). Paths are the platforms' official logos (Civitai
-         * hexagon frame + C; Substack stacked bars). */
+         * hexagon frame + C; Substack stacked bars; Lantern lighthouse). */
         public static function svg_for($url, $label = '') {
             $s = strtolower(($url ?: '') . ' ' . ($label ?: ''));
             $open = '<svg class="social-svg" width="1em" height="1em" fill="currentColor" aria-hidden="true" focusable="false" style="display:block" ';
+            /* Matches the /go/lantern pretty link and the lanternserials.com
+             * host alike — both carry the string. */
+            if (strpos($s, 'lantern') !== false) {
+                return ht_lantern_mark();
+            }
             if (strpos($s, 'civitai') !== false) {
                 return $open . 'viewBox="-1 0 22.7 22.7"><path d="M10.2,4.7l5.9,3.4V15l-5.9,3.4L4.2,15V8.1L10.2,4.7 M10.2,1.6l-8.7,5v10l8.7,5l8.7-5v-10C18.8,6.6,10.2,1.6,10.2,1.6z"/><path d="M11.8,12.4l-1.7,1l-1.7-1v-1.9l1.7-1l1.7,1h2.1V9.3l-3.8-2.2L6.4,9.3v4.3l3.8,2.2l3.8-2.2v-1.2H11.8z"/></svg>';
             }

@@ -463,6 +463,11 @@
     box-shadow: 0 0 16px rgba(229,9,20,0.3);
     animation: glitch-shift-fast 0.4s;
   }
+  /* Tall inline marks (Lantern's lighthouse) overriding their own 1em/1em
+     attributes. A 2:3 shape at 1em of height carries visibly less optical
+     mass than the square glyphs it sits between — height 1.3em with the
+     width left to follow puts it back in line. */
+  .social-svg--tall { height: 1.3em; width: auto; }
   /* ---- Social label tooltip ----
    * Shared by the header bar and the bio page's social row. Same furniture as
    * .spine-tip on the book / web-novel listings — void panel, gold hairline,
@@ -3723,6 +3728,107 @@
   .lt-tile:hover::before, .lt-tile:focus-visible::before { opacity: 1; box-shadow: 0 0 12px rgba(255,212,0,0.8); }
   .lt-tile.is-free::before { background: var(--red); box-shadow: 0 0 10px rgba(229,9,20,0.5); }
 
+  /* ---- Lantern referral CTA ----
+   * Deliberately louder than a .lt-tile: full gold hairline instead of the
+   * left-edge rule, a warm wash behind it, and a hover that fills gold and
+   * inverts the text. It is the only ask on the page, so it should not be
+   * mistakable for one more entry in a stack. */
+  .lt-cta {
+    position: relative;
+    display: grid;
+    grid-template-columns: 44px 1fr auto;
+    gap: 1rem;
+    align-items: center;
+    margin: 0 0 2.2rem;
+    padding: 0.95rem 1.1rem;
+    background:
+      linear-gradient(135deg, rgba(255,212,0,0.10), rgba(255,212,0,0.02) 55%),
+      linear-gradient(135deg, rgba(24,20,13,0.95), rgba(9,8,5,0.95));
+    border: 1px solid var(--gold);
+    box-shadow: 0 0 18px rgba(255,212,0,0.12), inset 0 0 24px rgba(255,212,0,0.05);
+    color: var(--bone);
+    text-decoration: none;
+    transition: background 0.24s, color 0.24s, box-shadow 0.24s, transform 0.24s;
+  }
+  .lt-cta:hover, .lt-cta:focus-visible {
+    background: linear-gradient(135deg, var(--gold), var(--gold-deep));
+    color: var(--void);
+    box-shadow: 0 0 26px rgba(255,212,0,0.45);
+    transform: translateY(-2px);
+  }
+  .lt-cta-mark {
+    display: flex; align-items: center; justify-content: center;
+    width: 44px; height: 44px;
+    color: var(--gold);
+    /* The lighthouse is a 2:3 mark, so 1em of font-size buys 1em of HEIGHT —
+       set it from the plate, not inherited from the card's body copy. */
+    font-size: 30px;
+    filter: drop-shadow(0 0 8px rgba(255,212,0,0.4));
+    transition: color 0.24s, filter 0.24s;
+  }
+  .lt-cta-svg { height: 1.3em; width: auto; }
+  .lt-cta:hover .lt-cta-mark,
+  .lt-cta:focus-visible .lt-cta-mark { color: var(--void); filter: none; }
+  .lt-cta-body { display: block; min-width: 0; }
+  .lt-cta-eyebrow {
+    display: block;
+    font-family: 'Forum', serif;
+    font-size: 0.57rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--gold);
+    text-shadow: 0 0 6px rgba(255,212,0,0.5);
+    margin-bottom: 0.2rem;
+  }
+  .lt-cta-title {
+    display: block;
+    font-family: 'Forum', serif;
+    font-size: 1.12rem;
+    line-height: 1.15;
+    letter-spacing: 0.04em;
+    color: var(--gold);
+  }
+  .lt-cta-sub {
+    display: block;
+    font-size: 0.83rem;
+    line-height: 1.35;
+    color: var(--bone);
+    opacity: 0.82;
+    margin-top: 0.2rem;
+  }
+  .lt-cta-note {
+    display: block;
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    opacity: 0.5;
+    margin-top: 0.3rem;
+  }
+  .lt-cta-arrow {
+    font-size: 1.1rem;
+    color: var(--gold);
+    transition: color 0.24s, transform 0.24s;
+  }
+  /* Everything flips to void on the gold fill — bone-on-gold is the one
+     combination in this palette with no contrast to spare. The sub and the
+     small print keep their hierarchy through opacity instead. */
+  .lt-cta:hover .lt-cta-eyebrow,
+  .lt-cta:focus-visible .lt-cta-eyebrow,
+  .lt-cta:hover .lt-cta-title,
+  .lt-cta:focus-visible .lt-cta-title,
+  .lt-cta:hover .lt-cta-arrow,
+  .lt-cta:focus-visible .lt-cta-arrow,
+  .lt-cta:hover .lt-cta-sub,
+  .lt-cta:focus-visible .lt-cta-sub,
+  .lt-cta:hover .lt-cta-note,
+  .lt-cta:focus-visible .lt-cta-note { color: var(--void); text-shadow: none; }
+  .lt-cta:hover .lt-cta-sub,
+  .lt-cta:focus-visible .lt-cta-sub { opacity: 0.88; }
+  .lt-cta:hover .lt-cta-note,
+  .lt-cta:focus-visible .lt-cta-note { opacity: 0.6; }
+  .lt-cta:hover .lt-cta-arrow,
+  .lt-cta:focus-visible .lt-cta-arrow { transform: translateX(3px); }
+
   .lt-tile-art {
     display: flex; align-items: center; justify-content: center;
     width: 52px; aspect-ratio: 2/3;
@@ -3838,6 +3944,10 @@
     .lt-tile-art { width: 46px; }
     .lt-tile-title { font-size: 0.94rem; }
     .lt-tile-sub { font-size: 0.8rem; }
+    .lt-cta { grid-template-columns: 38px 1fr auto; gap: 0.8rem; padding: 0.85rem 0.95rem; }
+    .lt-cta-mark { width: 38px; height: 38px; font-size: 26px; }
+    .lt-cta-title { font-size: 1.02rem; }
+    .lt-cta-sub { font-size: 0.79rem; }
   }
 
   /* Every effect on this page is decoration — none of it carries meaning, so
@@ -3862,7 +3972,9 @@
     .lt-avatar-ghost,
     .lt-hero-tile::before { display: none; }
 
-    .lt-hero-bleed, .lt-hero-tile, .lt-tile { transition: none; }
+    .lt-hero-bleed, .lt-hero-tile, .lt-tile, .lt-cta, .lt-cta-arrow { transition: none; }
+    .lt-cta:hover, .lt-cta:focus-visible { transform: none; }
+    .lt-cta:hover .lt-cta-arrow, .lt-cta:focus-visible .lt-cta-arrow { transform: none; }
     .lt-tile:hover .lt-tile-title,
     .lt-hero-tile:hover .lt-hero-title { animation: none; text-shadow: none; }
     .lt-tile:hover .lt-tile-art img,
