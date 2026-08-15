@@ -324,7 +324,7 @@ function haunted_tech_logo_url() {
     return HAUNTED_TECH_URI . '/assets/logo.png';
 }
 
-function haunted_tech_get_hero_slides($limit = 3) {
+function haunted_tech_get_hero_slides($limit = 6) {
     return get_posts([
         'post_type'      => 'hero_update',
         'posts_per_page' => $limit,

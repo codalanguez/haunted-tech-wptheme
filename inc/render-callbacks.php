@@ -112,10 +112,10 @@ function ht_render_site_header($attributes = []) {
 }
 
 /* ============================================================
- * HERO SLIDER – pulls 3 most-recent hero_update posts
+ * HERO SLIDER – pulls 6 most-recent hero_update posts
  * ============================================================ */
 function ht_render_hero_slider($attributes = []) {
-    $hero_slides = haunted_tech_get_hero_slides(3);
+    $hero_slides = haunted_tech_get_hero_slides(6);
     ob_start(); ?>
     <span id="hero" class="ht-anchor" aria-hidden="true"></span>
     <span id="top"  class="ht-anchor" aria-hidden="true"></span>
@@ -153,7 +153,7 @@ function ht_render_hero_slider($attributes = []) {
               <?php /* Only the active slide's background loads eagerly (it's the
                        likely LCP element). The rest sit in data-bg and get set by
                        JS — on activation, or idle-preloaded shortly after first
-                       paint — so a cold homepage load doesn't fetch 3 hero
+                       paint — so a cold homepage load doesn't fetch 6 hero
                        images' worth of bytes for 1 visible slide. */ ?>
               <?php if ($i === 0): ?>
                 <div class="hero-slide-bg" style="background-image:url('<?php echo esc_url($bg_url); ?>');"></div>
@@ -172,7 +172,7 @@ function ht_render_hero_slider($attributes = []) {
           <div class="hero-content active" data-slide="0">
             <div class="hero-eyebrow">Welcome</div>
             <h2 data-text="HAUNTED TECH">HAUNTED <span class="gold">TECH</span></h2>
-            <p>Add your first slide by going to WP Admin &rarr; Hero Updates &rarr; Add New. The three most recent updates appear here automatically.</p>
+            <p>Add your first slide by going to WP Admin &rarr; Hero Updates &rarr; Add New. The six most recent updates appear here automatically.</p>
             <a href="<?php echo esc_url(admin_url('post-new.php?post_type=hero_update')); ?>" class="cta">Create First Update</a>
           </div>
         <?php endif; ?>

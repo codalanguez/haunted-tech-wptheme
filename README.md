@@ -29,7 +29,7 @@ Install ACF + the REST bridge before activating this theme. The theme registers 
    - **Primary** — Books / Web Novels / Services / Gallery / About
    - **Social** — Custom Links to Patreon, Ream, Substack, Discord, etc. (icons are picked automatically from the URL host)
    - **Footer** — secondary links
-6. **WP Admin → Hero Updates → Add New** — publish 1–3 hero updates. The three most recent appear in the homepage carousel.
+6. **WP Admin → Hero Updates → Add New** — publish 1–6 hero updates. The six most recent appear in the homepage carousel.
 7. Create a page with slug `about` to populate the About modal (post content becomes the bio; featured image becomes the portrait).
 
 ---
@@ -86,7 +86,7 @@ All blocks live under the **Haunted Tech** category in the block inserter:
 | `haunted-tech/site-header`    | Logo + nav + Subscribe CTA | Primary menu |
 | `haunted-tech/site-footer`    | Footer logo + links + copyright | Footer menu |
 | `haunted-tech/overlays`       | CRT scanline band + static burst | static |
-| `haunted-tech/hero-slider`    | 3-slide rotating hero | `hero_update` CPT |
+| `haunted-tech/hero-slider`    | Up to 6-slide rotating hero | `hero_update` CPT |
 | `haunted-tech/bookshelf`      | Spine grid of published books | `book` CPT |
 | `haunted-tech/crt-monitor`    | Terminal-style web novel list | `webnovel` CPT (+ chapter counts) |
 | `haunted-tech/services`       | Three service cards | static |
@@ -136,7 +136,7 @@ Each homepage hero slide is one post of type `hero_update`. Fields (ACF):
 | `cta_label`   | Button text |
 | `cta_link`    | Button URL |
 
-The three most recent updates appear in the slider, sorted DESC by publish date. Auto-rotation is 5 s per slide, pauses on hover.
+The six most recent updates appear in the slider, sorted DESC by publish date. Auto-rotation is 5 s per slide, pauses on hover.
 
 ### Bookshelf — `book` CPT (ACF-registered)
 
