@@ -697,9 +697,23 @@
     // desktop nav bar, and marking that inert would silently kill the site's
     // main navigation.
     const canInert = 'inert' in HTMLElement.prototype;
+
+    // Whether this element is currently the off-canvas panel rather than the
+    // desktop nav bar, read from the CSS's own result instead of from a
+    // matchMedia query kept in parallel with it.
+    //
+    // This is not fussiness. The first version asked matchMedia, and if that
+    // answered "mobile" at load and the viewport then widened without the
+    // change event landing, the desktop nav bar stayed inert — every link in
+    // the site's main navigation silently dead, with nothing visible to
+    // explain it. Reading `position` cannot drift from the stylesheet,
+    // because it *is* the stylesheet.
+    function isPanelMode() {
+      return getComputedStyle(panel).position === 'fixed';
+    }
     function syncInert() {
       if (!canInert) return;
-      panel.inert = mq.matches && !document.body.classList.contains('nav-open');
+      panel.inert = isPanelMode() && !document.body.classList.contains('nav-open');
     }
 
     function open() {
@@ -753,6 +767,17 @@
     };
     if (mq.addEventListener) mq.addEventListener('change', onChange);
     else if (mq.addListener) mq.addListener(onChange);
+
+    // Safety net. The media-query change event is the intended signal, but a
+    // missed one used to mean a permanently inert desktop nav, so resize gets
+    // to correct it too. rAF-throttled; syncInert only reads one computed
+    // property and sets a boolean.
+    let resizePending = false;
+    window.addEventListener('resize', () => {
+      if (resizePending) return;
+      resizePending = true;
+      requestAnimationFrame(() => { resizePending = false; syncInert(); });
+    });
 
     syncInert();   // initial state
   })();
