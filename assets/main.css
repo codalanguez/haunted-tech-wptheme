@@ -4790,16 +4790,27 @@ body.commission-open .static-burst { display: none !important; }
     /* Collapsed by default — this is the whole point of the exercise. The
        v0.9 rule that force-opened every submenu below 700px is overridden
        here rather than deleted, because it is still correct for the no-JS
-       path, where there is no button to open them with. */
+       path, where there is no button to open them with.
+
+       `display` carries !important, which is not laziness. The Books item is
+       the desktop two-column mega-menu and has its own rules keyed to
+       `#menu-item-385` — specificity 1-2-0. No selector built from classes
+       can outrank an ID, so without this the Books submenu stayed open
+       permanently while WebNovels collapsed correctly, which is exactly the
+       lopsided behaviour that got reported. The alternative is rewriting the
+       mega-menu's ID selectors, which risks the desktop dropdown for a
+       cosmetic win. */
     html:not(.no-js) .site-nav .sub-menu {
-      display: none;
+      display: none !important;
       position: static;
+      left: auto;
       padding: 0 0 0.5rem;
+      max-width: 100%;
       background: transparent;
       border: none;
       box-shadow: none;
     }
-    html:not(.no-js) .site-nav .submenu-open > .sub-menu { display: block; }
+    html:not(.no-js) .site-nav .submenu-open > .sub-menu { display: block !important; }
     html:not(.no-js) .site-nav .sub-menu a {
       display: block;
       padding: 0.5rem 0.25rem 0.5rem 1rem;
@@ -4807,7 +4818,14 @@ body.commission-open .static-burst { display: none !important; }
       font-size: 0.9rem;
       opacity: 0.85;
       border-left: 1px solid var(--border-dim);
+      /* Book titles are long. Without this a single unbroken title can push
+         the submenu wider than the panel and drag the text off the edge. */
+      white-space: normal;
+      overflow-wrap: anywhere;
     }
+    /* Nothing inside the panel may scroll sideways. */
+    html:not(.no-js) .site-nav { overflow-x: hidden; }
+    html:not(.no-js) .site-nav ul { max-width: 100%; }
   }
 
   /* Desktop keeps hover dropdowns; the injected buttons must not show. */
