@@ -20,7 +20,7 @@
 
 if (!defined('ABSPATH')) { exit; }
 
-define('HAUNTED_TECH_VERSION', '0.17.5');
+define('HAUNTED_TECH_VERSION', '0.17.6');
 define('HAUNTED_TECH_DIR', get_template_directory());
 define('HAUNTED_TECH_URI', get_template_directory_uri());
 
@@ -108,18 +108,20 @@ add_action('wp_enqueue_scripts', function () {
     // TODO: move this into the body rule in assets/main.css directly.
     wp_add_inline_style( 'haunted-tech-main', 'body{overflow-x:clip}' );
 
-    /* Mobile + accessibility overrides. Loaded AFTER main.css so equal
-     * specificity resolves in its favour: GPU hints for the always-on
-     * overlays, a prefers-reduced-motion kill switch, and a ≤700px block that
-     * drops backdrop-filter and halves the animation budget. It has been in
-     * the repo since the mobile pass and was never enqueued, so none of it
-     * has ever run on the live site. */
-    wp_enqueue_style(
-        'haunted-tech-mobile-perf',
-        HAUNTED_TECH_URI . '/assets/mobile-perf.css',
-        ['haunted-tech-main'],
-        HAUNTED_TECH_VERSION
-    );
+    /* NOT ENQUEUED — see assets/mobile-perf.css.
+     *
+     * It was enqueued in 0.17.0 after sitting unused in the repo, and it
+     * changed how the site looks on every screen size, not just phones:
+     * `will-change` on the four mix-blend-mode overlays gave each its own
+     * compositing layer and therefore its own stacking context, which changes
+     * what `screen` blending composites against — the whole page went milky
+     * and grainy. Separately, its reduced-motion block froze .crt-band's
+     * animation instead of hiding the band, leaving it parked at full opacity.
+     *
+     * Both are fixed in the file now, but it stays out of the enqueue until
+     * the fix has been confirmed on a real screen. The mobile pass's other
+     * wins (nav panel, section padding, tap targets, anchor offsets) live in
+     * main.css and are unaffected by this. */
 
     wp_enqueue_script(
         'haunted-tech-main',

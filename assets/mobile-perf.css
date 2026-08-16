@@ -9,19 +9,25 @@
  */
 
 /* ---------------------------------------------------------------------------
- * 1. GPU promotion hints
- *    Tell the compositor to hoist these 4 fixed-position animated overlays
- *    onto their own GPU layers. Without this, every animation frame
- *    invalidates the main-thread paint for the entire viewport.
+ * 1. GPU promotion hints — REMOVED, do not put them back.
+ *
+ *    This block used to set `will-change: transform` on body::before,
+ *    body::after, .crt-band and .static-burst, reasoning that promoting the
+ *    always-on overlays to their own GPU layers would stop every animation
+ *    frame invalidating a full-viewport paint. The reasoning is sound and the
+ *    result was wrong.
+ *
+ *    All four overlays use `mix-blend-mode: screen`. A blend mode composites
+ *    against the backdrop *within its own stacking context*, and `will-change`
+ *    creates a stacking context. Promoting them therefore changed what they
+ *    blended against: instead of screening over the page, they screened over
+ *    their own isolated layer, and the whole site went milky and grainy on
+ *    every screen size — these rules were never inside the ≤700px block.
+ *
+ *    There is no version of this that is safe while the overlays blend. If the
+ *    paint cost ever needs addressing, the lever is the blend mode or the
+ *    overlays themselves, not a compositing hint underneath them.
  * ------------------------------------------------------------------------- */
-body::before,
-body::after {
-  will-change: transform;
-}
-.crt-band,
-.static-burst {
-  will-change: transform;
-}
 
 /* ---------------------------------------------------------------------------
  * 2. Respect OS / browser “reduce motion” preference.
@@ -37,6 +43,22 @@ body::after {
     animation-iteration-count: 1      !important;
     transition-duration:       0.05ms !important;
     scroll-behavior:           auto   !important;
+  }
+
+  /* The blanket rule above is wrong for anything whose *resting* state is
+   * only invisible because an animation is holding it there.
+   *
+   * .crt-band is the case: `crt-roll` moves it from top:-120px to top:100vh,
+   * and its base rule sets no top and no opacity. Cut the animation to 0.01ms
+   * with fill-mode:none and it snaps back to base — a full-opacity band parked
+   * in the viewport forever instead of a glow sweeping past once every ten
+   * seconds. .static-burst is the same shape of hazard.
+   *
+   * Someone who asked for less motion wants no CRT sweep at all, not a frozen
+   * frame of one. Remove them outright. */
+  .crt-band,
+  .static-burst {
+    display: none !important;
   }
 }
 
