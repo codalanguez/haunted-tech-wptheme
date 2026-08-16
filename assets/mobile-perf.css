@@ -52,11 +52,17 @@ body::after {
  * ------------------------------------------------------------------------- */
 @media (max-width: 700px) {
 
-  /* Header: swap frosted-glass blur for solid dark background */
+  /* Header: swap frosted-glass blur for a solid background. This is the real
+   * win in this file — backdrop-filter forces a separate compositing pass on
+   * every repaint, and a sticky header repaints on every scroll frame.
+   *
+   * The colour must stay in the palette. This was rgba(10, 8, 16, .97), which
+   * is blue-purple; --void is #000 and --obsidian #0F0D0A, both warm. It read
+   * as a different theme on a phone. */
   header {
     backdrop-filter:         none;
     -webkit-backdrop-filter: none;
-    background:              rgba(10, 8, 16, 0.97);
+    background:              rgba(0, 0, 0, 0.97);
   }
 
   /* About modal: same swap */
@@ -82,11 +88,16 @@ body::after {
     animation-duration: 20s;
   }
 
-  /* Static burst: 2× slower + halved opacity (halves paint cost) */
-  .static-burst {
-    animation-duration: 14s;
-    opacity:            0.5;
-  }
+  /* Static burst: LEFT ALONE ON PURPOSE.
+   *
+   * This file originally slowed it to 14s and halved its opacity to 0.5. It
+   * is the grain, and the grain is the brand — halving it on mobile makes the
+   * site look flat on the device most people see it on, which is a bad trade
+   * for a repaint that already only fires for ~3% of its cycle (see the
+   * static-burst keyframes: opacity is 0 from 0-95% and 98-100%).
+   *
+   * The paint cost here is not the opacity, it is the compositing, and the
+   * will-change hint at the top of this file already addresses that. */
 
   /* Hero glitch: 2× longer cycle → same visual drama, half the GPU work */
   .hero h1 {

@@ -693,6 +693,13 @@
       toggle.setAttribute('aria-expanded', 'true');
       toggle.setAttribute('aria-label', 'Close menu');
       if (scrim) scrim.hidden = false;
+      // The panel is visibility:hidden while closed, and a visibility:hidden
+      // element cannot take focus — calling activate() in the same tick as the
+      // class change silently did nothing, leaving keyboard users outside the
+      // panel they just opened. Reading layout flushes the style change first.
+      // (rAF would also work but htFocusTrap's own notes warn it can be
+      // throttled; this is synchronous and cannot be dropped.)
+      void panel.offsetHeight;
       trap.activate();
     }
     function close(restoreFocus) {
