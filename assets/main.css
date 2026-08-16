@@ -4715,13 +4715,25 @@ body.commission-open .static-burst { display: none !important; }
       border-left: 1px solid var(--border);
       box-shadow: -24px 0 60px rgba(0,0,0,0.8);
       transform: translateX(101%);  /* 101% keeps the box-shadow off-screen */
-      visibility: hidden;
-      transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0.32s;
+      /* Nothing here is animatable except transform, deliberately.
+       *
+       * This used to also transition `visibility`, hidden while closed with a
+       * 0.32s delay so the slide-out stayed visible. The delay is the problem:
+       * any time the open rule's transition does not win, visibility flips
+       * only after the slide has already finished, so the transform animates
+       * on an invisible element and the panel appears in place instead of
+       * sliding. That is precisely the symptom that got reported.
+       *
+       * Keeping the panel out of the tab order is now `inert` (set from
+       * main.js, and only below the breakpoint — inert on the desktop nav bar
+       * would be a disaster), and pointer-events guards stray taps on the
+       * off-screen panel without JS. */
+      pointer-events: none;
+      transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
     }
     body.nav-open .site-nav {
       transform: translateX(0);
-      visibility: visible;
-      transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s;
+      pointer-events: auto;
     }
     .site-nav:focus { outline: none; }   /* focus-trap fallback target */
 

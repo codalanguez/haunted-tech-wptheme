@@ -688,17 +688,30 @@
     });
 
     // ---- Panel ----
+    // The closed panel is only translated off-screen, so without this its
+    // links stay in the tab order and get announced. `inert` does both jobs
+    // and, unlike visibility, is not animatable — so it cannot interfere with
+    // the slide the way the old visibility transition did.
+    //
+    // Strictly gated on the breakpoint: above it this element is the ordinary
+    // desktop nav bar, and marking that inert would silently kill the site's
+    // main navigation.
+    const canInert = 'inert' in HTMLElement.prototype;
+    function syncInert() {
+      if (!canInert) return;
+      panel.inert = mq.matches && !document.body.classList.contains('nav-open');
+    }
+
     function open() {
       document.body.classList.add('nav-open');
       toggle.setAttribute('aria-expanded', 'true');
       toggle.setAttribute('aria-label', 'Close menu');
       if (scrim) scrim.hidden = false;
-      // The panel is visibility:hidden while closed, and a visibility:hidden
-      // element cannot take focus — calling activate() in the same tick as the
-      // class change silently did nothing, leaving keyboard users outside the
-      // panel they just opened. Reading layout flushes the style change first.
-      // (rAF would also work but htFocusTrap's own notes warn it can be
-      // throttled; this is synchronous and cannot be dropped.)
+      // Must clear inert before focusing: an inert subtree refuses focus.
+      syncInert();
+      // Flush the style change so the panel is focusable by the time the trap
+      // reaches for it. (rAF would also work but htFocusTrap's own notes warn
+      // it can be throttled; this is synchronous and cannot be dropped.)
       void panel.offsetHeight;
       trap.activate();
     }
@@ -707,13 +720,15 @@
       toggle.setAttribute('aria-expanded', 'false');
       toggle.setAttribute('aria-label', 'Open menu');
       if (scrim) scrim.hidden = true;
-      if (restoreFocus === false) {
-        // Resizing to desktop: the panel stopped existing rather than being
-        // dismissed, so yanking focus back to a now-hidden button is wrong.
-        document.body.classList.remove('nav-open');
-      } else {
+      if (restoreFocus !== false) {
+        // Deactivate before going inert: the trap restores focus to the
+        // toggle, and doing it the other way round can strand focus.
         trap.deactivate();
       }
+      // Resizing up to desktop passes false — the panel stopped *existing*
+      // rather than being dismissed, so yanking focus back to a button that
+      // is now display:none would be wrong.
+      syncInert();
     }
     const isOpen = () => document.body.classList.contains('nav-open');
 
@@ -732,7 +747,12 @@
 
     // Crossing the breakpoint with the panel open leaves body scroll locked
     // on a desktop layout that has no visible way to unlock it.
-    const onChange = e => { if (!e.matches && isOpen()) close(false); };
+    const onChange = e => {
+      if (!e.matches && isOpen()) close(false);
+      syncInert();   // crossing either way changes whether inert applies
+    };
     if (mq.addEventListener) mq.addEventListener('change', onChange);
     else if (mq.addListener) mq.addListener(onChange);
+
+    syncInert();   // initial state
   })();
