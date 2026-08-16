@@ -4840,6 +4840,14 @@ body.commission-open .static-burst { display: none !important; }
     .social-bar { padding: 0.5rem 1rem; }
   }
 
+  /* Reduced motion: the panel appears instantly instead of sliding.
+   *
+   * The selector has to match the one that sets the transition
+   * (html:not(.no-js) .site-nav, specificity 0-2-1). Written as a bare
+   * `.site-nav` this was 0-1-0 and lost silently — it never applied once,
+   * which is its own small lesson about writing an override without checking
+   * what it is overriding. */
   @media (prefers-reduced-motion: reduce) {
-    .site-nav, .nav-toggle-bars span, .submenu-toggle span { transition: none; }
+    html:not(.no-js) .site-nav { transition: none; }
+    .nav-toggle-bars span, .submenu-toggle span { transition: none; }
   }
