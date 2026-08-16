@@ -20,7 +20,7 @@
 
 if (!defined('ABSPATH')) { exit; }
 
-define('HAUNTED_TECH_VERSION', '0.17.1');
+define('HAUNTED_TECH_VERSION', '0.17.2');
 define('HAUNTED_TECH_DIR', get_template_directory());
 define('HAUNTED_TECH_URI', get_template_directory_uri());
 
@@ -134,11 +134,6 @@ add_action('wp_enqueue_scripts', function () {
  * 2b. Front-end performance tweaks
  * ------------------------------------------------------------------------- */
 
-/* Preload the hero headline font (Forum, latin subset). It renders the LCP
- * element (.hero h2) on the homepage, so starting its download in the <head>
- * — instead of after the CSS parses — shaves the largest-text render delay.
- * Only this one face is preloaded on purpose: preload ignores unicode-range,
- * so preloading more here would fetch subsets the page may never use. */
 /* Scripting gate for the mobile nav.
  *
  * The nav hides itself behind an off-canvas panel below 700px, which is only
@@ -168,6 +163,11 @@ add_action('wp_head', function () {
        . "</script>\n";
 }, 0);
 
+/* Preload the hero headline font (Forum, latin subset). It renders the LCP
+ * element (.hero h2) on the homepage, so starting its download in the <head>
+ * — instead of after the CSS parses — shaves the largest-text render delay.
+ * Only this one face is preloaded on purpose: preload ignores unicode-range,
+ * so preloading more here would fetch subsets the page may never use. */
 add_action('wp_head', function () {
     if (!is_front_page() && !is_home()) { return; }
     $forum_latin = HAUNTED_TECH_URI . '/assets/fonts/6aey4Ky-Vb8Ew8IROpI.woff2';
