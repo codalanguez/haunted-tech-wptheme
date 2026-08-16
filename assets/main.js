@@ -646,10 +646,15 @@
   // a custom Walker whose output the desktop hover styles would then have to
   // undo. Injecting keeps the desktop markup exactly as it was.
   //
-  // Without JS none of this runs, and the .ht-js gate in the CSS means the
+  // Without JS none of this runs, and the `no-js` gate in the CSS means the
   // panel is never hidden in the first place — the menu degrades to the long
   // expanded list it used to be rather than to a button that does nothing.
   (function () {
+    // Belt to the inline head script's braces: if the optimizer ever strips
+    // that one too, the class comes off here instead. Later, so the collapsed
+    // nav flashes expanded first, which beats not collapsing at all.
+    document.documentElement.classList.remove('no-js');
+
     const toggle = document.getElementById('nav-toggle');
     const panel  = document.getElementById('site-nav-panel');
     const scrim  = document.getElementById('nav-scrim');

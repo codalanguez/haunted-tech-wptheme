@@ -20,7 +20,7 @@
 
 if (!defined('ABSPATH')) { exit; }
 
-define('HAUNTED_TECH_VERSION', '0.17.0');
+define('HAUNTED_TECH_VERSION', '0.17.1');
 define('HAUNTED_TECH_DIR', get_template_directory());
 define('HAUNTED_TECH_URI', get_template_directory_uri());
 
@@ -139,16 +139,33 @@ add_action('wp_enqueue_scripts', function () {
  * — instead of after the CSS parses — shaves the largest-text render delay.
  * Only this one face is preloaded on purpose: preload ignores unicode-range,
  * so preloading more here would fetch subsets the page may never use. */
-/* Mark that scripting is available, before first paint.
+/* Scripting gate for the mobile nav.
  *
- * The mobile nav hides itself behind an off-canvas panel, which is only a
- * good idea if there is JS to open it again. Everything that hides the menu
- * is gated on .ht-js, so with scripting off the panel simply stays open and
- * the site keeps a working (if long) menu instead of an inert button.
- * Printed inline in <head> rather than enqueued so the class lands before
- * the first paint and the nav never flashes. */
+ * The nav hides itself behind an off-canvas panel below 700px, which is only
+ * a good idea if there is JS to open it again. So the CSS that hides it is
+ * gated on the ABSENCE of a `no-js` class: with scripting off, the class
+ * survives and the menu stays in flow as an ordinary (long) list rather than
+ * becoming a button that does nothing.
+ *
+ * The class is written into <html> server-side rather than added by a script,
+ * because the host's optimizer strips unmarked inline <script> tags outright
+ * — the first attempt at this used one and it never reached the browser. A
+ * class in the markup cannot be stripped by a JS optimizer.
+ *
+ * Removing it then has two paths, and the redundancy is deliberate: the
+ * inline head script carries the optimizer's own opt-out attributes (the ones
+ * it uses on its own inline scripts) so the class goes before first paint and
+ * nothing flashes; main.js removes it again on the chance that the optimizer
+ * changes its mind about those attributes, at the cost of a brief flash
+ * rather than a broken menu. */
+add_filter('language_attributes', function ($output) {
+    return trim($output) . ' class="no-js"';
+});
+
 add_action('wp_head', function () {
-    echo "<script>document.documentElement.classList.add('ht-js');</script>\n";
+    echo "<script data-pagespeed-no-defer data-two-no-delay>"
+       . "document.documentElement.classList.remove('no-js');"
+       . "</script>\n";
 }, 0);
 
 add_action('wp_head', function () {

@@ -4694,9 +4694,11 @@ body.commission-open .static-burst { display: none !important; }
     .header-cta { letter-spacing: 0.12em; }
 
     /* ---- The panel ----
-     * Hidden only when scripting is available to open it again. Without
-     * .ht-js this whole block does not apply and the nav stays in flow. */
-    .ht-js .site-nav {
+     * Hidden only when scripting is available to open it again. The `no-js`
+     * class is written into <html> server-side and removed by script, so if
+     * scripting is off it survives, this block never applies, and the nav
+     * stays in normal flow as an ordinary list. */
+    html:not(.no-js) .site-nav {
       position: fixed;
       top: 0; right: 0;
       width: min(88vw, 360px);
@@ -4716,7 +4718,6 @@ body.commission-open .static-burst { display: none !important; }
       visibility: hidden;
       transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0.32s;
     }
-    .ht-js body.nav-open .site-nav,
     body.nav-open .site-nav {
       transform: translateX(0);
       visibility: visible;
@@ -4778,7 +4779,7 @@ body.commission-open .static-burst { display: none !important; }
        v0.9 rule that force-opened every submenu below 700px is overridden
        here rather than deleted, because it is still correct for the no-JS
        path, where there is no button to open them with. */
-    .ht-js .site-nav .sub-menu {
+    html:not(.no-js) .site-nav .sub-menu {
       display: none;
       position: static;
       padding: 0 0 0.5rem;
@@ -4786,8 +4787,8 @@ body.commission-open .static-burst { display: none !important; }
       border: none;
       box-shadow: none;
     }
-    .ht-js .site-nav .submenu-open > .sub-menu { display: block; }
-    .ht-js .site-nav .sub-menu a {
+    html:not(.no-js) .site-nav .submenu-open > .sub-menu { display: block; }
+    html:not(.no-js) .site-nav .sub-menu a {
       display: block;
       padding: 0.5rem 0.25rem 0.5rem 1rem;
       text-align: left;
