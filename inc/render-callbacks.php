@@ -85,7 +85,13 @@ function ht_render_site_header($attributes = []) {
             <?php endif; ?>
           </span>
         </a>
-        <nav class="site-nav" role="navigation" aria-label="Primary">
+        <?php
+        /* Below 700px this <nav> stops being a bar and becomes the off-canvas
+         * panel; the markup is identical either way, so the menu is authored
+         * once and CSS decides what it is. tabindex="-1" so the focus trap has
+         * a valid fallback target, matching the modal convention in main.js. */
+        ?>
+        <nav class="site-nav" id="site-nav-panel" role="navigation" aria-label="Primary" tabindex="-1">
           <?php
           wp_nav_menu([
               'theme_location' => 'primary',
@@ -104,7 +110,19 @@ function ht_render_site_header($attributes = []) {
             </div>
           </div>
           <a href="#newsletter" class="header-cta">Subscribe</a>
+          <?php
+          /* Only rendered as a control below 700px (CSS), and only *useful*
+           * when JS is running — hence the .ht-js gate on hiding the nav.
+           * Without JS the panel never hides, so the menu stays reachable
+           * rather than becoming a dead button. */
+          ?>
+          <button type="button" class="nav-toggle" id="nav-toggle"
+                  aria-expanded="false" aria-controls="site-nav-panel"
+                  aria-label="<?php esc_attr_e('Open menu', 'haunted-tech'); ?>">
+            <span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span>
+          </button>
         </div>
+        <div class="nav-scrim" id="nav-scrim" hidden></div>
       </div>
     </header>
     <?php

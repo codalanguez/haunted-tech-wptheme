@@ -108,6 +108,19 @@ add_action('wp_enqueue_scripts', function () {
     // TODO: move this into the body rule in assets/main.css directly.
     wp_add_inline_style( 'haunted-tech-main', 'body{overflow-x:clip}' );
 
+    /* Mobile + accessibility overrides. Loaded AFTER main.css so equal
+     * specificity resolves in its favour: GPU hints for the always-on
+     * overlays, a prefers-reduced-motion kill switch, and a ≤700px block that
+     * drops backdrop-filter and halves the animation budget. It has been in
+     * the repo since the mobile pass and was never enqueued, so none of it
+     * has ever run on the live site. */
+    wp_enqueue_style(
+        'haunted-tech-mobile-perf',
+        HAUNTED_TECH_URI . '/assets/mobile-perf.css',
+        ['haunted-tech-main'],
+        HAUNTED_TECH_VERSION
+    );
+
     wp_enqueue_script(
         'haunted-tech-main',
         HAUNTED_TECH_URI . '/assets/main.js',
@@ -126,6 +139,18 @@ add_action('wp_enqueue_scripts', function () {
  * — instead of after the CSS parses — shaves the largest-text render delay.
  * Only this one face is preloaded on purpose: preload ignores unicode-range,
  * so preloading more here would fetch subsets the page may never use. */
+/* Mark that scripting is available, before first paint.
+ *
+ * The mobile nav hides itself behind an off-canvas panel, which is only a
+ * good idea if there is JS to open it again. Everything that hides the menu
+ * is gated on .ht-js, so with scripting off the panel simply stays open and
+ * the site keeps a working (if long) menu instead of an inert button.
+ * Printed inline in <head> rather than enqueued so the class lands before
+ * the first paint and the nav never flashes. */
+add_action('wp_head', function () {
+    echo "<script>document.documentElement.classList.add('ht-js');</script>\n";
+}, 0);
+
 add_action('wp_head', function () {
     if (!is_front_page() && !is_home()) { return; }
     $forum_latin = HAUNTED_TECH_URI . '/assets/fonts/6aey4Ky-Vb8Ew8IROpI.woff2';

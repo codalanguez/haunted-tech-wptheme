@@ -4630,3 +4630,203 @@ body.commission-open .static-burst { display: none !important; }
    * inside it. Only visible in the rare case a modal has no focusable
    * content yet (e.g. book/webnovel modal before REST content loads). */
   .about-modal:focus, .mechape-modal:focus, .lightbox:focus, .book-modal:focus { outline: none; }
+
+
+  /* =========================================================
+   * v0.17.0 — MOBILE NAV + MOBILE PASS
+   *
+   * The header menu is 6 top-level items carrying 16 book and
+   * web-novel titles between them. Below 700px the theme used
+   * to un-hide every submenu (hover can't open a dropdown on a
+   * touchscreen, so the instinct was right) and render all 22
+   * links inline — inside a position:sticky header. The result
+   * was a sticky element taller than the phone viewport, which
+   * cannot be scrolled past.
+   *
+   * So below 700px the same <nav> becomes an off-canvas panel
+   * and the submenus become real collapsibles.
+   * ========================================================= */
+
+  /* The toggle is a mobile control only. */
+  .nav-toggle { display: none; }
+
+  @media (max-width: 700px) {
+    .nav-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px; height: 44px;   /* full tap target, not the icon's size */
+      padding: 0;
+      background: transparent;
+      border: 1px solid var(--border-dim);
+      color: var(--gold);
+      cursor: pointer;
+      position: relative;
+      z-index: 102;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .nav-toggle:hover, .nav-toggle:focus-visible {
+      border-color: var(--gold);
+      box-shadow: 0 0 14px rgba(255,212,0,0.35);
+    }
+    .nav-toggle-bars {
+      display: block;
+      width: 20px; height: 14px;
+      position: relative;
+    }
+    .nav-toggle-bars span {
+      position: absolute; left: 0;
+      display: block; width: 100%; height: 2px;
+      background: currentColor;
+      transition: transform 0.28s, opacity 0.18s, top 0.28s;
+    }
+    .nav-toggle-bars span:nth-child(1) { top: 0; }
+    .nav-toggle-bars span:nth-child(2) { top: 6px; }
+    .nav-toggle-bars span:nth-child(3) { top: 12px; }
+    /* Bars fold into an X while the panel is open. */
+    body.nav-open .nav-toggle-bars span:nth-child(1) { top: 6px; transform: rotate(45deg); }
+    body.nav-open .nav-toggle-bars span:nth-child(2) { opacity: 0; }
+    body.nav-open .nav-toggle-bars span:nth-child(3) { top: 6px; transform: rotate(-45deg); }
+
+    /* Header collapses to logo | (search + subscribe + toggle). */
+    .header-inner { grid-template-columns: auto 1fr; gap: 0.75rem; }
+    .header-right { gap: 0.5rem; justify-self: end; }
+    .header-cta { letter-spacing: 0.12em; }
+
+    /* ---- The panel ----
+     * Hidden only when scripting is available to open it again. Without
+     * .ht-js this whole block does not apply and the nav stays in flow. */
+    .ht-js .site-nav {
+      position: fixed;
+      top: 0; right: 0;
+      width: min(88vw, 360px);
+      height: 100%;
+      height: 100dvh;              /* mobile browser chrome shrinks 100vh */
+      z-index: 101;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain; /* don't scroll the page behind it */
+      padding: 5.5rem 1.5rem 3rem;
+      background:
+        radial-gradient(ellipse at 100% 0%, rgba(255,212,0,0.10), transparent 55%),
+        linear-gradient(180deg, rgba(10,9,7,0.99), rgba(0,0,0,0.99));
+      border-left: 1px solid var(--border);
+      box-shadow: -24px 0 60px rgba(0,0,0,0.8);
+      transform: translateX(101%);  /* 101% keeps the box-shadow off-screen */
+      visibility: hidden;
+      transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0.32s;
+    }
+    .ht-js body.nav-open .site-nav,
+    body.nav-open .site-nav {
+      transform: translateX(0);
+      visibility: visible;
+      transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s;
+    }
+    .site-nav:focus { outline: none; }   /* focus-trap fallback target */
+
+    .nav-scrim {
+      position: fixed; inset: 0;
+      z-index: 100;
+      background: rgba(0,0,0,0.72);
+      backdrop-filter: blur(2px);
+      -webkit-backdrop-filter: blur(2px);
+      border: 0;
+    }
+    body.nav-open { overflow: hidden; }
+
+    /* ---- Menu inside the panel ---- */
+    .site-nav > ul {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      align-items: stretch;
+      list-style: none;
+      margin: 0; padding: 0;
+    }
+    .site-nav > ul > li {
+      position: relative;
+      border-bottom: 1px solid var(--border-dim);
+    }
+    .site-nav > ul > li > a {
+      display: block;
+      padding: 0.95rem 2.75rem 0.95rem 0.25rem;  /* right pad clears the toggle */
+      font-size: 1.05rem;
+      text-align: left;
+    }
+    .site-nav > ul > li > a::after { display: none; }  /* no centered underline */
+
+    /* Submenu disclosure button, injected by main.js */
+    .submenu-toggle {
+      position: absolute;
+      top: 0; right: 0;
+      width: 44px; height: 52px;
+      display: inline-flex;
+      align-items: center; justify-content: center;
+      background: transparent;
+      border: 0;
+      border-left: 1px solid var(--border-dim);
+      color: var(--gold);
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: color 0.2s, background 0.2s;
+    }
+    .submenu-toggle span { display: block; transition: transform 0.25s; }
+    .submenu-open > .submenu-toggle span { transform: rotate(180deg); }
+    .submenu-toggle:hover, .submenu-toggle:focus-visible { background: rgba(255,212,0,0.06); }
+
+    /* Collapsed by default — this is the whole point of the exercise. The
+       v0.9 rule that force-opened every submenu below 700px is overridden
+       here rather than deleted, because it is still correct for the no-JS
+       path, where there is no button to open them with. */
+    .ht-js .site-nav .sub-menu {
+      display: none;
+      position: static;
+      padding: 0 0 0.5rem;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+    }
+    .ht-js .site-nav .submenu-open > .sub-menu { display: block; }
+    .ht-js .site-nav .sub-menu a {
+      display: block;
+      padding: 0.5rem 0.25rem 0.5rem 1rem;
+      text-align: left;
+      font-size: 0.9rem;
+      opacity: 0.85;
+      border-left: 1px solid var(--border-dim);
+    }
+  }
+
+  /* Desktop keeps hover dropdowns; the injected buttons must not show. */
+  @media (min-width: 701px) {
+    .submenu-toggle { display: none; }
+    .nav-scrim { display: none; }
+  }
+
+  /* ---- Mobile spacing ----
+   * `section { padding: 6rem 3rem }` had no mobile override, so every section
+   * on the site kept 48px gutters and 96px of vertical padding on a 390px
+   * phone. That is a quarter of the screen width spent on air. */
+  @media (max-width: 700px) {
+    section { padding: 3.5rem 1.25rem; }
+    .crt-section { padding: 3.5rem 1.25rem; }
+    .book-content-section { padding: 2.5rem 1.25rem 0; }
+    .book-excerpt-section { padding: 2.5rem 1.25rem; }
+    .more-series-section, .also-by-section { padding: 2.5rem 1.25rem; }
+
+    /* Anchor offsets were tuned for the desktop header. The collapsed mobile
+       header is ~86px, so the old 100/140px pushed in-page jumps too far. */
+    html { scroll-padding-top: 86px; }
+    [id="books"], [id="web-novels"], [id="services"], [id="gallery"],
+    [id="newsletter"], [id="about"], [id="hero-slider"], [id="lab"] {
+      scroll-margin-top: 96px;
+    }
+
+    /* 36px was under the comfortable-tap minimum. */
+    .social-list a { width: 44px; height: 44px; }
+    .social-bar { padding: 0.5rem 1rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .site-nav, .nav-toggle-bars span, .submenu-toggle span { transition: none; }
+  }

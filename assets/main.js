@@ -635,3 +635,92 @@
       if (e.key === 'Escape' && !panel.hidden) { close(); toggle.focus(); }
     });
   })();
+
+  // ===== Mobile nav: hamburger + off-canvas panel =====
+  // The same <nav class="site-nav"> is the desktop bar and the mobile panel;
+  // CSS decides which. This wires the toggle, traps focus while the panel is
+  // open, and converts each "menu-item-has-children" into a real collapsible.
+  //
+  // Why the submenu buttons are injected here rather than authored in PHP:
+  // the menu comes from wp_nav_menu(), so adding them server-side would mean
+  // a custom Walker whose output the desktop hover styles would then have to
+  // undo. Injecting keeps the desktop markup exactly as it was.
+  //
+  // Without JS none of this runs, and the .ht-js gate in the CSS means the
+  // panel is never hidden in the first place — the menu degrades to the long
+  // expanded list it used to be rather than to a button that does nothing.
+  (function () {
+    const toggle = document.getElementById('nav-toggle');
+    const panel  = document.getElementById('site-nav-panel');
+    const scrim  = document.getElementById('nav-scrim');
+    if (!toggle || !panel) return;
+
+    const mq = window.matchMedia('(max-width: 700px)');
+    const trap = htFocusTrap(panel);
+
+    // ---- Submenu collapsibles ----
+    panel.querySelectorAll('.menu-item-has-children').forEach((li, i) => {
+      const sub = li.querySelector(':scope > .sub-menu');
+      const link = li.querySelector(':scope > a');
+      if (!sub || !link) return;
+      if (!sub.id) sub.id = 'ht-submenu-' + i;
+
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'submenu-toggle';
+      btn.setAttribute('aria-expanded', 'false');
+      btn.setAttribute('aria-controls', sub.id);
+      // The parent link keeps its own destination, so the button needs a name
+      // of its own or a screen reader announces two identical controls.
+      btn.setAttribute('aria-label', 'Show ' + link.textContent.trim() + ' submenu');
+      btn.innerHTML = '<span aria-hidden="true">\u25BE</span>';
+      btn.addEventListener('click', () => {
+        const open = li.classList.toggle('submenu-open');
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        btn.setAttribute('aria-label', (open ? 'Hide ' : 'Show ') + link.textContent.trim() + ' submenu');
+      });
+      li.insertBefore(btn, sub);
+    });
+
+    // ---- Panel ----
+    function open() {
+      document.body.classList.add('nav-open');
+      toggle.setAttribute('aria-expanded', 'true');
+      toggle.setAttribute('aria-label', 'Close menu');
+      if (scrim) scrim.hidden = false;
+      trap.activate();
+    }
+    function close(restoreFocus) {
+      document.body.classList.remove('nav-open');
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.setAttribute('aria-label', 'Open menu');
+      if (scrim) scrim.hidden = true;
+      if (restoreFocus === false) {
+        // Resizing to desktop: the panel stopped existing rather than being
+        // dismissed, so yanking focus back to a now-hidden button is wrong.
+        document.body.classList.remove('nav-open');
+      } else {
+        trap.deactivate();
+      }
+    }
+    const isOpen = () => document.body.classList.contains('nav-open');
+
+    toggle.addEventListener('click', () => { isOpen() ? close() : open(); });
+    if (scrim) scrim.addEventListener('click', () => close());
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && isOpen()) close();
+    });
+
+    // Any link inside the panel closes it. In-page anchors would otherwise
+    // scroll behind an open panel and look like nothing happened.
+    panel.addEventListener('click', e => {
+      if (e.target.closest('a') && isOpen()) close();
+    });
+
+    // Crossing the breakpoint with the panel open leaves body scroll locked
+    // on a desktop layout that has no visible way to unlock it.
+    const onChange = e => { if (!e.matches && isOpen()) close(false); };
+    if (mq.addEventListener) mq.addEventListener('change', onChange);
+    else if (mq.addListener) mq.addListener(onChange);
+  })();
