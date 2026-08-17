@@ -563,6 +563,34 @@ if (!class_exists('Haunted_Tech_Social_Walker')) {
 }
 
 /* ---------------------------------------------------------------------------
+ * 6b. Meta descriptions for the custom post type archives
+ *
+ * Rank Math has no per-post-type archive description setting, so /book/,
+ * /chapter/ and /webnovel/ fall back to "<Label> Archive - <Site>" — around
+ * 30 characters against a 150-160 target. These three hub pages are the top
+ * of their sections, so they are worth real copy. Falls through untouched
+ * for anything that is not one of these archives, and for singles.
+ * ------------------------------------------------------------------------- */
+add_filter('rank_math/frontend/description', function ($description) {
+    if (! is_post_type_archive()) {
+        return $description;
+    }
+
+    $post_type = get_query_var('post_type');
+    if (is_array($post_type)) {
+        $post_type = reset($post_type);
+    }
+
+    $descriptions = [
+        'book'     => 'Every published book by Coda Languez in one place — dark fantasy romance, gothic horror and magic realism, with buy links and content notes for each title.',
+        'chapter'  => "Every chapter of Coda Languez's web novels, free to start. Gothic horror, dark romance and fairytale retellings, updating across five serials each week.",
+        'webnovel' => "All five of Coda Languez's ongoing web novels — gothic horror, dark romance and fairytale retellings. Start any of them free, new chapters every week.",
+    ];
+
+    return $descriptions[$post_type] ?? $description;
+});
+
+/* ---------------------------------------------------------------------------
  * 7. Body classes
  * ------------------------------------------------------------------------- */
 add_filter('body_class', function ($classes) {
