@@ -609,6 +609,7 @@ require_once HAUNTED_TECH_DIR . '/inc/rest.php';
 require_once HAUNTED_TECH_DIR . '/inc/commission-forms.php';
 require_once HAUNTED_TECH_DIR . '/inc/book-schema.php';
 require_once HAUNTED_TECH_DIR . '/inc/chapter-schema.php';
+require_once HAUNTED_TECH_DIR . '/inc/webnovel-schema.php';
 require_once HAUNTED_TECH_DIR . '/inc/redirects.php';
 require_once HAUNTED_TECH_DIR . '/inc/links-domain.php';
 if (is_admin()) {
