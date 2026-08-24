@@ -492,6 +492,12 @@ if (!class_exists('Haunted_Tech_Social_Walker')) {
         /* Commercial/affiliate outbound links get sponsored+nofollow; genuine
          * social profiles stay followable. Matches Pretty Link slugs + hosts. */
         public static function rel_for($url, $label = '') {
+            /* Delegates to inc/outbound-rel.php so the menu and post-content
+             * links share one needle list and cannot drift apart. The inline
+             * copy below is a fallback for the case where that file is absent. */
+            if (function_exists('ht_outbound_rel_for')) {
+                return ht_outbound_rel_for($url, $label);
+            }
             $s = strtolower(($url ?: '') . ' ' . ($label ?: ''));
             $commercial = ['amazon', 'audible', 'barnes', 'noble', '/go/bn', 'kobo', 'apple', 'bookshop', 'gumroad', 'redbubble', 'etsy', 'ko-fi', 'kofi'];
             foreach ($commercial as $needle) {
@@ -610,6 +616,7 @@ require_once HAUNTED_TECH_DIR . '/inc/commission-forms.php';
 require_once HAUNTED_TECH_DIR . '/inc/book-schema.php';
 require_once HAUNTED_TECH_DIR . '/inc/chapter-schema.php';
 require_once HAUNTED_TECH_DIR . '/inc/webnovel-schema.php';
+require_once HAUNTED_TECH_DIR . '/inc/outbound-rel.php';
 require_once HAUNTED_TECH_DIR . '/inc/redirects.php';
 require_once HAUNTED_TECH_DIR . '/inc/links-domain.php';
 if (is_admin()) {
