@@ -43,21 +43,29 @@ function ht_outbound_rel_for($url, $label = '') {
 
     /**
      * Substrings that mark a link as commercial or compensated: retailers,
-     * tip jars, and the Pretty Link slugs that front them. `joinlantern` is
-     * a referral link — Lantern counts sign-ups through it and features the
-     * week's top referrer — which is compensated placement, the same class
-     * as an affiliate link.
+     * tip jars, and the Pretty Link slugs that front them.
      *
-     * Matched on the referral SLUG, not the lanternserials.com host: a plain
-     * link to one of Coda's own stories there (/story/custodian-...) is
-     * ordinary editorial linking, carries no referral code, and should stay
-     * followable. Marking a whole host sponsored would mislabel it and shed
-     * link equity for nothing.
+     * Both Lantern slugs belong here, and it is worth saying why, because
+     * only one of them looks like a referral from its name. Resolved
+     * 2026-08-23:
+     *
+     *   /go/joinlantern -> lanternserials.com/?ref=9726680A2E
+     *   /go/lantern     -> lanternserials.com/author/coda-languez?ref=9726680A2E
+     *
+     * Both carry the referral code, and Lantern counts sign-ups through it
+     * and features the week's top referrer — compensated placement, the
+     * same class as an affiliate link. **Resolve a /go/ slug before
+     * deciding it is harmless; the name does not tell you.**
+     *
+     * Matched on the /go/ SLUGS, not the lanternserials.com host: a plain
+     * link to one of Coda's own stories there (/story/custodian-...) has no
+     * referral code and should stay followable. Marking the whole host
+     * sponsored would mislabel it and shed link equity for nothing.
      */
     $commercial = apply_filters('ht_commercial_link_needles', [
         'amazon', 'audible', 'barnes', 'noble', '/go/bn', 'kobo', 'apple',
         'bookshop', 'gumroad', 'redbubble', 'etsy', 'ko-fi', 'kofi',
-        'joinlantern',
+        '/go/joinlantern', '/go/lantern',
     ]);
 
     foreach ($commercial as $needle) {
