@@ -223,6 +223,13 @@
       bg.removeAttribute('data-bg');
     }
 
+    // Slide 0's inline style is the eager LCP fetch, but the host's image
+    // optimizer rewrites it into a lazy-load placeholder it then fails to swap
+    // back, leaving the first slide with no background. Slide 0 now also ships
+    // a data-bg copy, so re-applying it here is a no-op when the inline style
+    // survived and a repair when it did not.
+    loadSlideBg(slides[0]);
+
     function go(n) {
       index = (n + total) % total;
       loadSlideBg(slides[index]);

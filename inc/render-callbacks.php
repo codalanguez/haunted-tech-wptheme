@@ -173,8 +173,17 @@ function ht_render_hero_slider($attributes = []) {
                        JS — on activation, or idle-preloaded shortly after first
                        paint — so a cold homepage load doesn't fetch 6 hero
                        images' worth of bytes for 1 visible slide. */ ?>
+              <?php /* Slide 0 carries BOTH the inline style and data-bg. The
+                       host's image optimizer rewrites eager inline background
+                       styles into a lazy-load placeholder
+                       (url("data:image/svg+xml,…#}<real url>")) and does not
+                       reliably swap them back — the first slide, i.e. the LCP
+                       element, was rendering with no image at all. data-bg
+                       gives main.js a copy of the URL to restore from; the
+                       inline style still starts the fetch at parse time when
+                       the optimizer leaves it alone. */ ?>
               <?php if ($i === 0): ?>
-                <div class="hero-slide-bg" style="background-image:url('<?php echo esc_url($bg_url); ?>');"></div>
+                <div class="hero-slide-bg" style="background-image:url('<?php echo esc_url($bg_url); ?>');" data-bg="<?php echo esc_url($bg_url); ?>"></div>
               <?php else: ?>
                 <div class="hero-slide-bg" data-bg="<?php echo esc_url($bg_url); ?>"></div>
               <?php endif; ?>
