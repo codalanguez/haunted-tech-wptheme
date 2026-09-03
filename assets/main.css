@@ -2777,6 +2777,56 @@
     box-shadow: 0 0 28px rgba(255,212,0,0.7), 0 0 48px rgba(229,9,20,0.25);
   }
   .buy-btn-download:hover::before { color: var(--red); }
+
+  /* Core button blocks (wp:buttons), styled to match .buy-btn.
+   *
+   * theme.json sets no `elements.button` or `blocks.core/button` styles, so a
+   * button dropped into a post rendered with WordPress's stock blue — which is
+   * the one colour nothing else on this site uses. Posts should be able to use
+   * the editor's own button block and still look like the rest of the site.
+   *
+   * Selector is `.wp-block-button .wp-block-button__link` (0,2,0) on purpose:
+   * core ships its default as `:root :where(.wp-element-button)` (0,1,0), and
+   * relying on source order to win that tie is fragile when the block library
+   * stylesheet can be inlined, deferred, or reordered by the host optimizer. */
+  .wp-block-buttons { margin: 2.4rem 0; }
+  .wp-block-button .wp-block-button__link {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 1rem 1.7rem;
+    background: var(--void); color: var(--gold);
+    border: 1px solid var(--gold);
+    border-radius: 0;
+    font-family: 'Forum', serif;
+    font-size: 0.85rem; letter-spacing: 0.26em;
+    text-transform: uppercase; text-decoration: none;
+    transition: all 0.3s;
+    text-shadow: 0 0 6px rgba(255,212,0,0.3);
+  }
+  .wp-block-button .wp-block-button__link::before { content: '◆'; color: var(--red); font-size: 0.55em; }
+  .wp-block-button .wp-block-button__link:hover {
+    background: var(--gold); color: var(--void); text-shadow: none;
+    box-shadow: 0 0 20px rgba(255,212,0,0.5);
+    animation: glitch-shift-fast 0.4s;
+  }
+  .wp-block-button .wp-block-button__link:hover::before { color: var(--red-deep); }
+  /* Filled variant for a primary "keep going" action, mirroring .buy-btn-download. */
+  .wp-block-button.ht-btn-primary .wp-block-button__link {
+    background: var(--gold); color: var(--void);
+    border-color: var(--gold-bright); font-weight: 600;
+    text-shadow: 0 0 8px rgba(255,212,0,0.35);
+    box-shadow: 0 0 14px rgba(255,212,0,0.35);
+  }
+  .wp-block-button.ht-btn-primary .wp-block-button__link::before { color: var(--red-deep); }
+  .wp-block-button.ht-btn-primary .wp-block-button__link:hover {
+    background: var(--gold-bright);
+    box-shadow: 0 0 28px rgba(255,212,0,0.7), 0 0 48px rgba(229,9,20,0.25);
+  }
+  @media (max-width: 700px) {
+    /* Full-width stacked buttons read better than three cramped pills. */
+    .wp-block-buttons .wp-block-button { width: 100%; }
+    .wp-block-button .wp-block-button__link { width: 100%; justify-content: center; letter-spacing: 0.18em; }
+  }
+
   .book-find-row {
     display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem;
     margin: 0 0 2rem;
