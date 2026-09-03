@@ -1677,6 +1677,7 @@ function ht_render_single_webnovel($attributes = []) {
         'patron_only'   => 'Patron Only',
         'ream_premium'  => 'Ream Premium',
         'substack_paid' => 'Substack Premium',
+        'lantern_free'  => 'Free on Lantern',
         'locked'        => 'Locked',
     ];
     if (!empty($chapters)):
@@ -1777,10 +1778,24 @@ function ht_render_single_chapter($attributes = []) {
         'patron_only'   => 'Patron Only',
         'ream_premium'  => 'Ream Premium',
         'substack_paid' => 'Substack Premium',
+        'lantern_free'  => 'Free on Lantern',
         'locked'        => 'Locked / Off-Platform',
     ];
     $access_label = $access_labels[$access] ?? 'Free / Public';
-    $is_gated     = in_array($access, ['early_access', 'patron_only', 'ream_premium', 'substack_paid', 'locked'], true);
+    /* "Gated" here means "the full text is not on this page", not "the reader
+     * has to pay" — lantern_free chapters are free to read, just exclusive to
+     * Lantern, so they get the excerpt + continue-reading layout too. */
+    $is_gated     = in_array($access, ['early_access', 'patron_only', 'ream_premium', 'substack_paid', 'lantern_free', 'locked'], true);
+
+    /* The continue-reading CTA used to hardcode Substack, which held while
+     * every off-site chapter lived there. Letters Between Sex and Violence now
+     * runs arcs on more than one platform (The First Sky is a Lantern
+     * exclusive), so the label follows the URL instead of assuming. */
+    $read_platform = 'Substack';
+    if ($read_url) {
+        $read_host = strtolower((string) wp_parse_url($read_url, PHP_URL_HOST));
+        if (strpos($read_host, 'lanternserials.com') !== false) { $read_platform = 'Lantern'; }
+    }
 
     /* Auto-compute prev/next by chapter_number within the same series unless
      * manually overridden via the prev_chapter / next_chapter fields.
@@ -1862,11 +1877,11 @@ function ht_render_single_chapter($attributes = []) {
       <div class="book-excerpt-body"><?php the_content(); ?></div>
       <?php if ($is_gated && $read_url): ?>
         <div class="book-excerpt-fade">
-          <a href="<?php echo esc_url($read_url); ?>" class="cta" target="_blank" rel="noopener">Continue Reading on Substack</a>
+          <a href="<?php echo esc_url($read_url); ?>" class="cta" target="_blank" rel="noopener">Continue Reading on <?php echo esc_html($read_platform); ?></a>
         </div>
       <?php elseif ($read_url): ?>
         <div style="text-align:center;margin-top:2rem;">
-          <a href="<?php echo esc_url($read_url); ?>" class="buy-btn buy-btn-download" target="_blank" rel="noopener">Also Available on Substack</a>
+          <a href="<?php echo esc_url($read_url); ?>" class="buy-btn buy-btn-download" target="_blank" rel="noopener">Also Available on <?php echo esc_html($read_platform); ?></a>
         </div>
       <?php endif; ?>
     </section>

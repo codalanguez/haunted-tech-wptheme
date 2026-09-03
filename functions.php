@@ -20,7 +20,7 @@
 
 if (!defined('ABSPATH')) { exit; }
 
-define('HAUNTED_TECH_VERSION', '0.17.8');
+define('HAUNTED_TECH_VERSION', '0.18.0');
 define('HAUNTED_TECH_DIR', get_template_directory());
 define('HAUNTED_TECH_URI', get_template_directory_uri());
 
@@ -246,6 +246,17 @@ add_action('init', function () {
         'supports'     => ['title', 'thumbnail', 'page-attributes', 'custom-fields'],
         'has_archive'  => false,
     ]);
+});
+
+/* The Chapter "Access Level" select is a DB-defined ACF field (acf-field 239),
+ * so its choices are not in this repo. "Free on Lantern" is bolted on here
+ * instead of edited into the serialized DB row: it ships with the theme, stays
+ * in version control, and reverts cleanly if the Lantern arcs ever move. */
+add_filter('acf/load_field/name=access_level', function ($field) {
+    if (isset($field['choices']) && is_array($field['choices']) && !isset($field['choices']['lantern_free'])) {
+        $field['choices']['lantern_free'] = 'Free on Lantern';
+    }
+    return $field;
 });
 
 /* Register the ACF field groups for theme-managed CPTs. */

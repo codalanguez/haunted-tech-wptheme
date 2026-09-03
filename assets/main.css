@@ -2922,7 +2922,9 @@
     border: 1px solid var(--border);
     color: var(--bone-dim);
   }
-  .chapter-access-free { color: var(--cyan); border-color: rgba(0,255,224,0.4); }
+  /* lantern_free is free to read — just not here — so it wears the free badge. */
+  .chapter-access-free,
+  .chapter-access-lantern_free { color: var(--cyan); border-color: rgba(0,255,224,0.4); }
   .chapter-access-early_access,
   .chapter-access-patron_only,
   .chapter-access-ream_premium,
