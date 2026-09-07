@@ -1884,13 +1884,22 @@ function ht_render_single_chapter($attributes = []) {
     <section class="book-excerpt-section">
       <div class="book-excerpt-eyebrow"><?php echo $is_gated ? 'Excerpt' : 'Chapter'; ?></div>
       <div class="book-excerpt-body"><?php the_content(); ?></div>
+      <?php
+      /* rel is computed, not hardcoded: external_read_url can carry a
+       * referral code (Lantern's ?ref=...), which makes it compensated
+       * placement and not a plain outbound link. Was hardcoded "noopener"
+       * until 2026-09-06. See inc/outbound-rel.php. */
+      $read_rel = function_exists('ht_outbound_rel_for')
+          ? ht_outbound_rel_for($read_url)
+          : 'noopener';
+      ?>
       <?php if ($is_gated && $read_url): ?>
         <div class="book-excerpt-fade">
-          <a href="<?php echo esc_url($read_url); ?>" class="cta" target="_blank" rel="noopener">Continue Reading on <?php echo esc_html($read_platform); ?></a>
+          <a href="<?php echo esc_url($read_url); ?>" class="cta" target="_blank" rel="<?php echo esc_attr($read_rel); ?>">Continue Reading on <?php echo esc_html($read_platform); ?></a>
         </div>
       <?php elseif ($read_url): ?>
         <div style="text-align:center;margin-top:2rem;">
-          <a href="<?php echo esc_url($read_url); ?>" class="buy-btn buy-btn-download" target="_blank" rel="noopener">Also Available on <?php echo esc_html($read_platform); ?></a>
+          <a href="<?php echo esc_url($read_url); ?>" class="buy-btn buy-btn-download" target="_blank" rel="<?php echo esc_attr($read_rel); ?>">Also Available on <?php echo esc_html($read_platform); ?></a>
         </div>
       <?php endif; ?>
     </section>
@@ -1898,7 +1907,14 @@ function ht_render_single_chapter($attributes = []) {
     <?php if ($note): ?>
       <section class="book-excerpt-section chapter-authors-note">
         <div class="book-excerpt-eyebrow">Author's Note</div>
-        <div class="book-excerpt-body"><?php echo wp_kses_post(wpautop($note)); ?></div>
+        <?php
+        /* The note is authored HTML that never passes through the_content,
+         * so commercial links inside it bypassed the rel filter. Routed
+         * through the same rewriter here. */
+        $note_html = wp_kses_post(wpautop($note));
+        $note_html = apply_filters('ht_chapter_authors_note_html', $note_html);
+        ?>
+        <div class="book-excerpt-body"><?php echo $note_html; ?></div>
       </section>
     <?php endif; ?>
 

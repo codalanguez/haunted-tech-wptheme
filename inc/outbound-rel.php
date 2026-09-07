@@ -61,6 +61,19 @@ function ht_outbound_rel_for($url, $label = '') {
      * link to one of Coda's own stories there (/story/custodian-...) has no
      * referral code and should stay followable. Marking the whole host
      * sponsored would mislabel it and shed link equity for nothing.
+     *
+     * ⛔ CORRECTION 2026-09-06 — the premise above was half wrong.
+     * "A plain lanternserials.com link has no ref code" stopped being true
+     * on 2026-09-03, when The First Sky chapters began carrying
+     * `lanternserials.com/story/...?ref=9726680A2E` directly, with no /go/
+     * slug in front of it. The *distinction* still holds — post 1568 links
+     * the same story with no ref code and correctly stays followable — so
+     * the answer is neither "match the host" nor "match the slug".
+     *
+     * **Match the referral code.** A /go/ slug, a bare host and a query
+     * parameter are three shapes of one commercial relationship; the ref
+     * check below catches all three, and the needle list stays for
+     * retailers that use no code of their own.
      */
     $commercial = apply_filters('ht_commercial_link_needles', [
         'amazon', 'audible', 'barnes', 'noble', '/go/bn', 'kobo', 'apple',
@@ -74,18 +87,45 @@ function ht_outbound_rel_for($url, $label = '') {
         }
     }
 
+    /**
+     * Referral / affiliate codes carried as a query parameter, whatever the
+     * host. Matched on the parameter NAME, so a new partner needs no code
+     * added here. `ref=` is Lantern's; the rest are the usual suspects.
+     */
+    $ref_params = apply_filters('ht_referral_query_params', [
+        'ref', 'referral', 'aff', 'affiliate', 'tag', 'utm_affiliate',
+    ]);
+    $query = (string) wp_parse_url((string) $url, PHP_URL_QUERY);
+    if ($query !== '') {
+        parse_str($query, $args);
+        foreach ($ref_params as $p) {
+            if (!empty($args[$p])) {
+                return 'sponsored nofollow noopener';
+            }
+        }
+    }
+
     return 'noopener';
 }
 
 /**
- * Add rel to bare commercial links in post content.
+ * Add rel to bare commercial links in an arbitrary block of HTML.
  *
- * Leaves alone: anything already carrying a rel, and anything that isn't
- * commercial by the list above.
+ * Extracted from the the_content filter so it can also be applied to the
+ * chapter fields that never pass through it — `authors_note` is rendered
+ * straight out of ACF, and the `external_read_url` CTAs are built in
+ * inc/render-callbacks.php. Those were emitting referral links with a
+ * hardcoded rel="noopener" until 2026-09-06.
+ *
+ * Leaves alone: anything already carrying a rel, and anything not
+ * commercial by ht_outbound_rel_for().
+ *
+ * @param string $html
+ * @return string
  */
-add_filter('the_content', function ($content) {
-    if (is_admin() || !is_string($content) || $content === '' || stripos($content, '<a ') === false) {
-        return $content;
+function ht_add_outbound_rel($html) {
+    if (!is_string($html) || $html === '' || stripos($html, '<a ') === false) {
+        return $html;
     }
 
     return preg_replace_callback(
@@ -101,7 +141,7 @@ add_filter('the_content', function ($content) {
                 return $m[0];
             }
 
-            $rel = ht_outbound_rel_for($href);
+            $rel = ht_outbound_rel_for(html_entity_decode($href, ENT_QUOTES));
             if ($rel !== 'sponsored nofollow noopener') {
                 return $m[0]; // Not commercial: leave it followable and untouched.
             }
@@ -109,6 +149,18 @@ add_filter('the_content', function ($content) {
             return '<a ' . trim($before) . ' href=' . $quote . $href . $quote
                  . rtrim($after) . ' rel="' . $rel . '">';
         },
-        $content
+        $html
     );
+}
+
+/** Post content — the original surface this module covered. */
+add_filter('the_content', function ($content) {
+    if (is_admin()) { return $content; }
+    return ht_add_outbound_rel($content);
 }, 20);
+
+/**
+ * The chapter author's note, rendered straight out of ACF in
+ * inc/render-callbacks.php and therefore never seen by `the_content`.
+ */
+add_filter('ht_chapter_authors_note_html', 'ht_add_outbound_rel', 20);
