@@ -384,6 +384,7 @@ function ht_render_latest_episodes($attributes = []) {
 
     ob_start(); ?>
     <section class="latest-episodes" id="latest-episodes" aria-labelledby="latest-episodes-title">
+      <span class="section-anchor-alias" id="web-novels" aria-hidden="true"></span>
       <div class="section-header">
         <h2 class="section-title" id="latest-episodes-title"><?php esc_html_e('Latest Episodes', 'haunted-tech'); ?></h2>
         <div class="section-meta"><?php esc_html_e('Newest doors first', 'haunted-tech'); ?></div>
