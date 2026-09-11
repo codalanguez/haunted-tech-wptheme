@@ -2038,9 +2038,11 @@ function ht_linktree_tile($args) {
     $a = wp_parse_args($args, [
         'url' => '', 'title' => '', 'sub' => '', 'eyebrow' => '',
         'cover' => '', 'glyph' => '', 'modifier' => '', 'eyebrow_free' => false,
+        'new_tab' => false, 'rel' => '', 'data_action' => '',
+        'data_serial' => '', 'data_episode' => '',
     ]);
     ob_start(); ?>
-    <a href="<?php echo esc_url($a['url']); ?>" class="lt-tile<?php echo $a['modifier'] ? ' ' . esc_attr($a['modifier']) : ''; ?>">
+    <a href="<?php echo esc_url($a['url']); ?>" class="lt-tile<?php echo $a['modifier'] ? ' ' . esc_attr($a['modifier']) : ''; ?>"<?php echo $a['new_tab'] ? ' target="_blank"' : ''; ?><?php echo $a['rel'] ? ' rel="' . esc_attr($a['rel']) . '"' : ''; ?><?php echo $a['data_action'] ? ' data-serial-action="' . esc_attr($a['data_action']) . '"' : ''; ?><?php echo $a['data_serial'] ? ' data-serial="' . esc_attr($a['data_serial']) . '"' : ''; ?><?php echo $a['data_episode'] ? ' data-episode="' . esc_attr($a['data_episode']) . '"' : ''; ?>>
       <span class="lt-tile-art">
         <?php if ($a['cover']): ?>
           <img src="<?php echo esc_url($a['cover']); ?>" alt="" loading="lazy" decoding="async">
@@ -2061,27 +2063,15 @@ function ht_linktree_tile($args) {
     return ob_get_clean();
 }
 
-/**
- * Lantern Serials referral CTA — the one banner on this page that asks for
- * something rather than offering something, so it gets its own treatment
- * (gold plate, brand mark, filled hover) instead of another .lt-tile in a
- * stack. It sits directly under "Start here": high enough to be seen, but
- * behind the catalogue links the page actually exists for.
- *
- * The URL is the /go/joinlantern Pretty Link, which carries the ref code —
- * point the Pretty Link somewhere else and this follows, no deploy needed.
- * rel is sponsored+nofollow because it is a referral link, and the small
- * print says so out loud.
- */
-function ht_linktree_lantern_cta() {
+/** Secondary reader action: keep the audience after the first chapter. */
+function ht_linktree_substack_cta() {
     ob_start(); ?>
-    <a class="lt-cta" href="https://codalanguez.com/go/joinlantern" target="_blank" rel="sponsored nofollow noopener">
-      <span class="lt-cta-mark" aria-hidden="true"><?php echo ht_lantern_mark('lt-cta-svg'); ?></span>
+    <a class="lt-cta lt-cta--follow" href="https://codalanguez.com/go/substack" target="_blank" rel="noopener" data-serial-action="follow-substack">
+      <span class="lt-cta-mark" aria-hidden="true">&#9993;</span>
       <span class="lt-cta-body">
-        <span class="lt-cta-eyebrow">Serial fiction &middot; Invite only</span>
-        <span class="lt-cta-title">Join me on Lantern</span>
-        <span class="lt-cta-sub">A quieter home for serialized fiction. Request an invite through my link.</span>
-        <span class="lt-cta-note">Referral link</span>
+        <span class="lt-cta-eyebrow"><?php esc_html_e('Newsletter · Serial updates', 'haunted-tech'); ?></span>
+        <span class="lt-cta-title"><?php esc_html_e('Follow on Substack', 'haunted-tech'); ?></span>
+        <span class="lt-cta-sub"><?php esc_html_e('New chapters, free fiction, and dispatches from the static.', 'haunted-tech'); ?></span>
       </span>
       <span class="lt-cta-arrow" aria-hidden="true">&rarr;</span>
     </a>
@@ -2090,45 +2080,45 @@ function ht_linktree_lantern_cta() {
 }
 
 /**
- * The two hero tiles at the top of the card — the links the page exists to
- * push. Chosen by rule rather than hardcoded so they follow the catalogue:
- * the newest serial (something to follow) and the newest free book (something
- * to take away). Returns [$html, $used_ids].
+ * The primary reader action. It shares the homepage's deliberately selected
+ * featured source rather than guessing from post publication order.
  */
-function ht_linktree_featured($books, $webnovels) {
+function ht_linktree_featured($webnovels) {
     $html = '';
     $used = [];
 
-    $serial = !empty($webnovels) ? $webnovels[0] : null;
+    $serial = function_exists('ht_get_featured_serial_source') ? ht_get_featured_serial_source() : (!empty($webnovels) ? $webnovels[0] : null);
     if ($serial) {
-        $used[] = $serial->ID;
-        $status = function_exists('get_field') ? get_field('status', $serial->ID) : '';
-        $sched  = function_exists('get_field') ? get_field('update_schedule', $serial->ID) : '';
-        $eyebrow = trim(($status ? ucfirst((string) $status) : 'Serial') . ($sched ? ' · ' . $sched : ''));
-        $html .= ht_linktree_hero_tile([
-            'url'     => get_permalink($serial),
-            'eyebrow' => $eyebrow,
-            'title'   => get_the_title($serial),
-            'sub'     => ht_linktree_sub($serial->ID),
-            'cover'   => ht_linktree_cover_url($serial->ID),
-            'cta'     => 'Start reading',
-        ]);
-    }
+        $type = get_post_type($serial);
+        if ($type === 'webnovel') { $used[] = $serial->ID; }
 
-    foreach ($books as $b) {
-        $free = function_exists('get_field') ? get_field('download_url', $b->ID) : '';
-        if (!$free) { continue; }
-        $used[] = $b->ID;
+        if ($type === 'hero_update') {
+            $first   = (string) ht_serial_field('title_first', $serial->ID, get_the_title($serial));
+            $accent  = (string) ht_serial_field('title_accent', $serial->ID);
+            $title   = (string) ht_serial_field('serial_title', $serial->ID, trim($first . ' ' . $accent));
+            $sub     = (string) ht_serial_field('blurb', $serial->ID);
+            $eyebrow = (string) ht_serial_field('reader_lane', $serial->ID, ht_serial_field('eyebrow', $serial->ID, __('Featured serial', 'haunted-tech')));
+        } else {
+            $title   = get_the_title($serial);
+            $sub     = ht_linktree_sub($serial->ID, 20);
+            $status  = function_exists('get_field') ? get_field('status', $serial->ID) : '';
+            $sched   = function_exists('get_field') ? get_field('update_schedule', $serial->ID) : '';
+            $eyebrow = trim(($status ? ucfirst((string) $status) : __('Serial', 'haunted-tech')) . ($sched ? ' · ' . $sched : ''));
+        }
+
+        $destination = function_exists('ht_get_serial_destination')
+            ? ht_get_serial_destination($serial->ID, $type)
+            : ['url' => get_permalink($serial), 'label' => __('Start reading', 'haunted-tech')];
         $html .= ht_linktree_hero_tile([
-            'url'     => get_permalink($b),
-            'eyebrow' => 'Free download',
-            'title'   => get_the_title($b),
-            'sub'     => ht_linktree_sub($b->ID),
-            'cover'   => ht_linktree_cover_url($b->ID),
-            'cta'     => 'Get it free',
-            'free'    => true,
+            'url'     => $destination['url'],
+            'eyebrow' => $eyebrow,
+            'title'   => $title,
+            'sub'     => wp_trim_words(wp_strip_all_tags($sub), 20, '…'),
+            'cover'   => function_exists('ht_serial_cover_url') ? ht_serial_cover_url($serial->ID, 'medium') : ht_linktree_cover_url($serial->ID),
+            'cta'     => $destination['label'],
+            'action'  => 'linktree-featured',
+            'serial'  => $serial->post_name,
         ]);
-        break;
     }
 
     return [$html, $used];
@@ -2139,9 +2129,10 @@ function ht_linktree_hero_tile($args) {
     $a = wp_parse_args($args, [
         'url' => '', 'eyebrow' => '', 'title' => '', 'sub' => '',
         'cover' => '', 'cta' => 'Read', 'free' => false,
+        'action' => '', 'serial' => '',
     ]);
     ob_start(); ?>
-    <a href="<?php echo esc_url($a['url']); ?>" class="lt-hero-tile<?php echo $a['free'] ? ' is-free' : ''; ?>">
+    <a href="<?php echo esc_url($a['url']); ?>" class="lt-hero-tile<?php echo $a['free'] ? ' is-free' : ''; ?>"<?php echo $a['action'] ? ' data-serial-action="' . esc_attr($a['action']) . '"' : ''; ?><?php echo $a['serial'] ? ' data-serial="' . esc_attr($a['serial']) . '"' : ''; ?>>
       <?php if ($a['cover']): ?>
         <span class="lt-hero-bleed" style="background-image:url('<?php echo esc_url($a['cover']); ?>')" aria-hidden="true"></span>
       <?php endif; ?>
@@ -2159,6 +2150,69 @@ function ht_linktree_hero_tile($args) {
     </a>
     <?php
     return ob_get_clean();
+}
+
+/** Three freshest chapter doors, linked directly to the place they are read. */
+function ht_linktree_latest_episodes($limit = 3) {
+    $chapters = get_posts([
+        'post_type'      => 'chapter',
+        'post_status'    => 'publish',
+        'posts_per_page' => max(1, min(6, (int) $limit)),
+        'orderby'        => 'date',
+        'order'          => 'DESC',
+        'no_found_rows'  => true,
+    ]);
+    if (!$chapters) { return ''; }
+
+    $access_labels = [
+        'free'          => __('Free', 'haunted-tech'),
+        'early_access'  => __('Early Access', 'haunted-tech'),
+        'patron_only'   => __('Patron Only', 'haunted-tech'),
+        'ream_premium'  => __('Ream Premium', 'haunted-tech'),
+        'substack_paid' => __('Substack Premium', 'haunted-tech'),
+        'lantern_free'  => __('Free on Lantern', 'haunted-tech'),
+        'locked'        => __('Off-platform', 'haunted-tech'),
+    ];
+    $tiles = [];
+
+    foreach ($chapters as $chapter) {
+        $destination = ht_get_chapter_destination($chapter->ID);
+        $webnovel     = ht_serial_field('webnovel', $chapter->ID);
+        $webnovel_id  = is_object($webnovel) ? $webnovel->ID : (int) $webnovel;
+        $arc           = trim((string) ht_serial_field('arc', $chapter->ID));
+        $series        = $arc ?: ($webnovel_id ? get_the_title($webnovel_id) : __('Serial', 'haunted-tech'));
+        $number        = ht_serial_field('chapter_number', $chapter->ID, null);
+        $episode       = ((string) $number === '0') ? __('Prologue', 'haunted-tech') : sprintf(__('Episode %s', 'haunted-tech'), (string) $number);
+        $release       = (string) ht_serial_field('release_date', $chapter->ID);
+        $access        = (string) ht_serial_field('access_level', $chapter->ID, 'free');
+        $meta          = $access_labels[$access] ?? $access_labels['free'];
+        if ($access === 'free') {
+            $meta = sprintf(__('Free on %s', 'haunted-tech'), $destination['platform']);
+        } elseif (stripos($meta, (string) $destination['platform']) === false) {
+            $meta .= ' · ' . $destination['platform'];
+        }
+        if ($release && ($timestamp = strtotime($release))) {
+            $meta .= ' · ' . wp_date(get_option('date_format'), $timestamp);
+        }
+
+        $tiles[] = ht_linktree_tile([
+            'url'          => $destination['url'],
+            'eyebrow'      => sprintf(__('%1$s · %2$s', 'haunted-tech'), $series, $episode),
+            'eyebrow_free' => in_array($access, ['free', 'lantern_free'], true),
+            'title'        => get_the_title($chapter),
+            'sub'          => $meta,
+            'cover'        => $webnovel_id ? ht_linktree_cover_url($webnovel_id) : '',
+            'glyph'        => '&#9670;',
+            'modifier'     => 'lt-tile--episode',
+            'new_tab'      => $destination['external'],
+            'rel'          => $destination['external'] ? $destination['rel'] : '',
+            'data_action'  => 'linktree-latest-episode',
+            'data_serial'  => $arc ? sanitize_title($arc) : ($webnovel_id ? get_post_field('post_name', $webnovel_id) : $chapter->post_name),
+            'data_episode' => $chapter->post_name,
+        ]);
+    }
+
+    return ht_linktree_section(__('Latest Episodes', 'haunted-tech'), $tiles, count($tiles), __('All %d episodes', 'haunted-tech'));
 }
 
 /**
@@ -2239,24 +2293,27 @@ function ht_render_linktree($attributes = []) {
     $books     = get_posts(['post_type' => 'book'] + $query);
     $webnovels = get_posts(['post_type' => 'webnovel'] + $query);
 
-    list($featured_html, $featured_ids) = ht_linktree_featured($books, $webnovels);
+    list($featured_html, $featured_ids) = ht_linktree_featured($webnovels);
 
     /* Featured items are pulled out of their stacks — a page this short reads
      * a repeat as a bug, not as emphasis. */
-    $book_tiles = [];
+    $free_book_tiles = [];
+    $book_tiles      = [];
     foreach ($books as $b) {
         if (in_array($b->ID, $featured_ids, true)) { continue; }
         $is_free = function_exists('get_field') ? (bool) get_field('download_url', $b->ID) : false;
         $series  = function_exists('get_field') ? get_field('series', $b->ID) : '';
-        $book_tiles[] = ht_linktree_tile([
+        $tile = ht_linktree_tile([
             'url'          => get_permalink($b),
-            'eyebrow'      => $is_free ? 'Free download' : ($series ? $series : ''),
+            'eyebrow'      => $is_free ? __('Free download', 'haunted-tech') : ($series ? $series : ''),
             'eyebrow_free' => $is_free,
             'title'        => get_the_title($b),
             'sub'          => ht_linktree_sub($b->ID),
             'cover'        => ht_linktree_cover_url($b->ID),
             'modifier'     => $is_free ? 'is-free' : '',
         ]);
+        if ($is_free) { $free_book_tiles[] = $tile; }
+        else { $book_tiles[] = $tile; }
     }
 
     $novel_tiles = [];
@@ -2344,11 +2401,14 @@ function ht_render_linktree($attributes = []) {
           </section>
         <?php endif; ?>
 
-        <?php echo ht_linktree_lantern_cta(); ?>
+        <?php echo ht_linktree_latest_episodes(3); ?>
+
+        <?php echo ht_linktree_substack_cta(); ?>
 
         <?php
-        echo ht_linktree_section('Web Novels', $novel_tiles, $visible, 'All %d serials');
-        echo ht_linktree_section('Books',      $book_tiles,  $visible, 'All %d books');
+        echo ht_linktree_section(__('Choose a Serial', 'haunted-tech'), $novel_tiles, $visible, __('All %d serials', 'haunted-tech'));
+        echo ht_linktree_section(__('Free Books', 'haunted-tech'), $free_book_tiles, $visible, __('All %d free books', 'haunted-tech'));
+        echo ht_linktree_section(__('Books', 'haunted-tech'), $book_tiles, $visible, __('All %d books', 'haunted-tech'));
         ?>
 
         <section class="lt-section">
@@ -2356,30 +2416,32 @@ function ht_render_linktree($attributes = []) {
           <div class="lt-stack">
             <?php
             echo ht_linktree_tile([
-                'url'   => 'https://codalanguez.com/go/substack',
-                'title' => 'The Newsletter',
-                'sub'   => 'Early chapters, free shorts, and dispatches from the static',
-                'glyph' => '&#9993;',
-                'modifier' => 'lt-tile--flat',
-            ]);
-            echo ht_linktree_tile([
                 'url'   => home_url('/#services'),
-                'title' => 'Commission Services',
-                'sub'   => 'Character art, book covers and AI generation',
+                'title' => __('Commission Studio', 'haunted-tech'),
+                'sub'   => __('Character art, book covers and AI generation', 'haunted-tech'),
                 'glyph' => '&#10048;',
                 'modifier' => 'lt-tile--flat',
             ]);
             echo ht_linktree_tile([
                 'url'   => home_url('/lab/'),
-                'title' => 'The Lab',
-                'sub'   => 'Free, open-source software',
+                'title' => __('The Lab', 'haunted-tech'),
+                'sub'   => __('Free, open-source software', 'haunted-tech'),
                 'glyph' => '&#9879;',
                 'modifier' => 'lt-tile--flat',
             ]);
             echo ht_linktree_tile([
+                'url'      => 'https://codalanguez.com/go/joinlantern',
+                'title'    => __('Get a Lantern Invite', 'haunted-tech'),
+                'sub'      => __('Lantern is in private alpha. This referral link opens the door.', 'haunted-tech'),
+                'glyph'    => '&#9671;',
+                'modifier' => 'lt-tile--flat',
+                'new_tab'  => true,
+                'rel'      => 'sponsored nofollow noopener',
+            ]);
+            echo ht_linktree_tile([
                 'url'   => home_url('/'),
-                'title' => 'codalanguez.com',
-                'sub'   => 'The whole haunted archive',
+                'title' => __('codalanguez.com', 'haunted-tech'),
+                'sub'   => __('The whole haunted archive', 'haunted-tech'),
                 'glyph' => '&#8962;',
                 'modifier' => 'lt-tile--flat',
             ]);

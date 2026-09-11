@@ -73,6 +73,8 @@ add_action('acf/init', function () {
         'fields'   => [
             ['key'=>'field_ht_hero_featured_serial', 'label'=>'Use as Featured Serial', 'name'=>'featured_serial', 'type'=>'true_false',
              'instructions'=>'Use this update as the homepage serial gateway. Useful when the serial lives entirely on Lantern or Substack.', 'ui'=>1, 'show_in_rest'=>1],
+            ['key'=>'field_ht_hero_serial_title', 'label'=>'Serial Title', 'name'=>'serial_title', 'type'=>'text',
+             'instructions'=>'The actual story title used in compact campaign placements such as the Links page.', 'show_in_rest'=>1],
             ['key'=>'field_ht_hero_reader_lane', 'label'=>'Reader Lane', 'name'=>'reader_lane', 'type'=>'text',
              'instructions'=>'A short, accurate shelf such as Science-Fiction Monster Romance.', 'show_in_rest'=>1],
             ['key'=>'field_ht_hero_platform', 'label'=>'Reading Platform', 'name'=>'reading_platform', 'type'=>'select',

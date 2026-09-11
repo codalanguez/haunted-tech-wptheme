@@ -102,7 +102,7 @@ All blocks live under the **Haunted Tech** category in the block inserter:
 | `haunted-tech/single-book`    | Bespoke single-book layout | current queried post |
 | `haunted-tech/single-webnovel`| Bespoke single-webnovel layout | current queried post |
 | `haunted-tech/single-chapter` | Bespoke single-chapter reader layout | current queried post |
-| `haunted-tech/linktree`       | Linktree-style bio-link page: avatar + bio + stacked books, web novels, social | `book` + `webnovel` CPTs + social menu |
+| `haunted-tech/linktree`       | Reader-first bio-link page: featured serial, newest episodes, follow route, serials, books, social | featured campaign + `chapter`, `book`, `webnovel` CPTs + social menu |
 
 ### Block patterns
 
@@ -245,11 +245,16 @@ A single-block dynamic page for social-bio-link use (Instagram bio, TikTok bio, 
 - **Avatar** — site custom-logo (or `assets/logo.png` fallback), 120 px circle with gold ring + glow
 - **Site name** — Forum-serif, gold, with the existing glitch tear animation
 - **Bio** — pulled from Settings → General → Tagline (`blogdescription`)
-- **Books** — every published `book` post as a stacked tile (cover, series eyebrow, title, 14-word tagline). Books with `download_url` set show a gold **"Free Download"** eyebrow instead of the series name.
-- **Web Novels** — every published `webnovel` post (cover, status eyebrow, title, tagline)
+- **Start Reading** — the same deliberately selected featured serial used on the homepage, linked to its configured reading destination
+- **Latest Episodes** — the three newest `chapter` posts, linked directly to their Lantern, Substack, or local reading destinations
+- **Follow on Substack** — the secondary audience-retention route
+- **Choose a Serial** — every remaining published `webnovel` post (cover, status eyebrow, title, tagline)
+- **Free Books** — published `book` posts with a download URL, separated from the paid catalogue
+- **Books** — the remaining published books
+- **Elsewhere** — commissions, the Lab, the Lantern invitation referral, and the full site
 - **Follow** — `social` nav menu rendered through `Haunted_Tech_Social_Walker`, so all auto-mapped brand icons (YouTube, Facebook, BookBub, Civitai, Redbubble, etc.) light up here too
 
-All sections are conditional — empty CPTs or an unassigned social menu collapse out of the layout. Mobile-friendly 640 px column max-width; cards reflow at ≤480 px.
+All catalogue sections are conditional — empty CPTs or an unassigned social menu collapse out of the layout. The featured campaign is controlled by the `featured_serial` field rather than publication order, so the homepage and Links page stay in sync. Mobile-friendly 640 px column max-width; cards reflow at ≤480 px.
 
 Suggested page slug: `/links`. Set the page as a draft, drop a single `haunted-tech/linktree` block in the body, publish, then use `https://yoursite.com/links` as your social-bio destination.
 

@@ -3800,8 +3800,10 @@
   }
   .lt-tile:hover::before, .lt-tile:focus-visible::before { opacity: 1; box-shadow: 0 0 12px rgba(255,212,0,0.8); }
   .lt-tile.is-free::before { background: var(--red); box-shadow: 0 0 10px rgba(229,9,20,0.5); }
+  .lt-tile--episode::before { background: var(--cyan); box-shadow: 0 0 10px rgba(0,255,224,0.35); }
+  .lt-tile--episode .lt-tile-eyebrow { color: var(--cyan); text-shadow: 0 0 6px rgba(0,255,224,0.35); }
 
-  /* ---- Lantern referral CTA ----
+  /* ---- Follow CTA ----
    * Deliberately louder than a .lt-tile: full gold hairline instead of the
    * left-edge rule, a warm wash behind it, and a hover that fills gold and
    * inverts the text. It is the only ask on the page, so it should not be
@@ -3901,6 +3903,22 @@
   .lt-cta:focus-visible .lt-cta-note { opacity: 0.6; }
   .lt-cta:hover .lt-cta-arrow,
   .lt-cta:focus-visible .lt-cta-arrow { transform: translateX(3px); }
+  .lt-cta--follow {
+    border-color: rgba(0,255,224,0.58);
+    background:
+      linear-gradient(135deg, rgba(0,255,224,0.08), rgba(229,9,20,0.025) 58%),
+      linear-gradient(135deg, rgba(15,23,21,0.96), rgba(8,7,5,0.95));
+    box-shadow: 0 0 18px rgba(0,255,224,0.08), inset 0 0 24px rgba(0,255,224,0.035);
+  }
+  .lt-cta--follow .lt-cta-mark,
+  .lt-cta--follow .lt-cta-eyebrow,
+  .lt-cta--follow .lt-cta-title,
+  .lt-cta--follow .lt-cta-arrow { color: var(--cyan); text-shadow: 0 0 6px rgba(0,255,224,0.35); }
+  .lt-cta--follow:hover,
+  .lt-cta--follow:focus-visible {
+    background: linear-gradient(135deg, var(--cyan), #55c9bb);
+    box-shadow: 0 0 26px rgba(0,255,224,0.34);
+  }
 
   .lt-tile-art {
     display: flex; align-items: center; justify-content: center;
