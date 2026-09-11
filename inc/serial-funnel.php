@@ -421,3 +421,126 @@ function ht_render_latest_episodes($attributes = []) {
     </section>
     <?php return ob_get_clean();
 }
+
+/** Build one honest Start Here entry from fields already supplied in WordPress. */
+function ht_reader_index_entry($source, $source_type = '') {
+    $source_type = $source_type ?: get_post_type($source);
+    $source_id   = is_object($source) ? (int) $source->ID : (int) $source;
+    $source_post = get_post($source_id);
+    if (!$source_post) return null;
+
+    if ($source_type === 'hero_update') {
+        $title = trim((string) ht_serial_field('serial_title', $source_id));
+        if (!$title) {
+            $title = trim((string) ht_serial_field('title_first', $source_id) . ' ' . (string) ht_serial_field('title_accent', $source_id));
+        }
+        $hook     = (string) ht_serial_field('blurb', $source_id);
+        $lane     = (string) ht_serial_field('reader_lane', $source_id, ht_serial_field('eyebrow', $source_id));
+        $schedule = (string) ht_serial_field('update_schedule', $source_id);
+        $chapter_query = [
+            'post_type'=>'chapter', 'post_status'=>'publish', 'posts_per_page'=>1,
+            'orderby'=>'date', 'order'=>'DESC', 'no_found_rows'=>true,
+            'meta_query'=>[['key'=>'arc','value'=>$title]],
+        ];
+        $index_url = '';
+    } else {
+        $title     = get_the_title($source_id);
+        $hook      = (string) ht_serial_field('campaign_hook', $source_id);
+        if (!$hook) $hook = (string) ht_serial_field('gateway_prompt', $source_id, ht_serial_field('tagline', $source_id));
+        $lane      = (string) ht_serial_field('reader_lane', $source_id, ht_serial_field('genre', $source_id));
+        $schedule  = (string) ht_serial_field('update_schedule', $source_id);
+        $chapter_query = [
+            'post_type'=>'chapter', 'post_status'=>'publish', 'posts_per_page'=>1,
+            'orderby'=>'date', 'order'=>'DESC', 'no_found_rows'=>true,
+            'meta_query'=>[['key'=>'webnovel','value'=>$source_id]],
+        ];
+        $index_url = get_permalink($source_id);
+    }
+
+    $start  = ht_get_serial_destination($source_id, $source_type);
+    $latest = get_posts($chapter_query);
+    $latest_post = $latest ? $latest[0] : null;
+    $latest_dest = $latest_post ? ht_get_chapter_destination($latest_post->ID) : null;
+
+    return [
+        'id'           => $source_id,
+        'slug'         => sanitize_title($title ?: $source_post->post_name),
+        'title'        => $title ?: get_the_title($source_id),
+        'lane'         => $lane,
+        'hook'         => $hook,
+        'schedule'     => $schedule,
+        'cover'        => ht_serial_cover_url($source_id, 'large'),
+        'start'        => $start,
+        'latest_post'  => $latest_post,
+        'latest'       => $latest_dest,
+        'index_url'    => $index_url,
+    ];
+}
+
+/** A permanent, shareable index that gives every reader a beginning and a return path. */
+function ht_render_reader_index($attributes = []) {
+    $entries = [];
+    $featured = ht_get_featured_serial_source();
+
+    if ($featured && get_post_type($featured) === 'hero_update') {
+        $entry = ht_reader_index_entry($featured, 'hero_update');
+        if ($entry) $entries[] = $entry;
+    }
+
+    $webnovels = get_posts([
+        'post_type'=>'webnovel', 'post_status'=>'publish', 'posts_per_page'=>-1,
+        'orderby'=>['menu_order'=>'ASC','title'=>'ASC'], 'order'=>'ASC', 'no_found_rows'=>true,
+    ]);
+    foreach ($webnovels as $webnovel) {
+        if ($featured && (int) $featured->ID === (int) $webnovel->ID) continue;
+        $entry = ht_reader_index_entry($webnovel, 'webnovel');
+        if ($entry) $entries[] = $entry;
+    }
+    if (!$entries) return '';
+
+    ob_start(); ?>
+    <section class="reader-index" aria-labelledby="reader-index-heading">
+      <header class="reader-index-intro">
+        <p class="serial-kicker"><?php esc_html_e('The serial shelf', 'haunted-tech'); ?></p>
+        <h2 id="reader-index-heading"><?php esc_html_e('Pick a story. Make one bad decision.', 'haunted-tech'); ?></h2>
+        <p><?php esc_html_e('Start at the beginning, walk into the newest trouble, or let Substack tell you when something else goes wrong.', 'haunted-tech'); ?></p>
+      </header>
+
+      <div class="reader-index-grid">
+        <?php foreach ($entries as $entry): ?>
+          <article class="reader-index-card">
+            <?php if ($entry['cover']): ?><div class="reader-index-art" style="background-image:url('<?php echo esc_url($entry['cover']); ?>')" aria-hidden="true"></div><?php endif; ?>
+            <div class="reader-index-scrim" aria-hidden="true"></div>
+            <div class="reader-index-copy">
+              <?php if ($entry['lane']): ?><p class="reader-index-lane"><?php echo esc_html($entry['lane']); ?></p><?php endif; ?>
+              <h3><?php echo esc_html($entry['title']); ?></h3>
+              <?php if ($entry['hook']): ?><div class="reader-index-hook"><?php echo wp_kses_post(wpautop($entry['hook'])); ?></div><?php endif; ?>
+              <?php if ($entry['schedule']): ?><p class="reader-index-schedule"><?php echo esc_html($entry['schedule']); ?></p><?php endif; ?>
+              <div class="reader-index-actions">
+                <?php if (!empty($entry['start']['url'])):
+                    $start_external = ht_serial_url_is_external($entry['start']['url']); ?>
+                  <a class="reader-index-primary" href="<?php echo esc_url($entry['start']['url']); ?>" data-serial-action="start-reading" data-serial="<?php echo esc_attr($entry['slug']); ?>"<?php echo $start_external ? ' target="_blank" rel="noopener"' : ''; ?>><?php esc_html_e('Start at Episode One', 'haunted-tech'); ?> <span aria-hidden="true">&rarr;</span></a>
+                <?php endif; ?>
+                <?php if ($entry['latest'] && !empty($entry['latest']['url']) && untrailingslashit($entry['latest']['url']) !== untrailingslashit($entry['start']['url'])):
+                    $latest_rel = $entry['latest']['external'] ? ' rel="' . esc_attr($entry['latest']['rel']) . '"' : ''; ?>
+                  <a href="<?php echo esc_url($entry['latest']['url']); ?>" data-serial-action="episode-read" data-serial="<?php echo esc_attr($entry['slug']); ?>" data-episode="<?php echo esc_attr($entry['latest_post']->post_name); ?>"<?php echo $entry['latest']['external'] ? ' target="_blank"' : ''; ?><?php echo $latest_rel; ?>><?php esc_html_e('Newest Episode', 'haunted-tech'); ?></a>
+                <?php endif; ?>
+                <?php if ($entry['index_url']): ?>
+                  <a href="<?php echo esc_url($entry['index_url']); ?>" data-serial-action="serial-index" data-serial="<?php echo esc_attr($entry['slug']); ?>"><?php esc_html_e('All Episodes', 'haunted-tech'); ?></a>
+                <?php endif; ?>
+              </div>
+            </div>
+          </article>
+        <?php endforeach; ?>
+      </div>
+
+      <aside class="reader-index-follow" aria-label="<?php esc_attr_e('Follow new episodes', 'haunted-tech'); ?>">
+        <div>
+          <p class="serial-kicker"><?php esc_html_e('Prefer the trouble delivered?', 'haunted-tech'); ?></p>
+          <h2><?php esc_html_e('Let the next chapter find you.', 'haunted-tech'); ?></h2>
+        </div>
+        <a href="<?php echo esc_url(home_url('/go/substack')); ?>" data-serial-action="follow-substack" data-serial="publication" target="_blank" rel="noopener"><?php esc_html_e('Follow on Substack', 'haunted-tech'); ?> <span aria-hidden="true">&rarr;</span></a>
+      </aside>
+    </section>
+    <?php return ob_get_clean();
+}

@@ -109,7 +109,7 @@ function ht_render_site_header($attributes = []) {
               <?php get_search_form(); ?>
             </div>
           </div>
-          <a href="<?php echo esc_url(home_url('/#featured-serial')); ?>" class="header-cta">Read Free</a>
+          <a href="<?php echo esc_url(home_url('/start-here/')); ?>" class="header-cta" data-serial-action="serial-index" data-serial="publication"><?php esc_html_e('Start Here', 'haunted-tech'); ?></a>
           <?php
           /* Only rendered as a control below 700px (CSS), and only *useful*
            * when JS is running — hence the .ht-js gate on hiding the nav.
@@ -250,7 +250,7 @@ function ht_render_bookshelf($attributes = []) {
                 $width   = 60 + (($i * 7) % 25);
                 $height  = 380 + (($i * 11) % 60);
             ?>
-            <a id="book-<?php echo esc_attr($book->post_name); ?>" href="<?php echo esc_url(get_permalink($book)); ?>" data-open-book="<?php echo esc_attr($book->post_name); ?>" class="spine <?php echo esc_attr($variant); ?>" style="min-width:<?php echo (int)$width; ?>px; height:<?php echo (int)$height; ?>px;" aria-describedby="spine-tip-<?php echo esc_attr($book->post_name); ?>">
+            <a id="book-<?php echo esc_attr($book->post_name); ?>" href="<?php echo esc_url(get_permalink($book)); ?>" data-open-book="<?php echo esc_attr($book->post_name); ?>" data-serial-action="book-view" data-book="<?php echo esc_attr($book->post_name); ?>" class="spine <?php echo esc_attr($variant); ?>" style="min-width:<?php echo (int)$width; ?>px; height:<?php echo (int)$height; ?>px;" aria-describedby="spine-tip-<?php echo esc_attr($book->post_name); ?>">
               <div class="spine-title"><?php echo esc_html(get_the_title($book)); ?></div>
               <div class="spine-author"><?php echo esc_html($series); ?></div>
               <div class="spine-tip" id="spine-tip-<?php echo esc_attr($book->post_name); ?>" role="tooltip">
@@ -1108,18 +1108,18 @@ function ht_render_single_book($attributes = []) {
 
           <?php
           $buys = array_filter([
-              $download ? ['Download Free',  $download, 'buy-btn buy-btn-download'] : null,
-              $amazon   ? ['Amazon',         $amazon,   'buy-btn'] : null,
-              $bn       ? ['Barnes & Noble', $bn,       'buy-btn'] : null,
-              $kobo     ? ['Kobo',           $kobo,     'buy-btn'] : null,
-              $apple    ? ['Apple Books',    $apple,    'buy-btn'] : null,
+              $download ? ['Download Free',  $download, 'buy-btn buy-btn-download', 'download'] : null,
+              $amazon   ? ['Amazon',         $amazon,   'buy-btn', 'amazon'] : null,
+              $bn       ? ['Barnes & Noble', $bn,       'buy-btn', 'barnes-and-noble'] : null,
+              $kobo     ? ['Kobo',           $kobo,     'buy-btn', 'kobo'] : null,
+              $apple    ? ['Apple Books',    $apple,    'buy-btn', 'apple-books'] : null,
           ]);
           if (!empty($buys)): ?>
             <div class="book-buy-row">
               <?php foreach ($buys as $b):
                   $cls = $b[2] ?? 'buy-btn';
               ?>
-                <a href="<?php echo esc_url($b[1]); ?>" class="<?php echo esc_attr($cls); ?>" target="_blank" rel="<?php echo (strpos($cls, 'buy-btn-download') !== false) ? 'noopener' : 'sponsored nofollow noopener'; ?>"><?php echo esc_html($b[0]); ?></a>
+                <a href="<?php echo esc_url($b[1]); ?>" class="<?php echo esc_attr($cls); ?>" target="_blank" rel="<?php echo (strpos($cls, 'buy-btn-download') !== false) ? 'noopener' : 'sponsored nofollow noopener'; ?>" data-serial-action="<?php echo strpos($cls, 'buy-btn-download') !== false ? 'free-book-download' : 'book-buy'; ?>" data-book="<?php echo esc_attr(get_post_field('post_name', $post_id)); ?>" data-retailer="<?php echo esc_attr($b[3]); ?>"><?php echo esc_html($b[0]); ?></a>
               <?php endforeach; ?>
             </div>
           <?php endif; ?>
@@ -1906,11 +1906,11 @@ function ht_render_single_chapter($attributes = []) {
       ?>
       <?php if ($is_gated && $read_url): ?>
         <div class="book-excerpt-fade">
-          <a href="<?php echo esc_url($read_url); ?>" class="cta" target="_blank" rel="<?php echo esc_attr($read_rel); ?>">Continue Reading on <?php echo esc_html($read_platform); ?></a>
+          <a href="<?php echo esc_url($read_url); ?>" class="cta" target="_blank" rel="<?php echo esc_attr($read_rel); ?>" data-serial-action="episode-read" data-serial="<?php echo esc_attr($arc ? sanitize_title($arc) : ($wn_id ? get_post_field('post_name', $wn_id) : get_post_field('post_name', $ch_id))); ?>" data-episode="<?php echo esc_attr(get_post_field('post_name', $ch_id)); ?>">Continue Reading on <?php echo esc_html($read_platform); ?></a>
         </div>
       <?php elseif ($read_url): ?>
         <div style="text-align:center;margin-top:2rem;">
-          <a href="<?php echo esc_url($read_url); ?>" class="buy-btn buy-btn-download" target="_blank" rel="<?php echo esc_attr($read_rel); ?>">Also Available on <?php echo esc_html($read_platform); ?></a>
+          <a href="<?php echo esc_url($read_url); ?>" class="buy-btn buy-btn-download" target="_blank" rel="<?php echo esc_attr($read_rel); ?>" data-serial-action="episode-read" data-serial="<?php echo esc_attr($arc ? sanitize_title($arc) : ($wn_id ? get_post_field('post_name', $wn_id) : get_post_field('post_name', $ch_id))); ?>" data-episode="<?php echo esc_attr(get_post_field('post_name', $ch_id)); ?>">Also Available on <?php echo esc_html($read_platform); ?></a>
         </div>
       <?php endif; ?>
     </section>
@@ -1932,22 +1932,61 @@ function ht_render_single_chapter($attributes = []) {
     <?php if ($prev_id || $next_id): ?>
       <nav class="chapter-nav" aria-label="Chapter navigation">
         <?php if ($prev_id): ?>
-          <a href="<?php echo esc_url(get_permalink($prev_id)); ?>" class="chapter-nav-link chapter-nav-prev">
+          <a href="<?php echo esc_url(get_permalink($prev_id)); ?>" class="chapter-nav-link chapter-nav-prev" data-serial-action="episode-read" data-serial="<?php echo esc_attr($arc ? sanitize_title($arc) : get_post_field('post_name', $wn_id)); ?>" data-episode="<?php echo esc_attr(get_post_field('post_name', $prev_id)); ?>">
             <span class="chapter-nav-dir">&larr; Previous</span>
             <span class="chapter-nav-title"><?php echo esc_html(get_the_title($prev_id)); ?></span>
           </a>
         <?php else: ?><span class="chapter-nav-spacer"></span><?php endif; ?>
         <?php if ($wn_id): ?>
-          <a href="<?php echo esc_url(get_permalink($wn_id)); ?>" class="chapter-nav-index">All Chapters</a>
+          <a href="<?php echo esc_url(get_permalink($wn_id)); ?>" class="chapter-nav-index" data-serial-action="serial-index" data-serial="<?php echo esc_attr($arc ? sanitize_title($arc) : get_post_field('post_name', $wn_id)); ?>">All Chapters</a>
         <?php endif; ?>
         <?php if ($next_id): ?>
-          <a href="<?php echo esc_url(get_permalink($next_id)); ?>" class="chapter-nav-link chapter-nav-next">
+          <a href="<?php echo esc_url(get_permalink($next_id)); ?>" class="chapter-nav-link chapter-nav-next" data-serial-action="episode-read" data-serial="<?php echo esc_attr($arc ? sanitize_title($arc) : get_post_field('post_name', $wn_id)); ?>" data-episode="<?php echo esc_attr(get_post_field('post_name', $next_id)); ?>">
             <span class="chapter-nav-dir">Next &rarr;</span>
             <span class="chapter-nav-title"><?php echo esc_html(get_the_title($next_id)); ?></span>
           </a>
         <?php else: ?><span class="chapter-nav-spacer"></span><?php endif; ?>
       </nav>
     <?php endif; ?>
+
+    <?php
+    $serial_slug = $arc ? sanitize_title($arc) : ($wn_id ? get_post_field('post_name', $wn_id) : get_post_field('post_name', $ch_id));
+    $first_query = [
+        'post_type'=>'chapter', 'post_status'=>'publish', 'posts_per_page'=>1,
+        'meta_key'=>'chapter_number', 'orderby'=>'meta_value_num', 'order'=>'ASC',
+        'no_found_rows'=>true,
+    ];
+    $first_meta = [];
+    if ($wn_id) $first_meta[] = ['key'=>'webnovel','value'=>$wn_id];
+    if ($arc) $first_meta[] = ['key'=>'arc','value'=>$arc];
+    if ($first_meta) $first_query['meta_query'] = $first_meta;
+    $first_posts = $first_meta ? get_posts($first_query) : [];
+    $first_id = $first_posts ? (int) $first_posts[0]->ID : 0;
+    $first_destination = $first_id && function_exists('ht_get_chapter_destination') ? ht_get_chapter_destination($first_id) : null;
+    $next_destination = $next_id && function_exists('ht_get_chapter_destination') ? ht_get_chapter_destination($next_id) : null;
+    $substack_url = home_url('/go/substack');
+    ?>
+    <aside class="chapter-return-path" aria-labelledby="chapter-return-title">
+      <p class="serial-kicker"><?php echo $next_destination ? esc_html__('Keep going', 'haunted-tech') : esc_html__('You reached the current edge', 'haunted-tech'); ?></p>
+      <h2 id="chapter-return-title"><?php echo $next_destination ? esc_html__('There is another bad decision.', 'haunted-tech') : esc_html__('The next one can find you.', 'haunted-tech'); ?></h2>
+      <p><?php echo $next_destination ? esc_html__('Continue now, restart the damage, or leave your email near the summoning circle.', 'haunted-tech') : esc_html__('Follow on Substack and the next episode will arrive without you having to haunt the refresh button.', 'haunted-tech'); ?></p>
+      <div class="chapter-return-actions">
+        <?php if ($next_destination):
+            $next_rel = $next_destination['external'] ? ' rel="' . esc_attr($next_destination['rel']) . '"' : ''; ?>
+          <a href="<?php echo esc_url($next_destination['url']); ?>" data-serial-action="episode-read" data-serial="<?php echo esc_attr($serial_slug); ?>" data-episode="<?php echo esc_attr(get_post_field('post_name', $next_id)); ?>"<?php echo $next_destination['external'] ? ' target="_blank"' : ''; ?><?php echo $next_rel; ?>><?php esc_html_e('Continue to the Next Episode', 'haunted-tech'); ?> <span aria-hidden="true">&rarr;</span></a>
+        <?php else: ?>
+          <a href="<?php echo esc_url($substack_url); ?>" data-serial-action="follow-substack" data-serial="<?php echo esc_attr($serial_slug); ?>" target="_blank" rel="noopener"><?php esc_html_e('Follow on Substack', 'haunted-tech'); ?> <span aria-hidden="true">&rarr;</span></a>
+        <?php endif; ?>
+        <?php if ($first_destination && $first_id !== $ch_id):
+            $first_rel = $first_destination['external'] ? ' rel="' . esc_attr($first_destination['rel']) . '"' : ''; ?>
+          <a href="<?php echo esc_url($first_destination['url']); ?>" data-serial-action="start-reading" data-serial="<?php echo esc_attr($serial_slug); ?>" data-episode="<?php echo esc_attr(get_post_field('post_name', $first_id)); ?>"<?php echo $first_destination['external'] ? ' target="_blank"' : ''; ?><?php echo $first_rel; ?>><?php esc_html_e('Start at Episode One', 'haunted-tech'); ?></a>
+        <?php endif; ?>
+        <?php if ($next_destination): ?>
+          <a href="<?php echo esc_url($substack_url); ?>" data-serial-action="follow-substack" data-serial="<?php echo esc_attr($serial_slug); ?>" target="_blank" rel="noopener"><?php esc_html_e('Follow on Substack', 'haunted-tech'); ?></a>
+        <?php endif; ?>
+        <a href="<?php echo esc_url(home_url('/start-here/')); ?>" data-serial-action="serial-index" data-serial="<?php echo esc_attr($serial_slug); ?>"><?php esc_html_e('Choose Another Story', 'haunted-tech'); ?></a>
+      </div>
+    </aside>
     <?php
     return ob_get_clean();
 }
@@ -2039,10 +2078,10 @@ function ht_linktree_tile($args) {
         'url' => '', 'title' => '', 'sub' => '', 'eyebrow' => '',
         'cover' => '', 'glyph' => '', 'modifier' => '', 'eyebrow_free' => false,
         'new_tab' => false, 'rel' => '', 'data_action' => '',
-        'data_serial' => '', 'data_episode' => '',
+        'data_serial' => '', 'data_episode' => '', 'data_book' => '',
     ]);
     ob_start(); ?>
-    <a href="<?php echo esc_url($a['url']); ?>" class="lt-tile<?php echo $a['modifier'] ? ' ' . esc_attr($a['modifier']) : ''; ?>"<?php echo $a['new_tab'] ? ' target="_blank"' : ''; ?><?php echo $a['rel'] ? ' rel="' . esc_attr($a['rel']) . '"' : ''; ?><?php echo $a['data_action'] ? ' data-serial-action="' . esc_attr($a['data_action']) . '"' : ''; ?><?php echo $a['data_serial'] ? ' data-serial="' . esc_attr($a['data_serial']) . '"' : ''; ?><?php echo $a['data_episode'] ? ' data-episode="' . esc_attr($a['data_episode']) . '"' : ''; ?>>
+    <a href="<?php echo esc_url($a['url']); ?>" class="lt-tile<?php echo $a['modifier'] ? ' ' . esc_attr($a['modifier']) : ''; ?>"<?php echo $a['new_tab'] ? ' target="_blank"' : ''; ?><?php echo $a['rel'] ? ' rel="' . esc_attr($a['rel']) . '"' : ''; ?><?php echo $a['data_action'] ? ' data-serial-action="' . esc_attr($a['data_action']) . '"' : ''; ?><?php echo $a['data_serial'] ? ' data-serial="' . esc_attr($a['data_serial']) . '"' : ''; ?><?php echo $a['data_episode'] ? ' data-episode="' . esc_attr($a['data_episode']) . '"' : ''; ?><?php echo $a['data_book'] ? ' data-book="' . esc_attr($a['data_book']) . '"' : ''; ?>>
       <span class="lt-tile-art">
         <?php if ($a['cover']): ?>
           <img src="<?php echo esc_url($a['cover']); ?>" alt="" loading="lazy" decoding="async">
@@ -2311,6 +2350,8 @@ function ht_render_linktree($attributes = []) {
             'sub'          => ht_linktree_sub($b->ID),
             'cover'        => ht_linktree_cover_url($b->ID),
             'modifier'     => $is_free ? 'is-free' : '',
+            'data_action'  => 'book-view',
+            'data_book'    => get_post_field('post_name', $b->ID),
         ]);
         if ($is_free) { $free_book_tiles[] = $tile; }
         else { $book_tiles[] = $tile; }

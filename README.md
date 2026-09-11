@@ -162,7 +162,13 @@ Recommended *The First Sky* setup:
 - Secondary label: **Follow on Substack**.
 - Access message: state the current invitation/adult-access situation only after verifying it; do not let an old launch claim become evergreen copy.
 
-Both buttons carry `data-serial` and `data-serial-action` attributes so analytics can distinguish a Lantern reading click from a Substack continuity click.
+Reader actions carry `data-serial-action` plus serial, episode, book and retailer identifiers when relevant. Theme 0.22 sends separate GA4 events for `start_reading`, `episode_read`, `story_select`, `follow_substack`, `view_book`, `buy_book_click`, and `free_book_download`; tracking remains a no-op when Site Kit's Google tag is absent or blocked.
+
+### Start Here reader index *(v0.22)*
+
+`haunted-tech/reader-index` powers the permanent `/start-here/` page. It lists the deliberately featured external serial first, followed by published `webnovel` posts. Each entry uses only stored WordPress campaign fields and offers whichever routes actually exist: Episode One, newest episode, and the local episode index. The closing Substack action supplies the return path. No card invents a hook, schedule, platform, or story fact when its field is blank.
+
+Single chapter pages now finish with a return-path panel. It prefers the next direct reading destination, then offers Episode One, Substack follow, and the Start Here shelf. External Lantern and Substack links retain the outbound relationship rules used elsewhere in the theme.
 
 ### Bookshelf — `book` CPT (ACF-registered)
 
@@ -306,6 +312,8 @@ Every meaningful spot on the homepage has a stable `id`. Use any of them as a Cu
 | `#newsletter` | "Join the Signal" newsletter callout |
 | `#about` | Opens the About modal instead of scrolling (handled by JS) |
 | `#footer` | Site footer |
+
+The full reader index is a page rather than a homepage anchor: `/start-here/`.
 
 CSS `scroll-margin-top: 140px` is applied to all of these so they clear the sticky social bar + header on landing.
 

@@ -33,6 +33,7 @@ add_action('init', function () {
         ['slug' => 'featured-serial','title' => 'Featured Serial Gateway', 'render' => 'ht_render_featured_serial', 'icon' => 'welcome-view-site'],
         ['slug' => 'serial-doors',   'title' => 'Choose Your Door', 'render' => 'ht_render_serial_doors', 'icon' => 'open-folder'],
         ['slug' => 'latest-episodes','title' => 'Latest Episodes', 'render' => 'ht_render_latest_episodes', 'icon' => 'playlist-audio'],
+        ['slug' => 'reader-index',   'title' => 'Start Here Reader Index', 'render' => 'ht_render_reader_index', 'icon' => 'book-alt'],
         ['slug' => 'bookshelf',     'title' => 'Bookshelf',      'render' => 'ht_render_bookshelf',    'icon' => 'book'],
         ['slug' => 'crt-monitor',   'title' => 'CRT Monitor',    'render' => 'ht_render_crt_monitor',  'icon' => 'desktop'],
         ['slug' => 'services',      'title' => 'Services',       'render' => 'ht_render_services',     'icon' => 'awards'],

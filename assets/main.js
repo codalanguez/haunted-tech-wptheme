@@ -105,18 +105,41 @@
     window.addEventListener('hashchange', () => { if (location.hash === '#about') open(); });
   })();
 
-  // ===== Serial funnel analytics =====
+  // ===== Reader funnel analytics =====
   // Site Kit exposes the standard Google tag as window.gtag. Keep this a
-  // no-op when analytics is absent or blocked; reading links must never wait
-  // on tracking. Distinct actions let reports separate a reading click from
-  // a Substack follow click and from a reader-door selection.
+  // no-op when analytics is absent or blocked; reader links must never wait
+  // on tracking. Send one plainly named GA4 event per funnel step so the
+  // weekly report does not have to reconstruct intent from one overloaded
+  // event and a custom parameter.
   document.addEventListener('click', e => {
-    const link = e.target.closest('[data-serial-action][data-serial]');
+    const link = e.target.closest('[data-serial-action]');
     if (!link || typeof window.gtag !== 'function') return;
-    window.gtag('event', 'serial_reader_click', {
-      serial: link.dataset.serial,
+
+    const action = link.dataset.serialAction;
+    const eventNames = {
+      'chapter-one': 'start_reading',
+      'start-reading': 'start_reading',
+      'latest-episode': 'episode_read',
+      'linktree-latest-episode': 'episode_read',
+      'chapter-index': 'episode_read',
+      'episode-read': 'episode_read',
+      'gateway': 'story_select',
+      'serial-index': 'story_select',
+      'linktree-featured': 'start_reading',
+      'substack': 'follow_substack',
+      'follow-substack': 'follow_substack',
+      'book-view': 'view_book',
+      'book-buy': 'buy_book_click',
+      'free-book-download': 'free_book_download'
+    };
+    const eventName = eventNames[action] || 'reader_funnel_click';
+
+    window.gtag('event', eventName, {
+      serial: link.dataset.serial || '',
       episode: link.dataset.episode || '',
-      destination: link.dataset.serialAction,
+      book: link.dataset.book || '',
+      retailer: link.dataset.retailer || '',
+      funnel_action: action,
       link_url: link.href
     });
   });

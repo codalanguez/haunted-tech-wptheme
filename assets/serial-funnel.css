@@ -313,6 +313,170 @@
 .book-buy-row + .serial-access-note { margin: .85rem 0 1.4rem; }
 .book-meta-col .serial-status { margin: 1rem 0 1.4rem; }
 
+/* Start Here reader index: an editorial shelf, not another card directory. */
+.reader-index {
+  width: min(1180px, 100%);
+  margin: 0 auto;
+  padding: clamp(1rem, 3vw, 2rem) 0 clamp(3rem, 7vw, 6rem);
+}
+
+.reader-index-intro {
+  max-width: 760px;
+  margin: 0 0 clamp(2rem, 5vw, 4rem);
+}
+
+.reader-index-intro h2,
+.reader-index-follow h2 {
+  margin: .35rem 0 .75rem;
+  color: var(--gold-bright);
+  font: clamp(2.1rem, 6vw, 4.7rem)/.94 Forum, serif;
+  text-transform: uppercase;
+}
+
+.reader-index-intro > p:last-child {
+  max-width: 680px;
+  color: var(--bone);
+  font-size: clamp(1.08rem, 2vw, 1.3rem);
+}
+
+.reader-index-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+
+.reader-index-card {
+  position: relative;
+  min-height: 34rem;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  isolation: isolate;
+}
+
+.reader-index-card::after {
+  content: '';
+  position: absolute;
+  inset: .7rem;
+  z-index: 2;
+  border: 1px solid rgba(255, 212, 0, .2);
+  pointer-events: none;
+}
+
+.reader-index-art,
+.reader-index-scrim {
+  position: absolute;
+  inset: 0;
+}
+
+.reader-index-art {
+  z-index: -2;
+  background-position: center 22%;
+  background-size: cover;
+  filter: saturate(.78) contrast(1.08);
+  transform: scale(1.01);
+  transition: transform .35s ease, filter .35s ease;
+}
+
+.reader-index-scrim {
+  z-index: -1;
+  background: linear-gradient(0deg, rgba(0,0,0,.98) 10%, rgba(0,0,0,.8) 55%, rgba(0,0,0,.28));
+}
+
+.reader-index-card:hover .reader-index-art { transform: scale(1.045); filter: saturate(.92) contrast(1.1); }
+
+.reader-index-copy {
+  position: relative;
+  z-index: 3;
+  min-height: 34rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: clamp(2rem, 5vw, 3.25rem);
+}
+
+.reader-index-lane,
+.reader-index-schedule {
+  margin: 0;
+  color: var(--cyan);
+  font: .9rem/1.25 VT323, monospace;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.reader-index-copy h3 {
+  margin: .6rem 0 .85rem;
+  color: var(--gold-bright);
+  font: clamp(2rem, 5vw, 3.3rem)/.96 Forum, serif;
+  text-transform: uppercase;
+}
+
+.reader-index-hook { max-width: 38rem; font-size: 1.08rem; line-height: 1.45; }
+.reader-index-hook p { margin: 0; }
+.reader-index-schedule { margin-top: .85rem; color: var(--bone-dim); }
+
+.reader-index-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .7rem 1.1rem;
+  margin-top: 1.4rem;
+}
+
+.reader-index-actions a,
+.reader-index-follow > a {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  color: var(--gold);
+  font: 1rem/1 VT323, monospace;
+  letter-spacing: .08em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.reader-index-actions .reader-index-primary,
+.reader-index-follow > a {
+  justify-content: center;
+  padding: .8rem 1rem;
+  border: 1px solid var(--gold);
+  background: rgba(0,0,0,.45);
+}
+
+.reader-index-actions a:hover,
+.reader-index-actions a:focus-visible,
+.reader-index-follow > a:hover,
+.reader-index-follow > a:focus-visible { color: var(--void); background: var(--gold); outline: 2px solid var(--gold-bright); outline-offset: 3px; }
+
+.reader-index-follow {
+  margin-top: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: clamp(1.5rem, 4vw, 3rem);
+  border: 1px solid rgba(0,255,224,.4);
+  background: linear-gradient(120deg, rgba(0,255,224,.08), rgba(90,10,18,.18));
+}
+
+.reader-index-follow h2 { max-width: 650px; margin-bottom: 0; font-size: clamp(1.8rem, 4vw, 3.4rem); }
+
+/* The last page of an episode should still have a door instead of a wall. */
+.chapter-return-path {
+  width: min(900px, calc(100% - 3rem));
+  margin: 0 auto 4rem;
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--cyan);
+  background: linear-gradient(135deg, rgba(0,255,224,.06), rgba(90,10,18,.18));
+}
+
+.chapter-return-path h2 { margin: .35rem 0 .7rem; color: var(--gold-bright); font: clamp(1.8rem, 4vw, 2.8rem)/1 Forum, serif; text-transform: uppercase; }
+.chapter-return-path > p { max-width: 620px; margin: 0; }
+.chapter-return-actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1.35rem; }
+.chapter-return-actions a { min-height: 44px; display: inline-flex; align-items: center; padding: .75rem 1rem; border: 1px solid var(--border); color: var(--gold); font: 1rem/1 VT323, monospace; letter-spacing: .07em; text-decoration: none; text-transform: uppercase; }
+.chapter-return-actions a:first-child { border-color: var(--gold); background: rgba(255,212,0,.06); }
+.chapter-return-actions a:hover, .chapter-return-actions a:focus-visible { color: var(--void); background: var(--gold); outline: 2px solid var(--gold-bright); outline-offset: 3px; }
+
 @media (max-width: 860px) {
   .serial-feature { min-height: 700px; }
   .serial-feature-scrim { background: linear-gradient(0deg, rgba(0,0,0,.98), rgba(0,0,0,.62) 74%, rgba(0,0,0,.35)); }
@@ -320,6 +484,7 @@
   .serial-door-grid { grid-template-columns: 1fr; }
   .latest-episode-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .serial-door { min-height: 360px; }
+  .reader-index-grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 520px) {
@@ -332,6 +497,12 @@
   .serial-primary-cta { width: 100%; justify-content: center; text-align: center; }
   .serial-doors { padding-inline: .85rem; }
   .latest-episode-grid { grid-template-columns: 1fr; }
+  .reader-index-follow { align-items: flex-start; flex-direction: column; }
+  .reader-index-follow > a { width: 100%; }
+  .reader-index-copy { padding: 2rem 1.5rem; }
+  .chapter-return-path { width: calc(100% - 2rem); }
+  .chapter-return-actions { display: grid; }
+  .chapter-return-actions a { justify-content: center; text-align: center; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -342,4 +513,6 @@
   .serial-primary-cta:focus-visible { transform: none; }
   .serial-door-link:hover .serial-door-art,
   .serial-door-link:focus-visible .serial-door-art { transform: none; }
+  .reader-index-art { transition: none; }
+  .reader-index-card:hover .reader-index-art { transform: none; }
 }
