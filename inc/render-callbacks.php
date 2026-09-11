@@ -1750,7 +1750,7 @@ function ht_render_single_webnovel($attributes = []) {
                   <?php foreach ($arc_chs as $ch) { echo $ht_render_chapter_li($ch, false); } ?>
                 </ol>
               <?php else: ?>
-                <details class="chapter-arc">
+                <details class="chapter-arc" id="arc-<?php echo esc_attr(sanitize_title($arc)); ?>">
                   <summary class="chapter-arc-summary">
                     <span class="chapter-arc-name"><?php echo esc_html($arc); ?></span>
                     <span class="chapter-arc-count"><?php echo (int) count($arc_chs); ?> part<?php echo count($arc_chs) === 1 ? '' : 's'; ?></span>

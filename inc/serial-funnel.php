@@ -477,6 +477,41 @@ function ht_reader_index_entry($source, $source_type = '') {
     ];
 }
 
+/** Turn an anthology arc into its own reader choice instead of exposing its container. */
+function ht_reader_index_arc_entry($webnovel, $arc) {
+    $webnovel_id = is_object($webnovel) ? (int) $webnovel->ID : (int) $webnovel;
+    $arc = trim((string) $arc);
+    if (!$webnovel_id || !$arc) return null;
+
+    $base_query = [
+        'post_type'=>'chapter', 'post_status'=>'publish', 'posts_per_page'=>1,
+        'meta_query'=>[
+            ['key'=>'webnovel','value'=>$webnovel_id],
+            ['key'=>'arc','value'=>$arc],
+        ],
+        'no_found_rows'=>true,
+    ];
+    $first = get_posts($base_query + ['meta_key'=>'chapter_number','orderby'=>'meta_value_num','order'=>'ASC']);
+    $latest = get_posts($base_query + ['orderby'=>'date','order'=>'DESC']);
+    if (!$first && !$latest) return null;
+
+    $first_post = $first ? $first[0] : $latest[0];
+    $latest_post = $latest ? $latest[0] : $first_post;
+    return [
+        'id'           => $webnovel_id,
+        'slug'         => sanitize_title($arc),
+        'title'        => $arc,
+        'lane'         => (string) ht_serial_field('genre', $webnovel_id, __('Serial fiction', 'haunted-tech')),
+        'hook'         => '',
+        'schedule'     => (string) ht_serial_field('update_schedule', $webnovel_id),
+        'cover'        => ht_serial_cover_url($webnovel_id, 'large'),
+        'start'        => ht_get_chapter_destination($first_post->ID),
+        'latest_post'  => $latest_post,
+        'latest'       => ht_get_chapter_destination($latest_post->ID),
+        'index_url'    => get_permalink($webnovel_id) . '#arc-' . sanitize_title($arc),
+    ];
+}
+
 /** A permanent, shareable index that gives every reader a beginning and a return path. */
 function ht_render_reader_index($attributes = []) {
     $entries = [];
@@ -491,8 +526,31 @@ function ht_render_reader_index($attributes = []) {
         'post_type'=>'webnovel', 'post_status'=>'publish', 'posts_per_page'=>-1,
         'orderby'=>['menu_order'=>'ASC','title'=>'ASC'], 'order'=>'ASC', 'no_found_rows'=>true,
     ]);
+    $featured_title = $featured ? trim((string) ht_serial_field('serial_title', $featured->ID)) : '';
     foreach ($webnovels as $webnovel) {
         if ($featured && (int) $featured->ID === (int) $webnovel->ID) continue;
+
+        $arc_rows = get_posts([
+            'post_type'=>'chapter', 'post_status'=>'publish', 'posts_per_page'=>-1,
+            'meta_query'=>[
+                ['key'=>'webnovel','value'=>$webnovel->ID],
+                ['key'=>'arc','value'=>'','compare'=>'!='],
+            ],
+            'fields'=>'ids', 'no_found_rows'=>true,
+        ]);
+        $arcs = [];
+        foreach ($arc_rows as $chapter_id) {
+            $chapter_arc = trim((string) ht_serial_field('arc', $chapter_id));
+            if ($chapter_arc && !in_array($chapter_arc, $arcs, true)) $arcs[] = $chapter_arc;
+        }
+        if ($arcs) {
+            foreach ($arcs as $arc) {
+                if ($featured_title && strcasecmp($featured_title, $arc) === 0) continue;
+                $entry = ht_reader_index_arc_entry($webnovel, $arc);
+                if ($entry) $entries[] = $entry;
+            }
+            continue;
+        }
         $entry = ht_reader_index_entry($webnovel, 'webnovel');
         if ($entry) $entries[] = $entry;
     }
