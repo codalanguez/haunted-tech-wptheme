@@ -33,6 +33,9 @@ add_action('customize_register', function (\WP_Customize_Manager $wp_customize) 
           . '<ul style="font-family:Consolas,Menlo,monospace;font-size:11px;line-height:1.7;margin:0 0 0 1em;padding:0;">'
           . '<li><code>#top</code> &mdash; %s</li>'
           . '<li><code>#hero</code> &mdash; %s</li>'
+          . '<li><code>#featured-serial</code> &mdash; %s</li>'
+          . '<li><code>#serial-doors</code> &mdash; %s</li>'
+          . '<li><code>#latest-episodes</code> &mdash; %s</li>'
           . '<li><code>#books</code> &mdash; %s</li>'
           . '<li><code>#web-novels</code> &mdash; %s</li>'
           . '<li><code>#services</code> &mdash; %s</li>'
@@ -48,8 +51,11 @@ add_action('customize_register', function (\WP_Customize_Manager $wp_customize) 
           . '<p style="margin:0.8em 0 0 0;font-size:12px;line-height:1.5;">%s</p>',
             esc_html__('Available in-page anchors', 'haunted-tech'),
             esc_html__('Use any of these as a Custom Link URL in Appearance → Menus or in a Button block.', 'haunted-tech'),
-            esc_html__('top of page (alias of #hero)', 'haunted-tech'),
-            esc_html__('hero slider', 'haunted-tech'),
+            esc_html__('top of page', 'haunted-tech'),
+            esc_html__('legacy hero slider, when that block is used', 'haunted-tech'),
+            esc_html__('main featured-serial reading gateway', 'haunted-tech'),
+            esc_html__('three reader-choice cards', 'haunted-tech'),
+            esc_html__('newest episode links', 'haunted-tech'),
             esc_html__('bookshelf section', 'haunted-tech'),
             esc_html__('CRT-monitor web novels section', 'haunted-tech'),
             esc_html__('services section', 'haunted-tech'),

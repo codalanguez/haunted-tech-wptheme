@@ -105,6 +105,22 @@
     window.addEventListener('hashchange', () => { if (location.hash === '#about') open(); });
   })();
 
+  // ===== Serial funnel analytics =====
+  // Site Kit exposes the standard Google tag as window.gtag. Keep this a
+  // no-op when analytics is absent or blocked; reading links must never wait
+  // on tracking. Distinct actions let reports separate a reading click from
+  // a Substack follow click and from a reader-door selection.
+  document.addEventListener('click', e => {
+    const link = e.target.closest('[data-serial-action][data-serial]');
+    if (!link || typeof window.gtag !== 'function') return;
+    window.gtag('event', 'serial_reader_click', {
+      serial: link.dataset.serial,
+      episode: link.dataset.episode || '',
+      destination: link.dataset.serialAction,
+      link_url: link.href
+    });
+  });
+
   // ===== Simple portrait lightbox (static /about/ page): opens from
   // [data-open-portrait-lightbox]. Single image, no prev/next — separate
   // from the gallery's #lightbox, which is driven by gallery-item data. =====

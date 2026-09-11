@@ -18,14 +18,16 @@ add_action('init', function () {
 
     register_block_pattern('haunted-tech/full-homepage', [
         'title'       => __('Full Homepage', 'haunted-tech'),
-        'description' => __('All sections in the standard order: hero slider, bookshelf, CRT monitor, services, gallery, newsletter.', 'haunted-tech'),
+        'description' => __('Reader-first homepage: featured serial, reader doors, serial archive, newsletter, books, studio, gallery and lab.', 'haunted-tech'),
         'categories'  => ['haunted-tech'],
-        'content'     => '<!-- wp:haunted-tech/hero-slider /-->'
+        'content'     => '<!-- wp:haunted-tech/featured-serial /-->'
+                       . '<!-- wp:haunted-tech/serial-doors {"limit":3} /-->'
+                       . '<!-- wp:haunted-tech/latest-episodes {"limit":6} /-->'
+                       . '<!-- wp:haunted-tech/newsletter /-->'
                        . '<!-- wp:haunted-tech/bookshelf /-->'
-                       . '<!-- wp:haunted-tech/crt-monitor /-->'
                        . '<!-- wp:haunted-tech/services /-->'
                        . '<!-- wp:haunted-tech/gallery /-->'
-                       . '<!-- wp:haunted-tech/newsletter /-->',
+                       . '<!-- wp:haunted-tech/lab /-->',
     ]);
 
     register_block_pattern('haunted-tech/books-and-novels', [

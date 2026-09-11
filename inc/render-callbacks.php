@@ -58,11 +58,11 @@ function ht_render_social_bar($attributes = []) {
 }
 
 /* ============================================================
- * SITE HEADER – logo + nav + subscribe CTA
+ * SITE HEADER – logo + nav + reading CTA
  * ============================================================ */
 function ht_render_site_header($attributes = []) {
     ob_start(); ?>
-    <header class="block-header">
+    <header class="block-header" id="top">
       <div class="header-inner">
         <a href="<?php echo esc_url(home_url('/')); ?>" class="logo" aria-label="<?php bloginfo('name'); ?>">
           <?php
@@ -109,7 +109,7 @@ function ht_render_site_header($attributes = []) {
               <?php get_search_form(); ?>
             </div>
           </div>
-          <a href="#newsletter" class="header-cta">Subscribe</a>
+          <a href="<?php echo esc_url(home_url('/#featured-serial')); ?>" class="header-cta">Read Free</a>
           <?php
           /* Only rendered as a control below 700px (CSS), and only *useful*
            * when JS is running — hence the .ht-js gate on hiding the nav.
@@ -136,7 +136,6 @@ function ht_render_hero_slider($attributes = []) {
     $hero_slides = haunted_tech_get_hero_slides(6);
     ob_start(); ?>
     <span id="hero" class="ht-anchor" aria-hidden="true"></span>
-    <span id="top"  class="ht-anchor" aria-hidden="true"></span>
     <div class="hero block-hero" id="hero-slider">
         <?php if ( is_front_page() ) : ?><h1 class="ht-site-h1" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;"><?php echo esc_html( get_bloginfo( 'name' ) . ' — Dark Fantasy Romance & Web Novels' ); ?></h1><?php endif; ?>
       <div class="hero-watermark" aria-hidden="true">
@@ -1583,7 +1582,9 @@ function ht_render_single_webnovel($attributes = []) {
     $genre    = get_field('genre', $wn_id);
     $tropes   = get_field('tropes', $wn_id);
     $warnings = get_field('content_warnings', $wn_id);
-    $substack = get_field('substack_url', $wn_id);
+    $destination = ht_get_serial_destination($wn_id, 'webnovel');
+    $serial_links = ht_get_serial_links($wn_id, 'webnovel');
+    $serial_status = ht_get_serial_status_items($wn_id);
 
     $cover_url = '';
     if (is_array($cover) && !empty($cover['url'])) $cover_url = $cover['url'];
@@ -1596,10 +1597,6 @@ function ht_render_single_webnovel($attributes = []) {
     ]);
 
     $cw_items = array_filter(array_map('trim', explode(',', (string)$warnings)));
-
-    $reads = array_filter([
-        $substack ? ['Read on Substack', $substack, 'buy-btn buy-btn-download', true] : null,
-    ]);
 
     ob_start(); ?>
     <section class="book-hero is-webnovel">
@@ -1641,15 +1638,25 @@ function ht_render_single_webnovel($attributes = []) {
             </div>
           <?php endif; ?>
 
-          <?php if (!empty($reads)): ?>
+          <?php if (!empty($serial_status)): ?>
+            <dl class="serial-status">
+              <?php foreach ($serial_status as $item): ?>
+                <div><dt><?php echo esc_html($item[0]); ?></dt><dd><?php echo esc_html($item[1]); ?></dd></div>
+              <?php endforeach; ?>
+            </dl>
+          <?php endif; ?>
+
+          <?php if (!empty($serial_links)): ?>
             <div class="book-buy-row">
-              <?php foreach ($reads as $r):
-                  list($label, $url, $cls, $external) = $r;
+              <?php foreach ($serial_links as $index => $link):
+                  $classes = $index === 0 ? 'buy-btn buy-btn-download' : 'buy-btn';
               ?>
-                <a href="<?php echo esc_url($url); ?>" class="<?php echo esc_attr($cls); ?>"<?php echo $external ? ' target="_blank" rel="noopener"' : ''; ?>><?php echo esc_html($label); ?></a>
+                <a href="<?php echo esc_url($link['url']); ?>" class="<?php echo esc_attr($classes); ?>" data-serial-action="<?php echo esc_attr($link['action']); ?>" data-serial="<?php echo esc_attr(get_post_field('post_name', $wn_id)); ?>"<?php echo $link['external'] ? ' target="_blank" rel="noopener"' : ''; ?>><?php echo esc_html($link['label']); ?></a>
               <?php endforeach; ?>
             </div>
           <?php endif; ?>
+
+          <?php if ($destination['access']): ?><p class="serial-access-note"><?php echo esc_html($destination['access']); ?></p><?php endif; ?>
 
           <?php if ($blurb): ?>
             <div class="book-blurb"><?php echo wp_kses_post(wpautop($blurb)); ?></div>
@@ -1707,15 +1714,19 @@ function ht_render_single_webnovel($attributes = []) {
 
       /* Renders a single <li> for one chapter. $show_arc prefixes the title
        * with the story name (used only in the flat, no-accordion layout). */
-      $ht_render_chapter_li = function ($ch, $show_arc = false) use ($access_labels) {
+      $ht_render_chapter_li = function ($ch, $show_arc = false) use ($access_labels, $wn_id) {
           $ch_access = get_field('access_level', $ch->ID) ?: 'free';
           $ch_arc    = get_field('arc', $ch->ID);
           $ch_no     = get_field('chapter_number', $ch->ID);
+          $destination = ht_get_chapter_destination($ch->ID);
+          $serial_slug = $ch_arc ? sanitize_title($ch_arc) : get_post_field('post_name', $wn_id);
+          $rel = $destination['external'] ? ' rel="' . esc_attr($destination['rel']) . '"' : '';
           ob_start(); ?>
           <li class="chapter-index-item">
-            <a href="<?php echo esc_url(get_permalink($ch)); ?>" class="chapter-index-link">
+            <a href="<?php echo esc_url($destination['url']); ?>" class="chapter-index-link" data-serial-action="chapter-index" data-serial="<?php echo esc_attr($serial_slug); ?>" data-episode="<?php echo esc_attr($ch->post_name); ?>"<?php echo $destination['external'] ? ' target="_blank"' : ''; ?><?php echo $rel; ?>>
               <span class="chapter-index-num"><?php echo ($ch_no !== '' && $ch_no !== null) ? esc_html($ch_no) : ''; ?></span>
               <span class="chapter-index-title"><?php if ($show_arc && $ch_arc): ?><em><?php echo esc_html($ch_arc); ?> &middot; </em><?php endif; ?><?php echo esc_html(get_the_title($ch)); ?></span>
+              <span class="chapter-index-destination"><?php echo sprintf(esc_html__('Read on %s', 'haunted-tech'), esc_html($destination['platform'])); ?></span>
               <span class="chapter-access-badge chapter-access-<?php echo esc_attr($ch_access); ?>"><?php echo esc_html($access_labels[$ch_access] ?? 'Free'); ?></span>
             </a>
           </li>

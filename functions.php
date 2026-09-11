@@ -20,7 +20,7 @@
 
 if (!defined('ABSPATH')) { exit; }
 
-define('HAUNTED_TECH_VERSION', '0.19.0');
+define('HAUNTED_TECH_VERSION', '0.20.0');
 define('HAUNTED_TECH_DIR', get_template_directory());
 define('HAUNTED_TECH_URI', get_template_directory_uri());
 
@@ -57,7 +57,7 @@ add_action('after_setup_theme', function () {
 
     /* Make our main.css available to the block editor too, so blocks render
      * with the same colors/fonts/glitch styles inside the editor preview. */
-    add_editor_style('assets/main.css');
+    add_editor_style(['assets/main.css', 'assets/serial-funnel.css']);
 });
 
 /* ---------------------------------------------------------------------------
@@ -99,6 +99,13 @@ add_action('wp_enqueue_scripts', function () {
         'haunted-tech-main',
         HAUNTED_TECH_URI . '/assets/main.css',
         ['haunted-tech-style'],
+        HAUNTED_TECH_VERSION
+    );
+
+    wp_enqueue_style(
+        'haunted-tech-serial-funnel',
+        HAUNTED_TECH_URI . '/assets/serial-funnel.css',
+        ['haunted-tech-main'],
         HAUNTED_TECH_VERSION
     );
 
@@ -400,10 +407,11 @@ function haunted_tech_render_hero_title($first, $accent) {
  * ------------------------------------------------------------------------- */
 function haunted_tech_default_primary_menu() {
     echo '<ul>';
-    echo '<li><a href="' . esc_url(home_url('/#books'))      . '">Books</a></li>';
-    echo '<li><a href="' . esc_url(home_url('/#web-novels')) . '">Web Novels</a></li>';
-    echo '<li><a href="' . esc_url(home_url('/#services'))   . '">Services</a></li>';
-    echo '<li><a href="' . esc_url(home_url('/#gallery'))    . '">Gallery</a></li>';
+    echo '<li><a href="' . esc_url(home_url('/#featured-serial')) . '">Read Serials</a></li>';
+    echo '<li><a href="' . esc_url(home_url('/#books'))           . '">Finished Books</a></li>';
+    echo '<li><a href="' . esc_url(home_url('/#newsletter'))      . '">Newsletter</a></li>';
+    echo '<li><a href="' . esc_url(home_url('/#services'))        . '">Studio</a></li>';
+    echo '<li><a href="' . esc_url(home_url('/#lab'))             . '">The Lab</a></li>';
     echo '<li><a href="' . esc_url(home_url('/#about'))      . '" data-open-about>About</a></li>';
     echo '</ul>';
 }
@@ -620,6 +628,7 @@ add_filter('body_class', function ($classes) {
  * ------------------------------------------------------------------------- */
 require_once HAUNTED_TECH_DIR . '/inc/customizer.php';
 require_once HAUNTED_TECH_DIR . '/inc/render-callbacks.php';
+require_once HAUNTED_TECH_DIR . '/inc/serial-funnel.php';
 require_once HAUNTED_TECH_DIR . '/inc/blocks.php';
 require_once HAUNTED_TECH_DIR . '/inc/patterns.php';
 require_once HAUNTED_TECH_DIR . '/inc/rest.php';

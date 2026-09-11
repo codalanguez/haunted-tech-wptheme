@@ -30,7 +30,7 @@
   /* Smooth-scroll for in-page anchor jumps */
   html { scroll-behavior: smooth; }
   /* Sticky header is ~120px tall; offset anchor targets so they don't slide under it */
-  [id="books"], [id="web-novels"], [id="services"], [id="gallery"], [id="newsletter"], [id="about"], [id="hero-slider"], [id="lab"] {
+  [id="featured-serial"], [id="serial-doors"], [id="latest-episodes"], [id="books"], [id="web-novels"], [id="services"], [id="gallery"], [id="newsletter"], [id="about"], [id="hero-slider"], [id="lab"] {
     scroll-margin-top: 140px;
   }
   body {
@@ -4900,7 +4900,7 @@ body.commission-open .static-burst { display: none !important; }
     /* Anchor offsets were tuned for the desktop header. The collapsed mobile
        header is ~86px, so the old 100/140px pushed in-page jumps too far. */
     html { scroll-padding-top: 86px; }
-    [id="books"], [id="web-novels"], [id="services"], [id="gallery"],
+    [id="featured-serial"], [id="serial-doors"], [id="latest-episodes"], [id="books"], [id="web-novels"], [id="services"], [id="gallery"],
     [id="newsletter"], [id="about"], [id="hero-slider"], [id="lab"] {
       scroll-margin-top: 96px;
     }

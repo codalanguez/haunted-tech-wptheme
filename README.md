@@ -2,7 +2,7 @@
 
 A cyber-deco WordPress theme built for [codalanguez.com](https://codalanguez.com) — dark romance, web novels, art commissions, and morally ambiguous protagonists.
 
-High-contrast black + vivid gold + oxblood red with art-deco frames, animated CRT scanlines, live glitch effects on every heading, an auto-rotating hero update slider, a 3D-spine bookshelf, a working CRT-monitor terminal listing your web novels, a tabbed masonry gallery with lightbox, an about modal, and a sticky-header subscribe CTA.
+High-contrast black + vivid gold + oxblood red with art-deco frames, animated CRT scanlines, live glitch effects, a reader-first serial gateway, a 3D-spine bookshelf, a working CRT-monitor serial archive, a tabbed masonry gallery with lightbox, an about modal, and a sticky-header reading CTA.
 
 ---
 
@@ -26,11 +26,12 @@ Install ACF + the REST bridge before activating this theme. The theme registers 
 3. Activate.
 4. **Appearance → Customize → Site Identity** → upload your own logo (PNG/SVG, square). The bundled `assets/logo.png` is the Coda Languez medallion; the customizer override takes precedence.
 5. **WP Admin → Menus** → create three menus and assign locations:
-   - **Primary** — Books / Web Novels / Services / Gallery / About
+   - **Primary** — Read Serials / Finished Books / Newsletter / Studio / The Lab / About
    - **Social** — Custom Links to Patreon, Ream, Substack, Discord, etc. (icons are picked automatically from the URL host)
    - **Footer** — secondary links
-6. **WP Admin → Hero Updates → Add New** — publish 1–6 hero updates. The six most recent appear in the homepage carousel.
-7. Create a page with slug `about` to populate the About modal (post content becomes the bio; featured image becomes the portrait).
+6. Configure the homepage serial gateway. For a normal `webnovel`, open the title and fill in **Web Novel — Reader Path**. For an anthology story such as *The First Sky*, open its `hero_update` and fill in **Hero Update — Serial Gateway** instead.
+7. Use a direct Lantern story or Episode 1 route as the **Primary Reading URL** / `cta_link`. Use the Substack publication as **Secondary Follow URL**. The first button is for reading; the second is for staying connected.
+8. Create a page with slug `about` to populate the About modal (post content becomes the bio; featured image becomes the portrait).
 
 ---
 
@@ -47,6 +48,7 @@ haunted-tech/
 │
 ├── inc/                            PHP includes
 │   ├── render-callbacks.php          render functions for every block
+│   ├── serial-funnel.php              reader-path fields, destination rules + homepage blocks
 │   ├── blocks.php                    register_block_type() for each dynamic block
 │   ├── patterns.php                  register_block_pattern() compositions
 │   └── gallery-static.php            placeholder gallery markup (TODO: gallery_item CPT)
@@ -87,6 +89,9 @@ All blocks live under the **Haunted Tech** category in the block inserter:
 | `haunted-tech/site-footer`    | Footer logo + links + copyright | Footer menu |
 | `haunted-tech/overlays`       | CRT scanline band + static burst | static |
 | `haunted-tech/hero-slider`    | Up to 6-slide rotating hero | `hero_update` CPT |
+| `haunted-tech/featured-serial`| Primary serial promise + Lantern/Substack routes | featured `webnovel` or `hero_update` |
+| `haunted-tech/serial-doors`   | Up to three reader-choice cards | prioritized `webnovel` posts |
+| `haunted-tech/latest-episodes`| Newest chapter releases with direct reading links | `chapter` CPT |
 | `haunted-tech/bookshelf`      | Spine grid of published books | `book` CPT |
 | `haunted-tech/crt-monitor`    | Terminal-style web novel list | `webnovel` CPT (+ chapter counts) |
 | `haunted-tech/services`       | Three service cards | static |
@@ -103,7 +108,7 @@ All blocks live under the **Haunted Tech** category in the block inserter:
 
 Pre-built compositions in the inserter (Patterns → Haunted Tech):
 
-- **Full Homepage** — hero + bookshelf + CRT + services + gallery + newsletter
+- **Full Homepage** — featured serial + reader doors + serial archive + newsletter + books + studio + gallery + lab
 - **Books + Web Novels** — bookshelf + CRT
 - **Services + Gallery** — services + gallery
 
@@ -137,6 +142,27 @@ Each homepage hero slide is one post of type `hero_update`. Fields (ACF):
 | `cta_link`    | Button URL |
 
 The six most recent updates appear in the slider, sorted DESC by publish date. Auto-rotation is 5 s per slide, pauses on hover.
+
+### Serial reader gateway *(v0.20)*
+
+The homepage now begins with one explicit reading promise instead of a rotating list of unrelated updates. `haunted-tech/featured-serial` first looks for a `hero_update` marked **Use as Featured Serial**, then for a `webnovel` marked **Featured Serial**. If neither exists, it safely falls back to the latest chapter update and then the newest web novel.
+
+The primary button should lead to the place where the story is actually read. For *The First Sky*, that is Lantern. The secondary button is a continuity route—normally Substack—so it is labeled **Follow on Substack**, not as though the serial were hosted in both places.
+
+Reader-path fields on `webnovel` posts include campaign priority, reader lane, sourced hook, primary URL/platform/label, secondary follow URL/label, current access message, manuscript state, episode progress, and next release date. `hero_update` posts expose the smaller subset needed for anthology arcs and externally hosted serials. Blank facts do not render.
+
+`haunted-tech/serial-doors` shows up to three deliberately selected serials (`gateway_serial`) ordered by `campaign_priority`. If none have been selected yet, it falls back to the newest web novels.
+
+Recommended *The First Sky* setup:
+
+- Featured source: a chapter-type `hero_update`, because the story is an arc inside *Letters Between Sex and Violence*, not a separate `webnovel` post.
+- Primary destination: `https://codalanguez.com/go/FirstSkyLantern` (Episode 1 on Lantern).
+- Primary label: **Start The First Sky on Lantern**.
+- Secondary destination: `https://newsletter.codalanguez.com/`.
+- Secondary label: **Follow on Substack**.
+- Access message: state the current invitation/adult-access situation only after verifying it; do not let an old launch claim become evergreen copy.
+
+Both buttons carry `data-serial` and `data-serial-action` attributes so analytics can distinguish a Lantern reading click from a Substack continuity click.
 
 ### Bookshelf — `book` CPT (ACF-registered)
 
@@ -177,7 +203,13 @@ A floating gold-bordered arrow in the bottom-right corner, also a footer singlet
 
 Lists your serialized novels in a terminal-style monitor. Status indicator (●/◯/✓) reflects the `status` ACF field. Chapter count is computed by counting `chapter` posts whose `webnovel` relationship field points to this novel.
 
-### Chapter reading — `chapter` CPT (ACF-registered)
+On a single web-novel page, the primary reading destination and secondary Substack route use the same reader-path rules as the homepage. Duplicate URLs collapse to one button.
+
+### Latest episodes and chapter reading — `chapter` CPT (ACF-registered)
+
+The homepage’s **Latest Episodes** block pulls the six newest published chapter posts. When a chapter has `external_read_url`, its card goes directly to that verified Lantern or Substack installment and names the platform. Without an external URL, it links to the local chapter page. Release dates and access badges appear only from stored chapter data.
+
+The chapter index on each web-novel page follows the same destination rule. This prevents an off-platform chapter from looking like a full local reading page while preserving local chapter pages where the text actually lives.
 
 `single-chapter.php` renders the chapter content with optional author's note, content warnings, paywall metadata, and prev/next navigation. Prev/next default to the previous/next chapter by `chapter_number` within the same web novel, unless manually overridden via the `prev_chapter` / `next_chapter` ACF fields.
 
@@ -253,7 +285,11 @@ Every meaningful spot on the homepage has a stable `id`. Use any of them as a Cu
 
 | Anchor | Where it lands |
 |---|---|
-| `#top` / `#hero` | Top of the hero slider (use `#top` for a "back to top" button) |
+| `#featured-serial` | Main serial promise and direct reading CTA |
+| `#serial-doors` | Three reader-choice cards |
+| `#latest-episodes` | Most recently published chapter links |
+| `#top` | Top of the page (use for a "back to top" button) |
+| `#hero` | Legacy hero slider, when that block is used |
 | `#books` | Bookshelf section |
 | `#book-<slug>` | A specific book's spine on the shelf (slug = the book's post slug) |
 | `#web-novels` | CRT-monitor web novels section |
