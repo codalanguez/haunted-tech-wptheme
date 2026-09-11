@@ -3027,7 +3027,7 @@
   .chapter-index-item:last-child { border-bottom: none; }
   .chapter-index-link {
     display: grid;
-    grid-template-columns: 2.5rem 1fr auto;
+    grid-template-columns: 2.5rem minmax(0, 1fr) max-content max-content;
     align-items: center;
     gap: 1rem;
     padding: 0.9rem 0.5rem;
@@ -3040,8 +3040,29 @@
   }
   .chapter-index-title { font-family: 'Cormorant Garamond', serif; font-size: 1.12rem; color: var(--bone); }
   .chapter-index-title em { color: var(--bone-dim); font-style: italic; }
+  .chapter-index-link .chapter-access-badge { justify-self: start; white-space: nowrap; }
+  .chapter-index-destination {
+    justify-self: end;
+    color: var(--cyan);
+    font-family: 'VT323', monospace;
+    font-size: 0.82rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
   @media (max-width: 600px) {
-    .chapter-index-link { grid-template-columns: 1fr; text-align: center; gap: 0.4rem; }
+    .chapter-index-link {
+      grid-template-columns: 2rem minmax(0, 1fr) max-content;
+      gap: 0.45rem 0.75rem;
+      text-align: left;
+    }
+    .chapter-index-num { grid-column: 1; grid-row: 1 / span 2; align-self: start; padding-top: 0.15rem; }
+    .chapter-index-title { grid-column: 2 / -1; grid-row: 1; }
+    .chapter-index-link .chapter-access-badge { grid-column: 2; grid-row: 2; }
+    .chapter-index-destination { grid-column: 3; grid-row: 2; }
+  }
+  @media (max-width: 420px) {
+    .chapter-index-destination { grid-column: 2 / -1; grid-row: 3; justify-self: start; }
   }
 
   /* Chapter accordions — one collapsible group per story (the `arc` field).

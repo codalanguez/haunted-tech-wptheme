@@ -1726,8 +1726,8 @@ function ht_render_single_webnovel($attributes = []) {
             <a href="<?php echo esc_url($destination['url']); ?>" class="chapter-index-link" data-serial-action="chapter-index" data-serial="<?php echo esc_attr($serial_slug); ?>" data-episode="<?php echo esc_attr($ch->post_name); ?>"<?php echo $destination['external'] ? ' target="_blank"' : ''; ?><?php echo $rel; ?>>
               <span class="chapter-index-num"><?php echo ($ch_no !== '' && $ch_no !== null) ? esc_html($ch_no) : ''; ?></span>
               <span class="chapter-index-title"><?php if ($show_arc && $ch_arc): ?><em><?php echo esc_html($ch_arc); ?> &middot; </em><?php endif; ?><?php echo esc_html(get_the_title($ch)); ?></span>
-              <span class="chapter-index-destination"><?php echo sprintf(esc_html__('Read on %s', 'haunted-tech'), esc_html($destination['platform'])); ?></span>
               <span class="chapter-access-badge chapter-access-<?php echo esc_attr($ch_access); ?>"><?php echo esc_html($access_labels[$ch_access] ?? 'Free'); ?></span>
+              <span class="chapter-index-destination"><?php echo sprintf(esc_html__('Read on %s', 'haunted-tech'), esc_html($destination['platform'])); ?> <span aria-hidden="true">&rarr;</span></span>
             </a>
           </li>
           <?php return ob_get_clean();
