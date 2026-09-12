@@ -571,7 +571,7 @@ function ht_render_reader_index($attributes = []) {
             <div class="reader-index-scrim" aria-hidden="true"></div>
             <div class="reader-index-copy">
               <?php if ($entry['lane']): ?><p class="reader-index-lane"><?php echo esc_html($entry['lane']); ?></p><?php endif; ?>
-              <h3><?php echo esc_html($entry['title']); ?></h3>
+              <h3 data-text="<?php echo esc_attr($entry['title']); ?>"><?php echo esc_html($entry['title']); ?></h3>
               <?php if ($entry['hook']): ?><div class="reader-index-hook"><?php echo wp_kses_post(wpautop($entry['hook'])); ?></div><?php endif; ?>
               <?php if ($entry['schedule']): ?><p class="reader-index-schedule"><?php echo esc_html($entry['schedule']); ?></p><?php endif; ?>
               <div class="reader-index-actions">
@@ -656,7 +656,7 @@ function ht_render_flagship_serial_page($attributes = []) {
         <div class="flagship-hero-scrim" aria-hidden="true"></div>
         <div class="flagship-hero-copy">
           <?php if ($entry['lane']): ?><p class="serial-kicker"><?php echo esc_html($entry['lane']); ?></p><?php endif; ?>
-          <h1 id="flagship-serial-title"><?php echo esc_html($title); ?></h1>
+          <h1 id="flagship-serial-title" data-text="<?php echo esc_attr($title); ?>"><?php echo esc_html($title); ?></h1>
           <?php if ($entry['hook']): ?><div class="flagship-hook"><?php echo wp_kses_post(wpautop($entry['hook'])); ?></div><?php endif; ?>
           <?php if ($entry['schedule']): ?><p class="flagship-schedule"><?php echo esc_html($entry['schedule']); ?></p><?php endif; ?>
           <?php if ($access): ?><p class="flagship-access"><?php echo esc_html($access); ?></p><?php endif; ?>
