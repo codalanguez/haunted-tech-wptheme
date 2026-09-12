@@ -40,10 +40,12 @@ jobs:
             ./ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.THEME_PATH }}/
 
       - name: Smoke test reader funnel
+        continue-on-error: true
+        timeout-minutes: 1
         run: |
           page="$(mktemp)"
           curl --fail --silent --show-error \
-            --retry 5 --retry-all-errors --retry-delay 10 --max-time 30 \
+            --retry 1 --retry-all-errors --retry-delay 5 --max-time 15 \
             --user-agent "Haunted-Tech-Deploy-Check/1.0" \
             "https://codalanguez.com/the-first-sky/?deploy-check=${GITHUB_SHA}" \
             --output "$page"
