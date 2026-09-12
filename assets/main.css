@@ -134,7 +134,10 @@
    * headings don't slide behind it. */
   html { scroll-padding-top: 100px; }
 
-  header {
+  /* Scope the sticky shell to the actual site header. A bare `header`
+   * selector also captured semantic section headers such as Start Here's
+   * `.reader-index-intro`, turning them into sticky black overlays. */
+  .block-header {
     border-bottom: 1px solid var(--border);
     padding: 1.4rem 3rem;
     background: linear-gradient(180deg, rgba(0,0,0,0.96), rgba(0,0,0,0.78));
@@ -143,7 +146,7 @@
     top: 0;
     z-index: 50;
   }
-  header::before {
+  .block-header::before {
     content: '';
     position: absolute; bottom: -3px; left: 50%; transform: translateX(-50%);
     width: 200px; height: 1px;

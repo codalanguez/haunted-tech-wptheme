@@ -321,8 +321,14 @@
 }
 
 .reader-index-intro {
+  position: relative;
+  z-index: 1;
   max-width: 760px;
   margin: 0 0 clamp(2rem, 5vw, 4rem);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  backdrop-filter: none;
 }
 
 .reader-index-intro h2,
