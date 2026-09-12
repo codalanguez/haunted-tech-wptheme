@@ -732,3 +732,37 @@ function ht_render_flagship_serial_page($attributes = []) {
     </main>
     <?php return ob_get_clean();
 }
+
+/**
+ * Ensure the flagship serial has a stable, shareable landing page.
+ *
+ * This is an idempotent content migration rather than a permanent write on
+ * every request. Once WordPress confirms the page mutation, the option guard
+ * prevents the migration from running again.
+ */
+add_action('init', function () {
+    $migration = '2026-09-11-first-sky-landing-v1';
+    if (get_option('haunted_tech_content_migration') === $migration) {
+        return;
+    }
+
+    $page = get_page_by_path('the-first-sky', OBJECT, 'page');
+    $post = [
+        'post_type'    => 'page',
+        'post_title'   => 'The First Sky',
+        'post_name'    => 'the-first-sky',
+        'post_content' => '<!-- wp:haunted-tech/flagship-serial-page /-->',
+        'post_status'  => 'publish',
+    ];
+
+    if ($page instanceof WP_Post) {
+        $post['ID'] = $page->ID;
+        $result = wp_update_post($post, true);
+    } else {
+        $result = wp_insert_post($post, true);
+    }
+
+    if (!is_wp_error($result) && $result) {
+        update_option('haunted_tech_content_migration', $migration, false);
+    }
+}, 40);
