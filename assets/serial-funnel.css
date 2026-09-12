@@ -516,3 +516,96 @@
   .reader-index-art { transition: none; }
   .reader-index-card:hover .reader-index-art { transform: none; }
 }
+
+/* ============================================================
+   FLAGSHIP SERIAL LANDING — one story, every useful next step
+   ============================================================ */
+.flagship-serial {
+  width: min(1180px, calc(100% - 2rem));
+  margin: clamp(1rem, 4vw, 3rem) auto 6rem;
+  color: var(--bone);
+}
+
+.flagship-hero {
+  position: relative;
+  min-height: min(780px, 88vh);
+  display: grid;
+  align-items: end;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--void);
+  isolation: isolate;
+}
+
+.flagship-hero::before,
+.flagship-hero::after {
+  content: '';
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.flagship-hero::before { inset: 1rem; border: 1px solid rgba(255,212,0,.3); }
+.flagship-hero::after { width: 7rem; height: 7rem; top: 0; right: 0; border-top: 2px solid var(--gold); border-right: 2px solid var(--gold); }
+.flagship-hero-art { position: absolute; inset: 0; z-index: -2; background-position: center 20%; background-size: cover; filter: saturate(.8) contrast(1.08); }
+.flagship-hero-scrim { position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgba(0,0,0,.97) 0%, rgba(0,0,0,.79) 48%, rgba(0,0,0,.2) 100%), linear-gradient(0deg, rgba(0,0,0,.88), transparent 55%); }
+.flagship-hero-copy { width: min(720px, 88%); padding: clamp(5rem, 10vw, 9rem) clamp(2rem, 7vw, 6rem); }
+.flagship-hero h1 { margin: .4rem 0 1.4rem; color: var(--gold-bright); font: clamp(3.7rem, 10vw, 8.8rem)/.82 Forum, serif; letter-spacing: -.035em; text-transform: uppercase; text-wrap: balance; }
+.flagship-hook { max-width: 43rem; font-size: clamp(1.2rem, 2.2vw, 1.55rem); line-height: 1.45; }
+.flagship-hook p { margin: 0; }
+.flagship-schedule { margin: 1.15rem 0 0; color: var(--cyan); font: 1.05rem/1.2 VT323, monospace; letter-spacing: .1em; text-transform: uppercase; }
+.flagship-access { max-width: 46rem; margin: .55rem 0 0; color: var(--bone-dim); }
+
+.flagship-actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1.7rem; }
+.flagship-button { min-height: 48px; display: inline-flex; align-items: center; justify-content: center; padding: .85rem 1.15rem; border: 1px solid var(--gold); color: var(--gold-bright); background: rgba(0,0,0,.64); font: 1rem/1 VT323, monospace; letter-spacing: .075em; text-decoration: none; text-transform: uppercase; transition: color .2s ease, background .2s ease, transform .2s ease; }
+.flagship-button-primary { color: var(--void); background: var(--gold); }
+.flagship-button:hover, .flagship-button:focus-visible { color: var(--void); background: var(--gold-bright); outline: 2px solid var(--cyan); outline-offset: 3px; transform: translateY(-2px); }
+
+.flagship-orient,
+.flagship-continuity,
+.flagship-next-read { margin-top: 1.25rem; padding: clamp(2rem, 6vw, 5rem); border: 1px solid var(--border); background: linear-gradient(135deg, rgba(255,212,0,.045), rgba(90,10,18,.2)); }
+.flagship-orient { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(260px, .8fr); align-items: end; gap: clamp(2rem, 7vw, 6rem); }
+.flagship-orient h2, .flagship-continuity h2, .flagship-next-read h2 { margin: .45rem 0 0; color: var(--gold-bright); font: clamp(2.4rem, 6vw, 5.4rem)/.93 Forum, serif; text-transform: uppercase; text-wrap: balance; }
+.flagship-orient > p, .flagship-continuity p, .flagship-next-read p { margin-bottom: 0; font-size: 1.12rem; line-height: 1.55; }
+
+.flagship-episodes { margin-top: 1.25rem; padding: clamp(2rem, 6vw, 5rem); border: 1px solid rgba(0,255,224,.35); background: rgba(0,0,0,.62); }
+.flagship-episodes h2 { margin: .4rem 0 2rem; color: var(--gold-bright); font: clamp(3rem, 8vw, 7rem)/.85 Forum, serif; text-transform: uppercase; }
+.flagship-episode-list { margin: 0; padding: 0; list-style: none; border-top: 1px solid rgba(255,255,255,.13); }
+.flagship-episode-list li { border-bottom: 1px solid rgba(255,255,255,.13); }
+.flagship-episode-list li.is-latest { border-left: 3px solid var(--cyan); background: rgba(0,255,224,.045); }
+.flagship-episode-list a { min-height: 92px; display: grid; grid-template-columns: minmax(7rem, .42fr) minmax(12rem, 1fr) minmax(12rem, .7fr); align-items: center; gap: 1rem; padding: 1.2rem clamp(1rem, 3vw, 2rem); color: var(--bone); text-decoration: none; transition: color .18s ease, background .18s ease; }
+.flagship-episode-list a:hover, .flagship-episode-list a:focus-visible { color: var(--gold-bright); background: rgba(255,212,0,.065); outline: 2px solid var(--gold); outline-offset: -2px; }
+.flagship-episode-number { color: var(--cyan); font: 1rem/1 VT323, monospace; letter-spacing: .08em; text-transform: uppercase; }
+.flagship-episode-title { color: inherit; font: clamp(1.45rem, 3vw, 2.2rem)/1 Forum, serif; }
+.flagship-episode-meta { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: .4rem 1rem; color: var(--bone-dim); font: .9rem/1.2 VT323, monospace; letter-spacing: .06em; text-transform: uppercase; text-align: right; }
+.flagship-episode-meta span:first-child { color: var(--gold); }
+
+.flagship-continuity { display: flex; align-items: center; justify-content: space-between; gap: 2.5rem; border-color: rgba(0,255,224,.42); background: linear-gradient(120deg, rgba(0,255,224,.07), rgba(90,10,18,.18)); }
+.flagship-continuity > div { max-width: 760px; }
+.flagship-continuity .flagship-button { flex: 0 0 auto; }
+.flagship-next-read { position: relative; overflow: hidden; border-left: 3px solid var(--gold); }
+.flagship-next-read::after { content: '11'; position: absolute; right: clamp(1rem, 5vw, 4rem); bottom: -2.6rem; color: rgba(255,212,0,.055); font: 13rem/1 Forum, serif; pointer-events: none; }
+.flagship-next-read > * { position: relative; z-index: 1; }
+
+@media (max-width: 760px) {
+  .flagship-serial { width: calc(100% - 1rem); }
+  .flagship-hero { min-height: 720px; }
+  .flagship-hero-scrim { background: linear-gradient(0deg, rgba(0,0,0,.98), rgba(0,0,0,.6) 74%, rgba(0,0,0,.3)); }
+  .flagship-hero-copy { width: 100%; padding: 7rem 1.5rem 4rem; }
+  .flagship-orient { grid-template-columns: 1fr; align-items: start; }
+  .flagship-continuity { align-items: flex-start; flex-direction: column; }
+  .flagship-continuity .flagship-button { width: 100%; }
+  .flagship-episode-list a { grid-template-columns: 1fr; gap: .45rem; }
+  .flagship-episode-meta { justify-content: flex-start; text-align: left; }
+}
+
+@media (max-width: 520px) {
+  .flagship-actions { display: grid; }
+  .flagship-button { width: 100%; text-align: center; }
+  .flagship-hero h1 { font-size: clamp(3.3rem, 19vw, 5.2rem); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flagship-button { transition: none; }
+  .flagship-button:hover, .flagship-button:focus-visible { transform: none; }
+}

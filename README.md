@@ -170,6 +170,10 @@ Reader actions carry `data-serial-action` plus serial, episode, book and retaile
 
 Single chapter pages now finish with a return-path panel. It prefers the next direct reading destination, then offers Episode One, Substack follow, and the Start Here shelf. External Lantern and Substack links retain the outbound relationship rules used elsewhere in the theme.
 
+### Flagship serial landing page *(v0.23)*
+
+`haunted-tech/flagship-serial-page` powers the dedicated `/the-first-sky/` acquisition page. It reads the existing *The First Sky* `hero_update` and live `chapter` records instead of duplicating episode facts inside the page. The page shows the verified story hook and access note, Episode One, the actual newest installment, the complete current episode list, a clearly labeled Substack follow route, and *Custodian* as the completed next read. All reader actions retain the named funnel-event attributes used elsewhere in the theme.
+
 ### Bookshelf — `book` CPT (ACF-registered)
 
 Each book renders as a vertical spine on the shelf. Hover lifts the spine and glitches the title. **Click opens a modal overlay** (the whole single-book layout slides in over the homepage) — the standalone `/books/<slug>/` page still works for direct links + SEO and contains identical content.

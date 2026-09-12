@@ -602,3 +602,133 @@ function ht_render_reader_index($attributes = []) {
     </section>
     <?php return ob_get_clean();
 }
+
+/**
+ * Dedicated acquisition page for The First Sky.
+ *
+ * The campaign source and chapter posts remain the authority. The page does
+ * not copy episode facts into page content, so its latest and episode routes
+ * advance with the same verified records used by the homepage.
+ */
+function ht_render_flagship_serial_page($attributes = []) {
+    $sources = get_posts([
+        'post_type'      => 'hero_update',
+        'post_status'    => 'publish',
+        'posts_per_page' => 1,
+        'meta_key'       => 'serial_title',
+        'meta_value'     => 'The First Sky',
+        'orderby'        => 'date',
+        'order'          => 'DESC',
+        'no_found_rows'  => true,
+    ]);
+    $source = $sources ? $sources[0] : null;
+    if (!$source) {
+        $featured = ht_get_featured_serial_source();
+        if ($featured && get_post_type($featured) === 'hero_update') $source = $featured;
+    }
+    if (!$source) return '';
+
+    $entry = ht_reader_index_entry($source, 'hero_update');
+    if (!$entry) return '';
+
+    $title = trim((string) ht_serial_field('serial_title', $source->ID)) ?: 'The First Sky';
+    $access = (string) ht_serial_field('access_message', $source->ID);
+    $chapters = get_posts([
+        'post_type'      => 'chapter',
+        'post_status'    => 'publish',
+        'posts_per_page' => -1,
+        'meta_key'       => 'chapter_number',
+        'orderby'        => 'meta_value_num',
+        'order'          => 'ASC',
+        'meta_query'     => [['key' => 'arc', 'value' => $title]],
+        'no_found_rows'  => true,
+    ]);
+    $latest_post = $entry['latest_post'];
+    $latest = $entry['latest'];
+    $start = $entry['start'];
+    $serial_slug = sanitize_title($title);
+    $custodian_url = 'https://lanternserials.com/story/custodian-0439f272';
+
+    ob_start(); ?>
+    <main class="flagship-serial" aria-labelledby="flagship-serial-title">
+      <section class="flagship-hero">
+        <?php if ($entry['cover']): ?><div class="flagship-hero-art" style="background-image:url('<?php echo esc_url($entry['cover']); ?>')" aria-hidden="true"></div><?php endif; ?>
+        <div class="flagship-hero-scrim" aria-hidden="true"></div>
+        <div class="flagship-hero-copy">
+          <?php if ($entry['lane']): ?><p class="serial-kicker"><?php echo esc_html($entry['lane']); ?></p><?php endif; ?>
+          <h1 id="flagship-serial-title"><?php echo esc_html($title); ?></h1>
+          <?php if ($entry['hook']): ?><div class="flagship-hook"><?php echo wp_kses_post(wpautop($entry['hook'])); ?></div><?php endif; ?>
+          <?php if ($entry['schedule']): ?><p class="flagship-schedule"><?php echo esc_html($entry['schedule']); ?></p><?php endif; ?>
+          <?php if ($access): ?><p class="flagship-access"><?php echo esc_html($access); ?></p><?php endif; ?>
+          <div class="flagship-actions">
+            <?php if (!empty($start['url'])): ?>
+              <a class="flagship-button flagship-button-primary" href="<?php echo esc_url($start['url']); ?>" data-serial-action="start-reading" data-serial="<?php echo esc_attr($serial_slug); ?>" target="_blank" rel="noopener"><?php esc_html_e('Start at Episode One', 'haunted-tech'); ?> <span aria-hidden="true">&rarr;</span></a>
+            <?php endif; ?>
+            <?php if ($latest && !empty($latest['url']) && $latest_post): ?>
+              <a class="flagship-button" href="<?php echo esc_url($latest['url']); ?>" data-serial-action="episode-read" data-serial="<?php echo esc_attr($serial_slug); ?>" data-episode="<?php echo esc_attr($latest_post->post_name); ?>" target="_blank" rel="noopener"><?php esc_html_e('Read the Newest Episode', 'haunted-tech'); ?> <span aria-hidden="true">&rarr;</span></a>
+            <?php endif; ?>
+          </div>
+        </div>
+      </section>
+
+      <section class="flagship-orient" aria-labelledby="flagship-orient-title">
+        <div>
+          <p class="serial-kicker"><?php esc_html_e('Two ways in', 'haunted-tech'); ?></p>
+          <h2 id="flagship-orient-title"><?php esc_html_e('Begin at the door. Or return to the damage.', 'haunted-tech'); ?></h2>
+        </div>
+        <p><?php esc_html_e('New reader? Episode One is the cleanest mistake. Already following along? The newest live episode is waiting on Lantern.', 'haunted-tech'); ?></p>
+      </section>
+
+      <?php if ($chapters): ?>
+      <section class="flagship-episodes" aria-labelledby="flagship-episodes-title">
+        <header>
+          <p class="serial-kicker"><?php esc_html_e('Current transmission log', 'haunted-tech'); ?></p>
+          <h2 id="flagship-episodes-title"><?php esc_html_e('Episodes', 'haunted-tech'); ?></h2>
+        </header>
+        <ol class="flagship-episode-list">
+          <?php foreach ($chapters as $chapter):
+              $destination = ht_get_chapter_destination($chapter->ID);
+              $number = ht_serial_field('chapter_number', $chapter->ID, null);
+              $release = (string) ht_serial_field('release_date', $chapter->ID);
+              $is_latest = $latest_post && (int) $chapter->ID === (int) $latest_post->ID;
+              $episode_label = $number !== null
+                  ? ((int) $number === 0 ? __('Prologue', 'haunted-tech') : sprintf(__('Episode %d', 'haunted-tech'), (int) $number))
+                  : __('Episode', 'haunted-tech');
+          ?>
+            <li<?php echo $is_latest ? ' class="is-latest"' : ''; ?>>
+              <a href="<?php echo esc_url($destination['url']); ?>" data-serial-action="episode-read" data-serial="<?php echo esc_attr($serial_slug); ?>" data-episode="<?php echo esc_attr($chapter->post_name); ?>"<?php echo $destination['external'] ? ' target="_blank" rel="' . esc_attr($destination['rel']) . '"' : ''; ?>>
+                <span class="flagship-episode-number"><?php echo esc_html($episode_label); ?></span>
+                <span class="flagship-episode-title"><?php echo esc_html(get_the_title($chapter)); ?></span>
+                <span class="flagship-episode-meta">
+                  <?php if ($is_latest): ?><span><?php esc_html_e('Newest', 'haunted-tech'); ?></span><?php endif; ?>
+                  <?php if ($release && ($timestamp = strtotime($release))): ?><time datetime="<?php echo esc_attr($release); ?>"><?php echo esc_html(wp_date(get_option('date_format'), $timestamp)); ?></time><?php endif; ?>
+                  <span><?php echo sprintf(esc_html__('Read on %s', 'haunted-tech'), esc_html($destination['platform'])); ?> &rarr;</span>
+                </span>
+              </a>
+            </li>
+          <?php endforeach; ?>
+        </ol>
+      </section>
+      <?php endif; ?>
+
+      <section class="flagship-continuity" aria-labelledby="flagship-follow-title">
+        <div>
+          <p class="serial-kicker"><?php esc_html_e('Keep the signal', 'haunted-tech'); ?></p>
+          <h2 id="flagship-follow-title"><?php esc_html_e('Lantern holds the story. Substack tells you Coda is still alive.', 'haunted-tech'); ?></h2>
+          <p><?php esc_html_e('Follow the publication for new fiction, art, and whatever crawls out between releases.', 'haunted-tech'); ?></p>
+        </div>
+        <a class="flagship-button" href="<?php echo esc_url(home_url('/go/substack')); ?>" data-serial-action="follow-substack" data-serial="publication" target="_blank" rel="noopener"><?php esc_html_e('Follow Coda on Substack', 'haunted-tech'); ?> <span aria-hidden="true">&rarr;</span></a>
+      </section>
+
+      <section class="flagship-next-read" aria-labelledby="flagship-next-title">
+        <p class="serial-kicker"><?php esc_html_e('Prefer not to wait?', 'haunted-tech'); ?></p>
+        <h2 id="flagship-next-title"><?php esc_html_e('Custodian is complete in eleven parts.', 'haunted-tech'); ?></h2>
+        <p><?php esc_html_e('Another story from Letters Between Sex and Violence. The entire serial is already on Lantern.', 'haunted-tech'); ?></p>
+        <div class="flagship-actions">
+          <a class="flagship-button flagship-button-primary" href="<?php echo esc_url($custodian_url); ?>" data-serial-action="serial-index" data-serial="custodian" target="_blank" rel="noopener"><?php esc_html_e('Read Custodian on Lantern', 'haunted-tech'); ?> <span aria-hidden="true">&rarr;</span></a>
+          <a class="flagship-button" href="<?php echo esc_url(home_url('/start-here/')); ?>" data-serial-action="serial-index" data-serial="all-serials"><?php esc_html_e('Choose Another Story', 'haunted-tech'); ?> <span aria-hidden="true">&rarr;</span></a>
+        </div>
+      </section>
+    </main>
+    <?php return ob_get_clean();
+}
