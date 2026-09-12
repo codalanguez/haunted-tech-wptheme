@@ -38,3 +38,18 @@ jobs:
             --exclude='.env' \
             -e "ssh -i ~/.ssh/deploy_key -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no" \
             ./ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.THEME_PATH }}/
+
+      - name: Smoke test reader funnel
+        run: |
+          page="$(mktemp)"
+          curl --fail --silent --show-error \
+            --retry 5 --retry-all-errors --retry-delay 10 --max-time 30 \
+            --user-agent "Haunted-Tech-Deploy-Check/1.0" \
+            "https://codalanguez.com/the-first-sky/?deploy-check=${GITHUB_SHA}" \
+            --output "$page"
+          grep --fixed-strings 'class="flagship-serial"' "$page"
+          grep --fixed-strings 'data-serial-action="start-reading"' "$page"
+          grep --fixed-strings 'data-serial-action="episode-read"' "$page"
+          grep --fixed-strings 'data-serial-action="follow-substack"' "$page"
+          grep --fixed-strings 'data-serial="custodian"' "$page"
+          grep --fixed-strings 'href="https://codalanguez.com/start-here/"' "$page"
