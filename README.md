@@ -129,7 +129,7 @@ After activation, **Appearance → Editor (beta)** opens the Site Editor. From t
 
 ### Hero slider — Start Here story shelf
 
-The carousel uses `ht_get_reader_index_entries()`, the same canonical collection rendered by the Start Here reader index. Each slide receives the story title, reader lane, hook, cover art, and true Episode One destination from that normalized entry. The featured serial leads; remaining web novels and anthology arcs retain their Start Here order. Up to six entries are shown.
+The carousel uses `ht_get_reader_index_entries()`, the same canonical collection rendered by the Start Here reader index. Each slide receives the story title, reader lane, hook, cover art, and true Episode One destination from that normalized entry. The featured serial leads; remaining web novels and anthology arcs retain their Start Here order. Up to six entries are shown. The slide stage keeps a 3:2 aspect ratio and scales against the available viewport height so the complete carousel is visible on entry without scrolling.
 
 Auto-rotation is 5 s per slide and pauses on hover. Arrow keys, labeled previous/next buttons, and labeled story dots support manual navigation. When a visitor requests reduced motion, the carousel stays on its first story until they navigate it manually and all hero glitch/zoom animation is disabled.
 

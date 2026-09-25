@@ -563,7 +563,18 @@
   }
 
   /* ============ HERO ============ */
-  .hero { padding: 8rem 3rem 7rem; position: relative; overflow: hidden; border-bottom: 1px solid var(--border); background: var(--void); }
+  .hero {
+    padding: clamp(0.75rem, 2vh, 1.75rem) clamp(1rem, 3vw, 3rem);
+    min-height: calc(100svh - 180px);
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid var(--border);
+    background: var(--void);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-sizing: border-box;
+  }
   .hero::before {
     content: ''; position: absolute; top: -200px; left: 50%; transform: translateX(-50%);
     width: 1200px; height: 1200px;
@@ -585,7 +596,17 @@
       radial-gradient(ellipse at 30% 80%, rgba(229,9,20,0.06), transparent 60%);
     pointer-events: none;
   }
-  .hero-frame { max-width: 900px; margin: 0 auto; text-align: center; position: relative; padding: 5rem 4rem; z-index: 2; }
+  .hero-frame {
+    width: min(900px, calc((100svh - 310px) * 1.5), 100%);
+    max-width: 900px;
+    aspect-ratio: 3 / 2;
+    margin: 0 auto;
+    text-align: center;
+    position: relative;
+    padding: clamp(2rem, 5vh, 4rem) clamp(2rem, 5vw, 4rem);
+    z-index: 2;
+    box-sizing: border-box;
+  }
   .hero-frame::before, .hero-frame::after, .deco-corner-tr, .deco-corner-bl {
     content: ''; position: absolute; width: 60px; height: 60px;
     border: 2px solid var(--gold);
@@ -1067,7 +1088,7 @@
      slide. (Previously each slide was position:absolute, so a long blurb
      overflowed the fixed-height frame and collided with the controls once a
      second slide made them render.) */
-  .hero-frame { min-height: 480px; display: grid; align-content: center; overflow: hidden; }
+  .hero-frame { min-height: 0; display: grid; align-content: center; overflow: hidden; }
   .hero-content {
     grid-area: 1 / 1;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -1138,7 +1159,7 @@
   .hero-controls {
     position: relative;
     z-index: 3;
-    margin-top: 2.5rem;
+    margin-top: clamp(0.75rem, 1.8vh, 1.5rem);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1188,7 +1209,7 @@
   .hero-progress {
     height: 1px;
     background: var(--border-dim);
-    margin: 1.5rem auto 0;
+    margin: clamp(0.5rem, 1vh, 0.9rem) auto 0;
     max-width: 300px;
     position: relative;
     overflow: hidden;
@@ -2429,7 +2450,25 @@
   @media (max-width: 700px) {
     .header-inner { grid-template-columns: 1fr; justify-items: center; gap: 1rem; }
     .logo, .site-nav, .header-right { justify-self: center; }
-    .hero-frame { padding: 3rem 1.5rem; }
+    .hero { min-height: auto; }
+    .hero-frame {
+      width: 100%;
+      padding: clamp(1.1rem, 4vw, 1.75rem) 1.1rem;
+    }
+    .hero-eyebrow { font-size: 0.65rem; letter-spacing: 0.35em; margin-bottom: 0.65rem; }
+    .hero h2 { font-size: clamp(1.65rem, 8.5vw, 3rem); margin-bottom: 0.65rem; line-height: 0.95; }
+    .hero p {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      overflow: hidden;
+      font-size: 1rem;
+      line-height: 1.25;
+      margin: 0 auto 0.85rem;
+    }
+    .hero .cta { padding: 0.65rem 1rem; font-size: 0.68rem; letter-spacing: 0.22em; }
+    .hero-controls { margin-top: 0.75rem; }
+    .hero-progress { margin-top: 0.55rem; }
     .crt-row { grid-template-columns: 28px 1fr; gap: 0.6rem; }
     .crt-tag, .crt-meta, .crt-state { grid-column: 2; font-size: 0.85rem; }
     .bookshelf { gap: 4px; flex-wrap: wrap; min-height: auto; }
