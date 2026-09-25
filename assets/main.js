@@ -233,15 +233,13 @@
     window.addEventListener('hashchange', () => { if (isOurHash(location.hash)) open(); });
   })();
 
-  // ===== Hero slider — auto-rotate w/ pause on hover, arrows + dots + progress =====
+  // ===== Hero slider — auto-rotate w/ pause on hover + side arrows =====
   (function(){
     const hero = document.getElementById('hero-slider');
     if (!hero) return;
     const slides = hero.querySelectorAll('.hero-content');
-    const dots = hero.querySelectorAll('.hero-dot');
     const prevBtn = hero.querySelector('.hero-arrow.prev');
     const nextBtn = hero.querySelector('.hero-arrow.next');
-    const progressFill = document.getElementById('hero-progress-fill');
     let index = 0;
     const total = slides.length;
     // Read duration + autoplay from Customizer-localized options if present.
@@ -274,31 +272,22 @@
       index = (n + total) % total;
       loadSlideBg(slides[index]);
       slides.forEach((s, i) => s.classList.toggle('active', i === index));
-      dots.forEach((d, i) => {
-        d.classList.toggle('active', i === index);
-        d.setAttribute('aria-selected', i === index ? 'true' : 'false');
-      });
       progressStart = Date.now();
     }
     function tick() {
       if (!paused && AUTOPLAY && !REDUCED_MOTION) {
         const elapsed = Date.now() - progressStart;
-        const pct = Math.min(100, (elapsed / DURATION) * 100);
-        if (progressFill) progressFill.style.width = pct + '%';
         if (elapsed >= DURATION) go(index + 1);
-      } else if ((!AUTOPLAY || REDUCED_MOTION) && progressFill) {
-        progressFill.style.width = '0%';
       }
       rafId = requestAnimationFrame(tick);
     }
     prevBtn && prevBtn.addEventListener('click', () => go(index - 1));
     nextBtn && nextBtn.addEventListener('click', () => go(index + 1));
-    dots.forEach(d => d.addEventListener('click', () => go(parseInt(d.dataset.slide, 10))));
     hero.addEventListener('mouseenter', () => { paused = true; hero.classList.add('paused'); });
     hero.addEventListener('mouseleave', () => {
       paused = false;
       hero.classList.remove('paused');
-      progressStart = Date.now() - ((parseFloat(progressFill.style.width)/100) * DURATION || 0);
+      progressStart = Date.now();
     });
     // Keyboard arrows when hero in focus
     hero.addEventListener('keydown', e => {

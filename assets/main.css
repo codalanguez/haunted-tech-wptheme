@@ -1044,7 +1044,7 @@
   }
   /* Make sure hero-frame stays above the watermark */
   .hero-frame { position: relative; z-index: 2; }
-  .hero-controls, .hero-progress { position: relative; z-index: 3; }
+  .hero-controls { position: relative; z-index: 3; }
 
   /* ============ LIGHTBOX BRAND MARK (signature on the image) ============ */
   .lightbox-brand {
@@ -1142,6 +1142,7 @@
     .hero-slide-bg { transition: none; transform: scale(1); }
     .hero h2, .hero h2::before, .hero h2::after, .cta { animation: none; }
     .hero-content { transition: none; transform: none; }
+    .hero-arrow::before, .hero-arrow::after { animation: none; }
   }
   @media (max-width: 700px) {
     .hero-slide-bg, .hero-slide-scrim { inset: -3rem -1.5rem; }
@@ -1155,80 +1156,66 @@
   .hero-content[data-slide="2"] .hero-eyebrow { color: var(--cyan); text-shadow: 0 0 12px rgba(0,255,224,0.4); }
   .hero-content[data-slide="2"] .hero-eyebrow::before, .hero-content[data-slide="2"] .hero-eyebrow::after { color: var(--gold); }
 
-  /* Hero slider controls — sit OUTSIDE the deco frame, below */
+  /* Hero slider controls — two chromatic arrows pinned to the image edges. */
   .hero-controls {
-    position: relative;
+    position: absolute;
     z-index: 3;
-    margin-top: clamp(0.75rem, 1.8vh, 1.5rem);
+    top: 50%;
+    left: 50%;
+    width: min(900px, calc((100svh - 310px) * 1.5), calc(100% - 2rem));
+    margin: 0;
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 1.5rem;
-    max-width: 900px;
-    margin-left: auto;
-    margin-right: auto;
+    justify-content: space-between;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
   }
   .hero-arrow {
-    width: 44px; height: 44px;
+    width: 58px; height: 72px;
     display: inline-flex; align-items: center; justify-content: center;
-    background: var(--void);
+    background: rgba(10,10,12,0.68);
     color: var(--gold);
-    border: 1px solid var(--gold);
+    border: 0;
     font-family: 'Forum', serif;
-    font-size: 1.3rem;
+    font-size: 2.4rem;
     cursor: pointer;
-    transition: all 0.3s;
-    text-shadow: 0 0 8px rgba(255,212,0,0.4);
+    transition: color 0.2s, background 0.2s, transform 0.2s, text-shadow 0.2s;
+    text-shadow: -2px 0 var(--red), 2px 0 var(--cyan), 0 0 14px var(--gold);
+    position: relative;
+    pointer-events: auto;
+    overflow: hidden;
   }
+  .hero-arrow::before,
+  .hero-arrow::after {
+    content: attr(data-glyph);
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+    opacity: 0;
+  }
+  .hero-arrow::before { color: var(--red); animation: hero-arrow-glitch-r 3.2s infinite steps(1); }
+  .hero-arrow::after  { color: var(--cyan); animation: hero-arrow-glitch-c 3.2s infinite steps(1); }
+  .hero-arrow.prev { transform: translateX(-50%); }
+  .hero-arrow.next { transform: translateX(50%); }
   .hero-arrow:hover {
     background: var(--red);
     color: var(--bone);
-    border-color: var(--red);
-    box-shadow: 0 0 24px rgba(229,9,20,0.5);
+    text-shadow: -4px 0 var(--cyan), 4px 0 var(--gold), 0 0 24px var(--red);
+    animation: glitch-shift-fast 0.35s;
   }
-  .hero-dots {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
+  @keyframes hero-arrow-glitch-r {
+    0%, 88%, 100% { opacity: 0; transform: translate(0); clip-path: inset(0); }
+    89% { opacity: 0.85; transform: translate(-5px, -2px); clip-path: inset(12% 0 58% 0); }
+    91% { opacity: 0.55; transform: translate(4px, 2px); clip-path: inset(62% 0 10% 0); }
+    93% { opacity: 0; transform: translate(0); }
   }
-  .hero-dot {
-    width: 12px; height: 12px;
-    background: transparent;
-    border: 1px solid var(--gold);
-    cursor: pointer;
-    transition: all 0.3s;
-    transform: rotate(45deg);
-    padding: 0;
-    position: relative;
-  }
-  .hero-dot:hover { background: rgba(255,212,0,0.3); }
-  .hero-dot.active {
-    background: var(--gold);
-    box-shadow: 0 0 12px var(--gold), 0 0 24px rgba(229,9,20,0.4);
-  }
-  .hero-progress {
-    height: 1px;
-    background: var(--border-dim);
-    margin: clamp(0.5rem, 1vh, 0.9rem) auto 0;
-    max-width: 300px;
-    position: relative;
-    overflow: hidden;
-  }
-  .hero-progress-fill {
-    position: absolute; top: 0; left: 0;
-    height: 100%;
-    width: 0;
-    background: linear-gradient(90deg, var(--red), var(--gold), var(--red));
-    box-shadow: 0 0 8px var(--gold);
-    transition: width 0.1s linear;
-  }
-  .hero.paused .hero-progress-fill { transition: none; }
-
-  /* Keep desktop controls inside the 3:2 stage. The frame itself fits the
-     first viewport; allowing the control row to consume a second line below
-     it pushed the arrows just past the fold on shorter desktop windows. */
-  @media (min-width: 701px) {
-    .hero-controls { margin-top: -70px; }
+  @keyframes hero-arrow-glitch-c {
+    0%, 90%, 100% { opacity: 0; transform: translate(0); clip-path: inset(0); }
+    91% { opacity: 0.8; transform: translate(5px, 1px); clip-path: inset(48% 0 18% 0); }
+    94% { opacity: 0.5; transform: translate(-4px, -1px); clip-path: inset(18% 0 64% 0); }
+    96% { opacity: 0; transform: translate(0); }
   }
 
   /* ============ SECTIONS GENERIC ============ */
@@ -2474,8 +2461,8 @@
       margin: 0 auto 0.85rem;
     }
     .hero .cta { padding: 0.65rem 1rem; font-size: 0.68rem; letter-spacing: 0.22em; }
-    .hero-controls { margin-top: 0.75rem; }
-    .hero-progress { margin-top: 0.55rem; }
+    .hero-controls { width: calc(100% - 1rem); }
+    .hero-arrow { width: 42px; height: 54px; font-size: 1.8rem; }
     .crt-row { grid-template-columns: 28px 1fr; gap: 0.6rem; }
     .crt-tag, .crt-meta, .crt-state { grid-column: 2; font-size: 0.85rem; }
     .bookshelf { gap: 4px; flex-wrap: wrap; min-height: auto; }

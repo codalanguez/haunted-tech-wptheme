@@ -207,15 +207,9 @@ function ht_render_hero_slider($attributes = []) {
 
       <?php if (count($hero_slides) > 1): ?>
       <div class="hero-controls" role="group" aria-label="<?php esc_attr_e('Story carousel', 'haunted-tech'); ?>">
-        <button class="hero-arrow prev" aria-label="<?php esc_attr_e('Previous story', 'haunted-tech'); ?>">&larr;</button>
-        <div class="hero-dots" role="tablist">
-          <?php foreach ($hero_slides as $i => $_): ?>
-            <button class="hero-dot<?php echo $i === 0 ? ' active' : ''; ?>" data-slide="<?php echo (int)$i; ?>" role="tab" aria-label="<?php echo esc_attr(sprintf(__('Show story %d of %d', 'haunted-tech'), $i + 1, count($hero_slides))); ?>" aria-selected="<?php echo $i === 0 ? 'true' : 'false'; ?>"></button>
-          <?php endforeach; ?>
-        </div>
-        <button class="hero-arrow next" aria-label="<?php esc_attr_e('Next story', 'haunted-tech'); ?>">&rarr;</button>
+        <button class="hero-arrow prev" data-glyph="&larr;" aria-label="<?php esc_attr_e('Previous story', 'haunted-tech'); ?>">&larr;</button>
+        <button class="hero-arrow next" data-glyph="&rarr;" aria-label="<?php esc_attr_e('Next story', 'haunted-tech'); ?>">&rarr;</button>
       </div>
-      <div class="hero-progress"><div class="hero-progress-fill" id="hero-progress-fill"></div></div>
       <?php endif; ?>
     </div>
     <?php
