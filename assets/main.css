@@ -1224,6 +1224,13 @@
   }
   .hero.paused .hero-progress-fill { transition: none; }
 
+  /* Keep desktop controls inside the 3:2 stage. The frame itself fits the
+     first viewport; allowing the control row to consume a second line below
+     it pushed the arrows just past the fold on shorter desktop windows. */
+  @media (min-width: 701px) {
+    .hero-controls { margin-top: -70px; }
+  }
+
   /* ============ SECTIONS GENERIC ============ */
   section { padding: 6rem 3rem; max-width: 1300px; margin: 0 auto; position: relative; }
   .section-header { text-align: center; margin-bottom: 4rem; }
