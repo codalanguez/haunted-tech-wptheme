@@ -88,7 +88,7 @@ All blocks live under the **Haunted Tech** category in the block inserter:
 | `haunted-tech/site-header`    | Logo + nav + Subscribe CTA | Primary menu |
 | `haunted-tech/site-footer`    | Footer logo + links + copyright | Footer menu |
 | `haunted-tech/overlays`       | CRT scanline band + static burst | static |
-| `haunted-tech/hero-slider`    | Up to 6-slide rotating hero | `hero_update` CPT |
+| `haunted-tech/hero-slider`    | Up to 6-story rotating hero | Canonical Start Here shelf |
 | `haunted-tech/featured-serial`| Primary serial promise + Lantern/Substack routes | featured `webnovel` or `hero_update` |
 | `haunted-tech/serial-doors`   | Up to three reader-choice cards | prioritized `webnovel` posts |
 | `haunted-tech/latest-episodes`| Newest chapter releases with direct reading links | `chapter` CPT |
@@ -127,25 +127,15 @@ After activation, **Appearance → Editor (beta)** opens the Site Editor. From t
 
 ## What lives where
 
-### Hero slider — `hero_update` CPT
+### Hero slider — Start Here story shelf
 
-Each homepage hero slide is one post of type `hero_update`. Fields (ACF):
+The carousel uses `ht_get_reader_index_entries()`, the same canonical collection rendered by the Start Here reader index. Each slide receives the story title, reader lane, hook, cover art, and true Episode One destination from that normalized entry. The featured serial leads; remaining web novels and anthology arcs retain their Start Here order. Up to six entries are shown.
 
-| Field | Use |
-|---|---|
-| `update_type` | `book` (gold accent) · `chapter` (red) · `mandate` (cyan) |
-| `eyebrow`     | Small label above title — "New Release · Hardcover" |
-| `title_first` | Plain first half of the title |
-| `title_accent`| Second half, rendered in gold with extra glow |
-| `blurb`       | Body copy |
-| `cta_label`   | Button text |
-| `cta_link`    | Button URL |
-
-The six most recent updates appear in the slider, sorted DESC by publish date. Auto-rotation is 5 s per slide, pauses on hover.
+Auto-rotation is 5 s per slide and pauses on hover. Arrow keys, labeled previous/next buttons, and labeled story dots support manual navigation. When a visitor requests reduced motion, the carousel stays on its first story until they navigate it manually and all hero glitch/zoom animation is disabled.
 
 ### Serial reader gateway *(v0.20)*
 
-The homepage now begins with one explicit reading promise instead of a rotating list of unrelated updates. `haunted-tech/featured-serial` first looks for a `hero_update` marked **Use as Featured Serial**, then for a `webnovel` marked **Featured Serial**. If neither exists, it safely falls back to the latest chapter update and then the newest web novel.
+The homepage begins with the animated, glitching hero carousel. Its six slides are drawn from the same ordered story collection as `/start-here/`: the featured `hero_update` first, followed by the published `webnovel` entries (including anthology arcs). This keeps the homepage and reader index in sync. `haunted-tech/featured-serial` remains available for campaign landing pages and other templates.
 
 The primary button should lead to the place where the story is actually read. For *The First Sky*, that is Lantern. The secondary button is a continuity route—normally Substack—so it is labeled **Follow on Substack**, not as though the serial were hosted in both places.
 
@@ -300,7 +290,7 @@ Every meaningful spot on the homepage has a stable `id`. Use any of them as a Cu
 
 | Anchor | Where it lands |
 |---|---|
-| `#featured-serial` | Main serial promise and direct reading CTA |
+| `#hero` | Homepage story carousel sourced from Start Here |
 | `#serial-doors` | Three reader-choice cards |
 | `#latest-episodes` | Most recently published chapter links |
 | `#top` | Top of the page (use for a "back to top" button) |

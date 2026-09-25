@@ -1083,6 +1083,9 @@
     transform: translateY(0);
     pointer-events: auto;
   }
+  .hero-content:not(.active) {
+    visibility: hidden;
+  }
   /* Mobile hero spacing is handled by .hero-frame padding (see mobile block). */
 
   /* Per-slide background photo — sits inside the ornate frame, behind the
@@ -1116,6 +1119,8 @@
   }
   @media (prefers-reduced-motion: reduce) {
     .hero-slide-bg { transition: none; transform: scale(1); }
+    .hero h2, .hero h2::before, .hero h2::after, .cta { animation: none; }
+    .hero-content { transition: none; transform: none; }
   }
   @media (max-width: 700px) {
     .hero-slide-bg, .hero-slide-scrim { inset: -3rem -1.5rem; }

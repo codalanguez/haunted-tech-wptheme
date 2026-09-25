@@ -512,8 +512,15 @@ function ht_reader_index_arc_entry($webnovel, $arc) {
     ];
 }
 
-/** A permanent, shareable index that gives every reader a beginning and a return path. */
-function ht_render_reader_index($attributes = []) {
+/**
+ * Return the canonical set of stories offered on Start Here.
+ *
+ * The homepage carousel and /start-here/ deliberately share this collection
+ * so a story cannot be promoted in one place and silently disappear from the
+ * other. The optional limit is applied only after the complete ordered shelf
+ * has been assembled.
+ */
+function ht_get_reader_index_entries($limit = 0) {
     $entries = [];
     $featured = ht_get_featured_serial_source();
 
@@ -554,6 +561,14 @@ function ht_render_reader_index($attributes = []) {
         $entry = ht_reader_index_entry($webnovel, 'webnovel');
         if ($entry) $entries[] = $entry;
     }
+
+    $limit = (int) $limit;
+    return $limit > 0 ? array_slice($entries, 0, $limit) : $entries;
+}
+
+/** A permanent, shareable index that gives every reader a beginning and a return path. */
+function ht_render_reader_index($attributes = []) {
+    $entries = ht_get_reader_index_entries();
     if (!$entries) return '';
 
     ob_start(); ?>

@@ -248,6 +248,7 @@
     const OPTS = (typeof HauntedTechOpts !== 'undefined') ? HauntedTechOpts : {};
     const DURATION = (OPTS.sliderDuration && OPTS.sliderDuration > 0) ? Number(OPTS.sliderDuration) : 5000; // ms per slide
     const AUTOPLAY = ('sliderAutoplay' in OPTS) ? Boolean(Number(OPTS.sliderAutoplay)) : true;
+    const REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     let progressStart = Date.now();
     let paused = false;
     let rafId;
@@ -280,12 +281,12 @@
       progressStart = Date.now();
     }
     function tick() {
-      if (!paused && AUTOPLAY) {
+      if (!paused && AUTOPLAY && !REDUCED_MOTION) {
         const elapsed = Date.now() - progressStart;
         const pct = Math.min(100, (elapsed / DURATION) * 100);
         if (progressFill) progressFill.style.width = pct + '%';
         if (elapsed >= DURATION) go(index + 1);
-      } else if (!AUTOPLAY && progressFill) {
+      } else if ((!AUTOPLAY || REDUCED_MOTION) && progressFill) {
         progressFill.style.width = '0%';
       }
       rafId = requestAnimationFrame(tick);

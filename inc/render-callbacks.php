@@ -130,10 +130,12 @@ function ht_render_site_header($attributes = []) {
 }
 
 /* ============================================================
- * HERO SLIDER – pulls 6 most-recent hero_update posts
+ * HERO SLIDER – showcases the same story shelf as /start-here/
  * ============================================================ */
 function ht_render_hero_slider($attributes = []) {
-    $hero_slides = haunted_tech_get_hero_slides(6);
+    $hero_slides = function_exists('ht_get_reader_index_entries')
+        ? ht_get_reader_index_entries(6)
+        : [];
     ob_start(); ?>
     <span id="hero" class="ht-anchor" aria-hidden="true"></span>
     <div class="hero block-hero" id="hero-slider">
@@ -156,14 +158,13 @@ function ht_render_hero_slider($attributes = []) {
 
         <?php if (!empty($hero_slides)): ?>
           <?php foreach ($hero_slides as $i => $slide):
-              $eyebrow   = get_field('eyebrow',      $slide->ID) ?: '';
-              $first     = get_field('title_first',  $slide->ID) ?: get_the_title($slide);
-              $accent    = get_field('title_accent', $slide->ID) ?: '';
-              $blurb     = get_field('blurb',        $slide->ID) ?: '';
-              $cta_label = get_field('cta_label',    $slide->ID) ?: 'Read More';
-              $cta_link  = get_field('cta_link',     $slide->ID) ?: '#';
-              $combined  = trim($first . ' ' . $accent);
-              $bg_url    = get_the_post_thumbnail_url($slide->ID, 'hero_bg');
+              $eyebrow   = $slide['lane'] ?: __('Choose your next bad decision', 'haunted-tech');
+              $title     = $slide['title'];
+              $blurb     = $slide['hook'];
+              $cta_label = __('Start at Episode One', 'haunted-tech');
+              $cta_link  = !empty($slide['start']['url']) ? $slide['start']['url'] : home_url('/start-here/');
+              $external  = ht_serial_url_is_external($cta_link);
+              $bg_url    = $slide['cover'];
           ?>
           <div class="hero-content<?php echo $i === 0 ? ' active' : ''; ?><?php echo $bg_url ? ' has-hero-bg' : ''; ?>" data-slide="<?php echo (int)$i; ?>">
             <?php if ($bg_url): ?>
@@ -189,30 +190,30 @@ function ht_render_hero_slider($attributes = []) {
               <div class="hero-slide-scrim" aria-hidden="true"></div>
             <?php endif; ?>
             <?php if ($eyebrow): ?><div class="hero-eyebrow"><?php echo esc_html($eyebrow); ?></div><?php endif; ?>
-            <h2 data-text="<?php echo esc_attr($combined); ?>"><?php echo esc_html($first); ?> <span class="gold"><?php echo esc_html($accent); ?></span></h2>
+            <h2 data-text="<?php echo esc_attr($title); ?>"><?php echo esc_html($title); ?></h2>
             <?php if ($blurb): ?><p><?php echo esc_html($blurb); ?></p><?php endif; ?>
-            <a href="<?php echo esc_url($cta_link); ?>" class="cta"><?php echo esc_html($cta_label); ?></a>
+            <a href="<?php echo esc_url($cta_link); ?>" class="cta" data-serial-action="start-reading" data-serial="<?php echo esc_attr($slide['slug']); ?>"<?php echo $external ? ' target="_blank" rel="noopener"' : ''; ?>><?php echo esc_html($cta_label); ?></a>
           </div>
           <?php endforeach; ?>
         <?php else: ?>
           <div class="hero-content active" data-slide="0">
-            <div class="hero-eyebrow">Welcome</div>
-            <h2 data-text="HAUNTED TECH">HAUNTED <span class="gold">TECH</span></h2>
-            <p>Add your first slide by going to WP Admin &rarr; Hero Updates &rarr; Add New. The six most recent updates appear here automatically.</p>
-            <a href="<?php echo esc_url(admin_url('post-new.php?post_type=hero_update')); ?>" class="cta">Create First Update</a>
+            <div class="hero-eyebrow"><?php esc_html_e('The serial shelf', 'haunted-tech'); ?></div>
+            <h2 data-text="<?php esc_attr_e('Pick a story', 'haunted-tech'); ?>"><?php esc_html_e('Pick a story', 'haunted-tech'); ?></h2>
+            <p><?php esc_html_e('The shelf is empty—for now. The trouble is merely running late.', 'haunted-tech'); ?></p>
+            <a href="<?php echo esc_url(home_url('/start-here/')); ?>" class="cta"><?php esc_html_e('Visit Start Here', 'haunted-tech'); ?></a>
           </div>
         <?php endif; ?>
       </div>
 
       <?php if (count($hero_slides) > 1): ?>
-      <div class="hero-controls" role="group" aria-label="Hero slider">
-        <button class="hero-arrow prev" aria-label="Previous update">&larr;</button>
+      <div class="hero-controls" role="group" aria-label="<?php esc_attr_e('Story carousel', 'haunted-tech'); ?>">
+        <button class="hero-arrow prev" aria-label="<?php esc_attr_e('Previous story', 'haunted-tech'); ?>">&larr;</button>
         <div class="hero-dots" role="tablist">
           <?php foreach ($hero_slides as $i => $_): ?>
-            <button class="hero-dot<?php echo $i === 0 ? ' active' : ''; ?>" data-slide="<?php echo (int)$i; ?>" role="tab" aria-selected="<?php echo $i === 0 ? 'true' : 'false'; ?>"></button>
+            <button class="hero-dot<?php echo $i === 0 ? ' active' : ''; ?>" data-slide="<?php echo (int)$i; ?>" role="tab" aria-label="<?php echo esc_attr(sprintf(__('Show story %d of %d', 'haunted-tech'), $i + 1, count($hero_slides))); ?>" aria-selected="<?php echo $i === 0 ? 'true' : 'false'; ?>"></button>
           <?php endforeach; ?>
         </div>
-        <button class="hero-arrow next" aria-label="Next update">&rarr;</button>
+        <button class="hero-arrow next" aria-label="<?php esc_attr_e('Next story', 'haunted-tech'); ?>">&rarr;</button>
       </div>
       <div class="hero-progress"><div class="hero-progress-fill" id="hero-progress-fill"></div></div>
       <?php endif; ?>
