@@ -597,9 +597,9 @@
     pointer-events: none;
   }
   .hero-frame {
-    width: min(900px, calc((100svh - 310px) * 1.5), 100%);
+    width: min(900px, 100%);
     max-width: 900px;
-    aspect-ratio: 3 / 2;
+    /* Let the longest slide determine height; a viewport-sized ratio clipped CTAs. */
     margin: 0 auto;
     text-align: center;
     position: relative;
@@ -630,7 +630,7 @@
   }
   .hero-eyebrow::before, .hero-eyebrow::after { content: '◆'; color: var(--red); margin: 0 0.5rem; font-size: 0.7em; vertical-align: middle; text-shadow: 0 0 8px var(--red); }
   .hero h2 {
-    font-family: 'Forum', serif; font-size: clamp(3rem, 8.5vw, 7rem); font-weight: 700;
+    font-family: 'Forum', serif; font-size: clamp(3rem, 6vw, 5.5rem); font-weight: 700;
     line-height: 0.95; color: var(--bone); margin-bottom: 1.8rem;
     letter-spacing: 0.08em; text-transform: uppercase; position: relative;
     display: inline-block;
@@ -1162,7 +1162,7 @@
     z-index: 3;
     top: 50%;
     left: 50%;
-    width: min(900px, calc((100svh - 310px) * 1.5), calc(100% - 2rem));
+    width: min(900px, calc(100% - 2rem));
     margin: 0;
     display: flex;
     align-items: center;
