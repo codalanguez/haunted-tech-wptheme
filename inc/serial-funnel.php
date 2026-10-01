@@ -474,7 +474,7 @@ function ht_render_latest_episodes($attributes = []) {
         }
 
         $platform_key = '';
-        $platform_lc = strtolower($platform . ' ' . (string) wp_parse_url($episode_url, PHP_URL_HOST));
+        $platform_lc = strtolower($platform . ' ' . $episode_url);
         if (strpos($platform_lc, 'lantern') !== false) $platform_key = 'lantern';
         elseif (strpos($platform_lc, 'substack') !== false || strpos($platform_lc, 'newsletter.codalanguez.com') !== false) $platform_key = 'substack';
 
