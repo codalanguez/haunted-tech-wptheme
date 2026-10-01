@@ -374,7 +374,7 @@ function ht_render_latest_episodes($attributes = []) {
         'Victoria',
         'Taming Malice',
         'Nobody Came Looking',
-        'The First Case',
+        'The First Sky',
         'The Rust that Remains',
     ];
     $webnovels = get_posts([
