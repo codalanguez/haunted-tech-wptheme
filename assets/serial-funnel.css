@@ -308,20 +308,10 @@
   position: relative;
   overflow: hidden;
   isolation: isolate;
-  background:
-    linear-gradient(90deg, transparent 0 49.85%, rgba(0,255,224,.035) 50%, transparent 50.15%),
-    radial-gradient(ellipse at 50% 20%, rgba(0,255,224,.07), transparent 55%),
-    linear-gradient(180deg, #050504, #090806 58%, #030303);
+  background: transparent;
 }
 .transmission-guide::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  opacity: .5;
-  background: repeating-linear-gradient(0deg, transparent 0 3px, rgba(239,227,194,.025) 3px 4px);
-  animation: transmission-scan 13s linear infinite;
+  content: none;
 }
 .transmission-guide-header,
 .transmission-channel-stack,
