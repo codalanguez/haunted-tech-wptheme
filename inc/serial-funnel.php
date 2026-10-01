@@ -644,13 +644,30 @@ function ht_render_flagship_serial_page($attributes = []) {
         $featured = ht_get_featured_serial_source();
         if ($featured && get_post_type($featured) === 'hero_update') $source = $featured;
     }
-    if (!$source) return '';
+    $rust_fallback = $requested_title === 'The Rust that Remains';
+    if (!$source && !$rust_fallback) return '';
 
-    $entry = ht_reader_index_entry($source, 'hero_update');
-    if (!$entry) return '';
+    if ($source) {
+        $entry = ht_reader_index_entry($source, 'hero_update');
+        if (!$entry) return '';
+        $title = trim((string) ht_serial_field('serial_title', $source->ID)) ?: $requested_title;
+        $access = (string) ht_serial_field('access_message', $source->ID);
+    } else {
+        // Keep the launch page useful while a newly published ACF record is
+        // still being indexed or an edge cache has not yet caught up.
+        $title = $requested_title;
+        $access = 'Lantern Exclusive. Episodes 1–2 are live; explicit 18+ content is protected by Lantern’s adult-content gate.';
+        $entry = [
+            'cover'       => 'https://codalanguez.com/wp-content/uploads/2026/10/The-Rust-That-Remains-scaled.png',
+            'lane'        => 'Erotic Horror · Dark Romance',
+            'hook'        => 'Anna runs through Duskport with monsters at her heels and one prayer left: let the coal mine whistle sound. It does. Then the man in the iron cage breaks through her barricade—and her body recognizes the lover her mind has spent years burying.',
+            'schedule'    => 'New chapters every Monday.',
+            'start'       => ['url' => 'https://lanternserials.com/story/the-rust-that-remains-44ad7f3e?episode=1#chapter'],
+            'latest'      => null,
+            'latest_post' => null,
+        ];
+    }
 
-    $title = trim((string) ht_serial_field('serial_title', $source->ID)) ?: $requested_title;
-    $access = (string) ht_serial_field('access_message', $source->ID);
     $chapters = get_posts([
         'post_type'      => 'chapter',
         'post_status'    => 'publish',
@@ -661,9 +678,9 @@ function ht_render_flagship_serial_page($attributes = []) {
         'meta_query'     => [['key' => 'arc', 'value' => $title]],
         'no_found_rows'  => true,
     ]);
-    $latest_post = $entry['latest_post'];
-    $latest = $entry['latest'];
-    $start = $entry['start'];
+    $latest_post = $entry['latest_post'] ?? null;
+    $latest = $entry['latest'] ?? null;
+    $start = $entry['start'] ?? null;
     $serial_slug = sanitize_title($title);
     $custodian_url = 'https://lanternserials.com/story/custodian-0439f272';
 
