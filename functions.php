@@ -106,7 +106,7 @@ add_action('wp_enqueue_scripts', function () {
         'haunted-tech-serial-funnel',
         HAUNTED_TECH_URI . '/assets/serial-funnel.css',
         ['haunted-tech-main'],
-        HAUNTED_TECH_VERSION
+        (string) filemtime(HAUNTED_TECH_DIR . '/assets/serial-funnel.css')
     );
 
     // overflow-x:clip has the same visual effect as hidden (no horizontal
