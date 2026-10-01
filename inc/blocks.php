@@ -94,7 +94,8 @@ add_action('init', function () {
             ],
             'render_callback' => $b['render'],
             'attributes'      => [
-                'limit' => ['type' => 'number'],
+                'limit'       => ['type' => 'number'],
+                'serialTitle' => ['type' => 'string'],
             ],
         ]);
     }

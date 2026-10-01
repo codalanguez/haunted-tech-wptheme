@@ -619,25 +619,28 @@ function ht_render_reader_index($attributes = []) {
 }
 
 /**
- * Dedicated acquisition page for The First Sky.
+ * Dedicated acquisition page for an externally hosted anthology serial.
  *
  * The campaign source and chapter posts remain the authority. The page does
  * not copy episode facts into page content, so its latest and episode routes
  * advance with the same verified records used by the homepage.
  */
 function ht_render_flagship_serial_page($attributes = []) {
+    $requested_title = !empty($attributes['serialTitle'])
+        ? sanitize_text_field((string) $attributes['serialTitle'])
+        : 'The First Sky';
     $sources = get_posts([
         'post_type'      => 'hero_update',
         'post_status'    => 'publish',
         'posts_per_page' => 1,
         'meta_key'       => 'serial_title',
-        'meta_value'     => 'The First Sky',
+        'meta_value'     => $requested_title,
         'orderby'        => 'date',
         'order'          => 'DESC',
         'no_found_rows'  => true,
     ]);
     $source = $sources ? $sources[0] : null;
-    if (!$source) {
+    if (!$source && $requested_title === 'The First Sky') {
         $featured = ht_get_featured_serial_source();
         if ($featured && get_post_type($featured) === 'hero_update') $source = $featured;
     }
@@ -646,7 +649,7 @@ function ht_render_flagship_serial_page($attributes = []) {
     $entry = ht_reader_index_entry($source, 'hero_update');
     if (!$entry) return '';
 
-    $title = trim((string) ht_serial_field('serial_title', $source->ID)) ?: 'The First Sky';
+    $title = trim((string) ht_serial_field('serial_title', $source->ID)) ?: $requested_title;
     $access = (string) ht_serial_field('access_message', $source->ID);
     $chapters = get_posts([
         'post_type'      => 'chapter',
@@ -781,3 +784,27 @@ add_action('init', function () {
         update_option('haunted_tech_content_migration', $migration, false);
     }
 }, 40);
+
+/** Create the stable landing page for The Rust that Remains. */
+add_action('init', function () {
+    $migration = '2026-09-30-rust-that-remains-landing-v1';
+    if (get_option('haunted_tech_rust_landing_migration') === $migration) return;
+
+    $page = get_page_by_path('the-rust-that-remains', OBJECT, 'page');
+    $post = [
+        'post_type'    => 'page',
+        'post_title'   => 'The Rust that Remains',
+        'post_name'    => 'the-rust-that-remains',
+        'post_content' => '<!-- wp:haunted-tech/flagship-serial-page {"serialTitle":"The Rust that Remains"} /-->',
+        'post_status'  => 'publish',
+    ];
+    if ($page instanceof WP_Post) {
+        $post['ID'] = $page->ID;
+        $result = wp_update_post($post, true);
+    } else {
+        $result = wp_insert_post($post, true);
+    }
+    if (!is_wp_error($result) && $result) {
+        update_option('haunted_tech_rust_landing_migration', $migration, false);
+    }
+}, 41);

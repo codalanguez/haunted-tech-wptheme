@@ -162,7 +162,7 @@ Single chapter pages now finish with a return-path panel. It prefers the next di
 
 ### Flagship serial landing page *(v0.23)*
 
-`haunted-tech/flagship-serial-page` powers the dedicated `/the-first-sky/` acquisition page. It reads the existing *The First Sky* `hero_update` and live `chapter` records instead of duplicating episode facts inside the page. The page shows the verified story hook and access note, Episode One, the actual newest installment, the complete current episode list, a clearly labeled Substack follow route, and *Custodian* as the completed next read. All reader actions retain the named funnel-event attributes used elsewhere in the theme.
+`haunted-tech/flagship-serial-page` powers dedicated acquisition pages for externally hosted anthology stories. Pass its `serialTitle` attribute to select the matching `hero_update`; when omitted it remains backward-compatible with *The First Sky*. The theme provisions `/the-first-sky/` and `/the-rust-that-remains/` with this block. Each page reads its matching Hero Update and live chapter records rather than duplicating campaign facts in page content. All reader actions retain the named funnel-event attributes used elsewhere in the theme.
 
 ### Bookshelf — `book` CPT (ACF-registered)
 
