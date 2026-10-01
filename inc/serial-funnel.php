@@ -662,7 +662,7 @@ function ht_render_flagship_serial_page($attributes = []) {
             'lane'        => 'Erotic Horror · Dark Romance',
             'hook'        => 'Anna runs through Duskport with monsters at her heels and one prayer left: let the coal mine whistle sound. It does. Then the man in the iron cage breaks through her barricade—and her body recognizes the lover her mind has spent years burying.',
             'schedule'    => 'New chapters every Monday.',
-            'start'       => ['url' => 'https://lanternserials.com/story/the-rust-that-remains-44ad7f3e?episode=1#chapter'],
+            'start'       => ['url' => 'https://codalanguez.com/go/RustLantern'],
             'latest'      => null,
             'latest_post' => null,
         ];
