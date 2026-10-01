@@ -1706,6 +1706,16 @@ function ht_render_single_webnovel($attributes = []) {
           $ht_arc_groups[$arc][] = $ch;
           if ($arc !== '') { $ht_has_arcs = true; }
       }
+      $ht_is_letters_anthology = get_post_field('post_name', $wn_id) === 'letters-between-sex-and-violence';
+      $ht_has_rust_arc = false;
+      foreach ($ht_arc_order as $known_arc) {
+          if (strcasecmp($known_arc, 'The Rust that Remains') === 0) {
+              $ht_has_rust_arc = true;
+              break;
+          }
+      }
+      $ht_show_rust_launch = $ht_is_letters_anthology && !$ht_has_rust_arc;
+      if ($ht_show_rust_launch) $ht_has_arcs = true;
 
       /* Renders a single <li> for one chapter. $show_arc prefixes the title
        * with the story name (used only in the flat, no-accordion layout). */
@@ -1731,7 +1741,7 @@ function ht_render_single_webnovel($attributes = []) {
       <section class="chapter-index<?php echo $ht_has_arcs ? ' chapter-index--arcs' : ''; ?>">
         <div class="section-header">
           <h2 class="section-title">Chapters</h2>
-          <div class="section-meta"><?php echo (int) count($chapters); ?> published</div>
+          <div class="section-meta"><?php echo (int) count($chapters) + ($ht_show_rust_launch ? 2 : 0); ?> published</div>
         </div>
         <?php if (!$ht_has_arcs): ?>
           <ol class="chapter-index-list">
@@ -1757,6 +1767,25 @@ function ht_render_single_webnovel($attributes = []) {
                 </details>
               <?php endif; ?>
             <?php endforeach; ?>
+            <?php if ($ht_show_rust_launch): ?>
+              <details class="chapter-arc" id="arc-the-rust-that-remains">
+                <summary class="chapter-arc-summary">
+                  <span class="chapter-arc-name"><?php esc_html_e('The Rust that Remains', 'haunted-tech'); ?></span>
+                  <span class="chapter-arc-count"><?php esc_html_e('2 parts live', 'haunted-tech'); ?></span>
+                  <span class="chapter-arc-caret" aria-hidden="true">&#9660;</span>
+                </summary>
+                <ol class="chapter-index-list chapter-arc-chapters">
+                  <li class="chapter-index-item">
+                    <a href="<?php echo esc_url(home_url('/go/RustLantern')); ?>" class="chapter-index-link" data-serial-action="start-reading" data-serial="the-rust-that-remains" target="_blank" rel="noopener">
+                      <span class="chapter-index-num">1–2</span>
+                      <span class="chapter-index-title"><?php esc_html_e('Now serializing on Lantern', 'haunted-tech'); ?></span>
+                      <span class="chapter-access-badge chapter-access-lantern_free"><?php esc_html_e('Lantern Exclusive', 'haunted-tech'); ?></span>
+                      <span class="chapter-index-destination"><?php esc_html_e('Start on Lantern', 'haunted-tech'); ?> <span aria-hidden="true">&rarr;</span></span>
+                    </a>
+                  </li>
+                </ol>
+              </details>
+            <?php endif; ?>
           </div>
         <?php endif; ?>
       </section>
