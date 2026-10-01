@@ -99,7 +99,7 @@ add_action('wp_enqueue_scripts', function () {
         'haunted-tech-main',
         HAUNTED_TECH_URI . '/assets/main.css',
         ['haunted-tech-style'],
-        HAUNTED_TECH_VERSION
+        (string) filemtime(HAUNTED_TECH_DIR . '/assets/main.css')
     );
 
     wp_enqueue_style(

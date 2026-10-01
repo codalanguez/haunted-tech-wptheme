@@ -65,6 +65,20 @@
     pointer-events: none; z-index: 998; mix-blend-mode: screen;
     animation: crt-roll 10s linear infinite;
   }
+
+  /* The homepage is one continuous black stage. Keep the CRT texture there,
+     but do not let page-wide gold/red overlays create moving color bands
+     between otherwise matching sections. Component-level glows remain. */
+  body.home::before {
+    background: repeating-linear-gradient(0deg, transparent 0, transparent 2px, rgba(255,255,255,0.025) 2px, rgba(255,255,255,0.025) 3px);
+    mix-blend-mode: normal;
+  }
+  body.home::after {
+    background:
+      radial-gradient(ellipse at 50% 40%, transparent 40%, rgba(0,0,0,0.72) 100%),
+      repeating-linear-gradient(0deg, transparent 0, transparent 4px, rgba(255,255,255,0.012) 4px, rgba(255,255,255,0.012) 5px);
+  }
+  body.home .crt-band { display: none; }
   .static-burst {
     position: fixed; inset: 0;
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/></svg>");
