@@ -394,7 +394,8 @@ function ht_render_latest_episodes($attributes = []) {
     foreach ($channel_names as $channel_name) {
         $serial = null;
         foreach ($webnovels as $candidate) {
-            if (strcasecmp(trim(get_the_title($candidate)), $channel_name) === 0) {
+            $candidate_title = trim(get_the_title($candidate));
+            if (strcasecmp($candidate_title, $channel_name) === 0 || stripos($candidate_title, $channel_name) === 0) {
                 $serial = $candidate;
                 break;
             }
@@ -402,7 +403,7 @@ function ht_render_latest_episodes($attributes = []) {
 
         $meta_query = $serial
             ? [['key'=>'webnovel', 'value'=>$serial->ID]]
-            : [['key'=>'arc', 'value'=>$channel_name]];
+            : [['key'=>'arc', 'value'=>$channel_name, 'compare'=>'LIKE']];
         $latest = get_posts([
             'post_type'      => 'chapter',
             'post_status'    => 'publish',
