@@ -368,56 +368,167 @@ function ht_render_serial_doors($attributes = []) {
     <?php return ob_get_clean();
 }
 
-/** Recent chapter releases with direct, platform-aware reading links. */
+/** One current transmission per featured serial, presented as a monitor guide. */
 function ht_render_latest_episodes($attributes = []) {
-    $limit = max(1, min(12, isset($attributes['limit']) ? (int)$attributes['limit'] : 6));
-    $chapters = get_posts([
-        'post_type'=>'chapter', 'post_status'=>'publish', 'posts_per_page'=>$limit,
-        'orderby'=>'date', 'order'=>'DESC', 'no_found_rows'=>true,
+    $channel_names = [
+        'Victoria',
+        'Taming Malice',
+        'Nobody Came Looking',
+        'The First Case',
+        'The Rust that Remains',
+    ];
+    $webnovels = get_posts([
+        'post_type'      => 'webnovel',
+        'post_status'    => 'publish',
+        'posts_per_page' => -1,
+        'no_found_rows'  => true,
     ]);
-    if (!$chapters) return '';
-
     $access_labels = [
         'free'=>__('Free','haunted-tech'), 'early_access'=>__('Early Access','haunted-tech'),
         'patron_only'=>__('Patron Only','haunted-tech'), 'ream_premium'=>__('Ream Premium','haunted-tech'),
-        'substack_paid'=>__('Substack Premium','haunted-tech'), 'lantern_free'=>__('Free on Lantern','haunted-tech'),
+        'substack_paid'=>__('Substack Premium','haunted-tech'), 'lantern_free'=>__('Lantern Exclusive','haunted-tech'),
         'locked'=>__('Off-platform','haunted-tech'),
     ];
+    $channels = [];
+
+    foreach ($channel_names as $channel_name) {
+        $serial = null;
+        foreach ($webnovels as $candidate) {
+            if (strcasecmp(trim(get_the_title($candidate)), $channel_name) === 0) {
+                $serial = $candidate;
+                break;
+            }
+        }
+
+        $meta_query = $serial
+            ? [['key'=>'webnovel', 'value'=>$serial->ID]]
+            : [['key'=>'arc', 'value'=>$channel_name]];
+        $latest = get_posts([
+            'post_type'      => 'chapter',
+            'post_status'    => 'publish',
+            'posts_per_page' => 1,
+            'orderby'        => 'date',
+            'order'          => 'DESC',
+            'meta_query'     => $meta_query,
+            'no_found_rows'  => true,
+        ]);
+        $chapter = $latest ? $latest[0] : null;
+
+        if (!$serial && $chapter) {
+            $parent = ht_serial_field('webnovel', $chapter->ID);
+            $parent_id = is_object($parent) ? (int) $parent->ID : (int) $parent;
+            if ($parent_id) $serial = get_post($parent_id);
+        }
+
+        $onsite_url = $serial ? get_permalink($serial) : home_url('/start-here/');
+        if (!$serial && $chapter) {
+            $onsite_url = get_permalink((int) ht_serial_field('webnovel', $chapter->ID));
+        }
+        if (!$serial && $chapter && $onsite_url) {
+            $onsite_url .= '#arc-' . sanitize_title($channel_name);
+        }
+        if ($channel_name === 'The Rust that Remains') {
+            $onsite_url = home_url('/the-rust-that-remains/');
+        }
+
+        $cover = $serial ? ht_serial_cover_url($serial->ID, 'thumbnail') : '';
+        $episode_url = '';
+        $platform = '';
+        $episode_title = __('Signal awaiting next transmission', 'haunted-tech');
+        $episode_label = __('Dead air', 'haunted-tech');
+        $access_label = __('Stand by', 'haunted-tech');
+        $release = '';
+        $episode_slug = '';
+
+        if ($chapter) {
+            $destination = ht_get_chapter_destination($chapter->ID);
+            $number = ht_serial_field('chapter_number', $chapter->ID, null);
+            $access = (string) ht_serial_field('access_level', $chapter->ID, 'free');
+            $release = (string) ht_serial_field('release_date', $chapter->ID);
+            $episode_title = get_the_title($chapter);
+            $episode_label = $number !== null
+                ? ((int) $number === 0 ? __('Prologue','haunted-tech') : sprintf(__('Episode %d','haunted-tech'), (int) $number))
+                : __('Latest update','haunted-tech');
+            $access_label = $access_labels[$access] ?? $access_labels['free'];
+            $episode_url = $destination['url'];
+            $platform = $destination['platform'];
+            $episode_slug = $chapter->post_name;
+        } elseif ($channel_name === 'The Rust that Remains') {
+            $heroes = get_posts([
+                'post_type'=>'hero_update', 'post_status'=>'publish', 'posts_per_page'=>1,
+                'meta_key'=>'serial_title', 'meta_value'=>$channel_name, 'orderby'=>'date', 'order'=>'DESC',
+                'no_found_rows'=>true,
+            ]);
+            if ($heroes) {
+                $hero = $heroes[0];
+                $cover = ht_serial_cover_url($hero->ID, 'thumbnail');
+                $episode_url = (string) ht_serial_field('cta_link', $hero->ID, home_url('/go/RustLantern'));
+                $platform = 'Lantern';
+                $episode_title = __('Episodes 1–2 are live', 'haunted-tech');
+                $episode_label = __('Latest transmission', 'haunted-tech');
+                $access_label = __('Lantern Exclusive', 'haunted-tech');
+                $release = get_the_date('Y-m-d', $hero);
+                $episode_slug = $hero->post_name;
+            }
+        }
+
+        $platform_key = '';
+        $platform_lc = strtolower($platform . ' ' . (string) wp_parse_url($episode_url, PHP_URL_HOST));
+        if (strpos($platform_lc, 'lantern') !== false) $platform_key = 'lantern';
+        elseif (strpos($platform_lc, 'substack') !== false || strpos($platform_lc, 'newsletter.codalanguez.com') !== false) $platform_key = 'substack';
+
+        $channels[] = compact(
+            'channel_name', 'onsite_url', 'cover', 'episode_url', 'platform', 'platform_key',
+            'episode_title', 'episode_label', 'access_label', 'release', 'episode_slug'
+        );
+    }
 
     ob_start(); ?>
-    <section class="latest-episodes" id="latest-episodes" aria-labelledby="latest-episodes-title">
+    <section class="latest-episodes transmission-guide" id="latest-episodes" aria-labelledby="latest-episodes-title">
       <span class="section-anchor-alias" id="web-novels" aria-hidden="true"></span>
-      <div class="section-header">
-        <h2 class="section-title" id="latest-episodes-title"><?php esc_html_e('Latest Episodes', 'haunted-tech'); ?></h2>
-        <div class="section-meta"><?php esc_html_e('Newest doors first', 'haunted-tech'); ?></div>
-      </div>
-      <div class="latest-episode-grid">
-        <?php foreach ($chapters as $chapter):
-            $destination = ht_get_chapter_destination($chapter->ID);
-            $webnovel = ht_serial_field('webnovel', $chapter->ID);
-            $webnovel_id = is_object($webnovel) ? $webnovel->ID : (int)$webnovel;
-            $arc = (string) ht_serial_field('arc', $chapter->ID);
-            $series = $arc ?: ($webnovel_id ? get_the_title($webnovel_id) : __('Serial', 'haunted-tech'));
-            $serial_slug = $arc ? sanitize_title($arc) : ($webnovel_id ? get_post_field('post_name', $webnovel_id) : $chapter->post_name);
-            $number = ht_serial_field('chapter_number', $chapter->ID, null);
-            $release = (string) ht_serial_field('release_date', $chapter->ID);
-            $access = (string) ht_serial_field('access_level', $chapter->ID, 'free');
-            $rel = $destination['external'] ? ' rel="' . esc_attr($destination['rel']) . '"' : '';
+      <header class="transmission-guide-header">
+        <div>
+          <p class="transmission-guide-kicker"><?php esc_html_e('Five channels · live story signal', 'haunted-tech'); ?></p>
+          <h2 class="section-title" id="latest-episodes-title" data-text="<?php esc_attr_e('Latest Transmissions', 'haunted-tech'); ?>"><?php esc_html_e('Latest Transmissions', 'haunted-tech'); ?></h2>
+        </div>
+        <p><?php esc_html_e('Choose the onsite dossier. Follow the lit icon to the newest episode.', 'haunted-tech'); ?></p>
+      </header>
+      <div class="transmission-channel-stack">
+        <?php foreach ($channels as $index => $channel):
+            $channel_no = sprintf('%02d', $index + 1);
+            $timestamp = $channel['release'] ? strtotime($channel['release']) : false;
+            $icon_url = $channel['platform_key'] === 'lantern'
+                ? HAUNTED_TECH_URI . '/assets/lantern-lighthouse.png'
+                : HAUNTED_TECH_URI . '/assets/substack.png';
         ?>
-          <article class="latest-episode-card">
-            <a href="<?php echo esc_url($destination['url']); ?>" data-serial-action="latest-episode" data-serial="<?php echo esc_attr($serial_slug); ?>" data-episode="<?php echo esc_attr($chapter->post_name); ?>"<?php echo $destination['external'] ? ' target="_blank"' : ''; ?><?php echo $rel; ?>>
-              <span class="latest-episode-series"><?php echo esc_html($series); ?></span>
-              <span class="latest-episode-number"><?php echo $number !== null ? ((int)$number === 0 ? esc_html__('Prologue','haunted-tech') : sprintf(esc_html__('Episode %d','haunted-tech'), (int)$number)) : esc_html__('New episode','haunted-tech'); ?></span>
-              <span class="latest-episode-title"><?php echo esc_html(get_the_title($chapter)); ?></span>
-              <span class="latest-episode-meta">
-                <span><?php echo esc_html($access_labels[$access] ?? $access_labels['free']); ?></span>
-                <?php if ($release && ($timestamp = strtotime($release))): ?><time datetime="<?php echo esc_attr($release); ?>"><?php echo esc_html(wp_date(get_option('date_format'), $timestamp)); ?></time><?php endif; ?>
-              </span>
-              <span class="latest-episode-cta"><?php echo sprintf(esc_html__('Read on %s', 'haunted-tech'), esc_html($destination['platform'])); ?> <span aria-hidden="true">&rarr;</span></span>
-            </a>
-          </article>
+          <details class="transmission-channel"<?php echo $index === 0 ? ' open' : ''; ?>>
+            <summary>
+              <span class="transmission-channel-light" aria-hidden="true"></span>
+              <span class="transmission-channel-cover"<?php echo $channel['cover'] ? ' style="background-image:url(' . esc_url($channel['cover']) . ')"' : ''; ?> aria-hidden="true"></span>
+              <span class="transmission-channel-number"><?php echo esc_html($channel_no); ?></span>
+              <span class="transmission-channel-name"><?php echo esc_html($channel['channel_name']); ?></span>
+              <span class="transmission-channel-episode"><strong><?php echo esc_html($channel['episode_label']); ?></strong><?php echo esc_html($channel['episode_title']); ?></span>
+              <span class="transmission-channel-access"><?php echo esc_html($channel['access_label']); ?></span>
+              <?php if ($timestamp): ?><time datetime="<?php echo esc_attr($channel['release']); ?>"><?php echo esc_html(wp_date(get_option('date_format'), $timestamp)); ?></time><?php endif; ?>
+              <span class="transmission-channel-caret" aria-hidden="true">&#9660;</span>
+            </summary>
+            <div class="transmission-channel-panel">
+              <span class="transmission-waveform" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+              <p><?php echo esc_html(sprintf(__('Channel %1$s is carrying %2$s.', 'haunted-tech'), $channel_no, $channel['episode_title'])); ?></p>
+              <div class="transmission-channel-actions">
+                <a class="transmission-onsite-link" href="<?php echo esc_url($channel['onsite_url']); ?>" data-serial-action="serial-index" data-serial="<?php echo esc_attr(sanitize_title($channel['channel_name'])); ?>"><?php esc_html_e('Open Onsite Dossier', 'haunted-tech'); ?> <span aria-hidden="true">&rarr;</span></a>
+                <?php if ($channel['episode_url'] && $channel['platform_key']): ?>
+                  <a class="transmission-platform-link transmission-platform-<?php echo esc_attr($channel['platform_key']); ?>" href="<?php echo esc_url($channel['episode_url']); ?>" target="_blank" rel="noopener" data-serial-action="latest-episode" data-serial="<?php echo esc_attr(sanitize_title($channel['channel_name'])); ?>" data-episode="<?php echo esc_attr($channel['episode_slug']); ?>">
+                    <img src="<?php echo esc_url($icon_url); ?>" alt="" loading="lazy">
+                    <span><?php echo esc_html(sprintf(__('Read the latest on %s', 'haunted-tech'), $channel['platform'])); ?></span>
+                  </a>
+                <?php endif; ?>
+              </div>
+            </div>
+          </details>
         <?php endforeach; ?>
       </div>
+      <p class="transmission-guide-footer"><?php esc_html_e('Five channels. Stories persist.', 'haunted-tech'); ?></p>
     </section>
     <?php return ob_get_clean();
 }
