@@ -615,7 +615,7 @@ function ht_reader_index_arc_entry($webnovel, $arc) {
         'title'        => $arc,
         'lane'         => (string) ht_serial_field('genre', $webnovel_id, __('Serial fiction', 'haunted-tech')),
         'hook'         => '',
-        'schedule'     => (string) ht_serial_field('update_schedule', $webnovel_id),
+        'schedule'     => (string) ht_serial_field('arc_update_schedule', $first_post->ID, ht_serial_field('update_schedule', $webnovel_id)),
         'cover'        => ht_serial_cover_url($webnovel_id, 'large'),
         'start'        => ht_get_chapter_destination($first_post->ID),
         'latest_post'  => $latest_post,
