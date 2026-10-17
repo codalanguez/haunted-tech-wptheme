@@ -2321,7 +2321,9 @@ function ht_linktree_backdrop_id() {
 
 /** Section wrapper: ornamented title, the first N tiles, rest folded away. */
 function ht_linktree_section($title, $tiles, $visible, $more_label, $leading_tiles = []) {
-    if (empty($tiles) && empty($leading_tiles)) { return ''; }
+    // Every row belongs to the same visible limit and total, including external serials.
+    $tiles = array_merge(array_map('ht_linktree_tile', $leading_tiles), $tiles);
+    if (empty($tiles)) { return ''; }
     $shown  = array_slice($tiles, 0, $visible);
     $folded = array_slice($tiles, $visible);
     ob_start(); ?>
@@ -2329,9 +2331,6 @@ function ht_linktree_section($title, $tiles, $visible, $more_label, $leading_til
       <h2 class="lt-section-title"><?php echo ht_linktree_glitch_text($title); ?></h2>
       <div class="lt-stack">
         <?php
-        foreach ($leading_tiles as $leading_tile) {
-            echo ht_linktree_tile($leading_tile);
-        }
         echo implode('', $shown);
         ?>
       </div>
@@ -2391,6 +2390,8 @@ function ht_render_linktree($attributes = []) {
 
     $novel_tiles = [];
     foreach ($webnovels as $wn) {
+        // Hide this anthology only in the /links/ serial picker; preserve its content elsewhere.
+        if (is_page('links') && $wn->post_name === 'letters-between-sex-and-violence') { continue; }
         if (in_array($wn->ID, $featured_ids, true)) { continue; }
         $status = function_exists('get_field') ? get_field('status', $wn->ID) : '';
         $sched  = function_exists('get_field') ? get_field('update_schedule', $wn->ID) : '';
@@ -2483,7 +2484,7 @@ function ht_render_linktree($attributes = []) {
             [
                 'url'           => 'https://lanternserials.com/story/the-first-sky-a3cb4431?episode=1#chapter',
                 'title'         => __('The First Sky — Start with The Lottery', 'haunted-tech'),
-                'sub'           => __('Updates every Tuesday', 'haunted-tech'),
+                'eyebrow'       => __('Ongoing · New chapter every Tuesday', 'haunted-tech'),
                 'cover'         => get_theme_file_uri('/assets/covers/first-sky-approved.png'),
                 'cover_alt'     => __('The First Sky cover: three figures holding hands beneath a cloud-filled turquoise sky.', 'haunted-tech'),
                 'cover_contain' => true,
@@ -2491,7 +2492,7 @@ function ht_render_linktree($attributes = []) {
             [
                 'url'           => 'https://lanternserials.com/story/the-rust-that-remains-44ad7f3e?episode=1#chapter',
                 'title'         => __('The Rust That Remains', 'haunted-tech'),
-                'sub'           => __('Updates every Monday', 'haunted-tech'),
+                'eyebrow'       => __('Ongoing · New chapter every Monday', 'haunted-tech'),
                 'cover'         => get_theme_file_uri('/assets/covers/rust-that-remains-approved.png'),
                 'cover_alt'     => __('The Rust That Remains cover: a woman and a shadowed figure behind rusted iron bars.', 'haunted-tech'),
                 'cover_contain' => true,
