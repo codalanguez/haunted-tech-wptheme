@@ -2483,6 +2483,7 @@ function ht_render_linktree($attributes = []) {
             [
                 'url'           => 'https://lanternserials.com/story/the-first-sky-a3cb4431?episode=1#chapter',
                 'title'         => __('The First Sky — Start with The Lottery', 'haunted-tech'),
+                'sub'           => __('Updates every Tuesday', 'haunted-tech'),
                 'cover'         => get_theme_file_uri('/assets/covers/first-sky-approved.png'),
                 'cover_alt'     => __('The First Sky cover: three figures holding hands beneath a cloud-filled turquoise sky.', 'haunted-tech'),
                 'cover_contain' => true,
@@ -2490,6 +2491,7 @@ function ht_render_linktree($attributes = []) {
             [
                 'url'           => 'https://lanternserials.com/story/the-rust-that-remains-44ad7f3e?episode=1#chapter',
                 'title'         => __('The Rust That Remains', 'haunted-tech'),
+                'sub'           => __('Updates every Monday', 'haunted-tech'),
                 'cover'         => get_theme_file_uri('/assets/covers/rust-that-remains-approved.png'),
                 'cover_alt'     => __('The Rust That Remains cover: a woman and a shadowed figure behind rusted iron bars.', 'haunted-tech'),
                 'cover_contain' => true,
