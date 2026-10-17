@@ -2319,13 +2319,16 @@ function ht_linktree_backdrop_id() {
 }
 
 /** Section wrapper: ornamented title, the first N tiles, rest folded away. */
-function ht_linktree_section($title, $tiles, $visible, $more_label) {
+function ht_linktree_section($title, $tiles, $visible, $more_label, $leading_link = []) {
     if (empty($tiles)) { return ''; }
     $shown  = array_slice($tiles, 0, $visible);
     $folded = array_slice($tiles, $visible);
     ob_start(); ?>
     <section class="lt-section">
       <h2 class="lt-section-title"><?php echo ht_linktree_glitch_text($title); ?></h2>
+      <?php if (!empty($leading_link)): ?>
+        <p><a href="<?php echo esc_url($leading_link['url']); ?>"><?php echo esc_html($leading_link['label']); ?></a></p>
+      <?php endif; ?>
       <div class="lt-stack"><?php echo implode('', $shown); ?></div>
       <?php if (!empty($folded)): ?>
         <details class="lt-more">
@@ -2471,7 +2474,10 @@ function ht_render_linktree($attributes = []) {
         <?php echo ht_linktree_substack_cta(); ?>
 
         <?php
-        echo ht_linktree_section(__('Choose a Serial', 'haunted-tech'), $novel_tiles, $visible, __('All %d serials', 'haunted-tech'));
+        echo ht_linktree_section(__('Choose a Serial', 'haunted-tech'), $novel_tiles, $visible, __('All %d serials', 'haunted-tech'), [
+            'url'   => 'https://lanternserials.com/story/the-first-sky-a3cb4431?episode=1#chapter',
+            'label' => __('The First Sky — Start with The Lottery', 'haunted-tech'),
+        ]);
         echo ht_linktree_section(__('Free Books', 'haunted-tech'), $free_book_tiles, $visible, __('All %d free books', 'haunted-tech'));
         echo ht_linktree_section(__('Books', 'haunted-tech'), $book_tiles, $visible, __('All %d books', 'haunted-tech'));
         ?>
