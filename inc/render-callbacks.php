@@ -2100,7 +2100,8 @@ function ht_linktree_cover_url($post_id) {
 function ht_linktree_tile($args) {
     $a = wp_parse_args($args, [
         'url' => '', 'title' => '', 'sub' => '', 'eyebrow' => '',
-        'cover' => '', 'glyph' => '', 'modifier' => '', 'eyebrow_free' => false,
+        'cover' => '', 'cover_alt' => '', 'cover_contain' => false,
+        'glyph' => '', 'modifier' => '', 'eyebrow_free' => false,
         'new_tab' => false, 'rel' => '', 'data_action' => '',
         'data_serial' => '', 'data_episode' => '', 'data_book' => '',
     ]);
@@ -2108,7 +2109,7 @@ function ht_linktree_tile($args) {
     <a href="<?php echo esc_url($a['url']); ?>" class="lt-tile<?php echo $a['modifier'] ? ' ' . esc_attr($a['modifier']) : ''; ?>"<?php echo $a['new_tab'] ? ' target="_blank"' : ''; ?><?php echo $a['rel'] ? ' rel="' . esc_attr($a['rel']) . '"' : ''; ?><?php echo $a['data_action'] ? ' data-serial-action="' . esc_attr($a['data_action']) . '"' : ''; ?><?php echo $a['data_serial'] ? ' data-serial="' . esc_attr($a['data_serial']) . '"' : ''; ?><?php echo $a['data_episode'] ? ' data-episode="' . esc_attr($a['data_episode']) . '"' : ''; ?><?php echo $a['data_book'] ? ' data-book="' . esc_attr($a['data_book']) . '"' : ''; ?>>
       <span class="lt-tile-art">
         <?php if ($a['cover']): ?>
-          <img src="<?php echo esc_url($a['cover']); ?>" alt="" loading="lazy" decoding="async">
+          <img src="<?php echo esc_url($a['cover']); ?>" alt="<?php echo esc_attr($a['cover_alt']); ?>"<?php echo $a['cover_contain'] ? ' style="object-fit:contain"' : ''; ?> loading="lazy" decoding="async">
         <?php else: ?>
           <span class="lt-tile-glyph"><?php echo $a['glyph'] ? $a['glyph'] : '&#9670;'; ?></span>
         <?php endif; ?>
@@ -2319,8 +2320,8 @@ function ht_linktree_backdrop_id() {
 }
 
 /** Section wrapper: ornamented title, the first N tiles, rest folded away. */
-function ht_linktree_section($title, $tiles, $visible, $more_label, $leading_link = []) {
-    if (empty($tiles)) { return ''; }
+function ht_linktree_section($title, $tiles, $visible, $more_label, $leading_tiles = []) {
+    if (empty($tiles) && empty($leading_tiles)) { return ''; }
     $shown  = array_slice($tiles, 0, $visible);
     $folded = array_slice($tiles, $visible);
     ob_start(); ?>
@@ -2328,13 +2329,8 @@ function ht_linktree_section($title, $tiles, $visible, $more_label, $leading_lin
       <h2 class="lt-section-title"><?php echo ht_linktree_glitch_text($title); ?></h2>
       <div class="lt-stack">
         <?php
-        if (!empty($leading_link)) {
-            echo ht_linktree_tile([
-                'url'      => $leading_link['url'],
-                'title'    => $leading_link['label'],
-                'glyph'    => '&#9998;',
-                'modifier' => 'lt-tile--flat',
-            ]);
+        foreach ($leading_tiles as $leading_tile) {
+            echo ht_linktree_tile($leading_tile);
         }
         echo implode('', $shown);
         ?>
@@ -2484,8 +2480,20 @@ function ht_render_linktree($attributes = []) {
 
         <?php
         echo ht_linktree_section(__('Choose a Serial', 'haunted-tech'), $novel_tiles, $visible, __('All %d serials', 'haunted-tech'), [
-            'url'   => 'https://lanternserials.com/story/the-first-sky-a3cb4431?episode=1#chapter',
-            'label' => __('The First Sky — Start with The Lottery', 'haunted-tech'),
+            [
+                'url'           => 'https://lanternserials.com/story/the-first-sky-a3cb4431?episode=1#chapter',
+                'title'         => __('The First Sky — Start with The Lottery', 'haunted-tech'),
+                'cover'         => get_theme_file_uri('/assets/covers/first-sky-approved.png'),
+                'cover_alt'     => __('The First Sky cover: three figures holding hands beneath a cloud-filled turquoise sky.', 'haunted-tech'),
+                'cover_contain' => true,
+            ],
+            [
+                'url'           => 'https://lanternserials.com/story/the-rust-that-remains-44ad7f3e?episode=1#chapter',
+                'title'         => __('The Rust That Remains', 'haunted-tech'),
+                'cover'         => get_theme_file_uri('/assets/covers/rust-that-remains-approved.png'),
+                'cover_alt'     => __('The Rust That Remains cover: a woman and a shadowed figure behind rusted iron bars.', 'haunted-tech'),
+                'cover_contain' => true,
+            ],
         ]);
         echo ht_linktree_section(__('Free Books', 'haunted-tech'), $free_book_tiles, $visible, __('All %d free books', 'haunted-tech'));
         echo ht_linktree_section(__('Books', 'haunted-tech'), $book_tiles, $visible, __('All %d books', 'haunted-tech'));
