@@ -2326,10 +2326,19 @@ function ht_linktree_section($title, $tiles, $visible, $more_label, $leading_lin
     ob_start(); ?>
     <section class="lt-section">
       <h2 class="lt-section-title"><?php echo ht_linktree_glitch_text($title); ?></h2>
-      <?php if (!empty($leading_link)): ?>
-        <p><a href="<?php echo esc_url($leading_link['url']); ?>"><?php echo esc_html($leading_link['label']); ?></a></p>
-      <?php endif; ?>
-      <div class="lt-stack"><?php echo implode('', $shown); ?></div>
+      <div class="lt-stack">
+        <?php
+        if (!empty($leading_link)) {
+            echo ht_linktree_tile([
+                'url'      => $leading_link['url'],
+                'title'    => $leading_link['label'],
+                'glyph'    => '&#9998;',
+                'modifier' => 'lt-tile--flat',
+            ]);
+        }
+        echo implode('', $shown);
+        ?>
+      </div>
       <?php if (!empty($folded)): ?>
         <details class="lt-more">
           <summary>
