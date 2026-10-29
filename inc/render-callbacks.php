@@ -773,7 +773,7 @@ function ht_render_lab($attributes = []) {
     <section class="block-lab" id="lab">
       <div class="section-header">
         <h2 class="section-title">The Lab</h2>
-        <div class="section-meta">Free &amp; Open Source &mdash; Nothing Here Phones Home</div>
+        <div class="section-meta">Independent Software &mdash; Local Models, Optional Cloud Connections</div>
       </div>
       <div class="services-grid lab-grid">
         <div class="service-card lab-card" id="lab-mechape">
@@ -786,6 +786,7 @@ function ht_render_lab($attributes = []) {
             <div class="service-desc">A local, private LLM studio that brings its own engine &mdash; projects, Claude-style skills, and live file knowledge. Out of the box, not one syllable of your conversations ever leaves your machine.</div>
             <div class="lab-actions">
               <a href="#mechape" class="service-btn" data-open-mechape>Enter the Studio</a>
+              <a href="<?php echo esc_url(home_url('/mechape/#purchase')); ?>" class="service-btn lab-btn-ghost">Paid edition &mdash; US$29</a>
               <a href="https://github.com/codalanguez/MechApe" class="service-btn lab-btn-ghost" target="_blank" rel="noopener">GitHub</a>
             </div>
           </div>
@@ -835,7 +836,7 @@ function ht_render_mechape_modal($attributes = []) {
           </div>
           <div class="mechape-body-wrap">
             <div class="mechape-body">
-              <p>Everything the cloud chat apps do &mdash; minus the part where your ideas commute to somebody else&rsquo;s data center. Local by default: nothing ever leaves your machine.</p>
+              <p>A desktop workspace for local models, projects, reusable skills, and file knowledge. Cloud models are optional and use your own provider account.</p>
               <ul class="mechape-features">
                 <li><strong>Projects</strong> &mdash; instructions, knowledge files, skills &amp; chats bundled per obsession, each with its own model memory</li>
                 <li><strong>Skills</strong> &mdash; Claude-format SKILL.md instruction sets; toggle per project or summon mid-message with <code>/</code></li>
@@ -844,12 +845,13 @@ function ht_render_mechape_modal($attributes = []) {
                 <li><strong>Seven themes</strong> &mdash; four dark, three light, all WCAG AA</li>
                 <li><strong>Remote models</strong> &mdash; strictly opt-in OpenRouter support, loudly badged, mildly judged</li>
               </ul>
-              <p class="mechape-fine">Free &middot; MIT licensed &middot; Node.js 18+ required &middot; the model engine comes with it</p>
+              <p class="mechape-fine"><strong>Paid edition: US$29 once for MechApe 2.x.</strong> One active device, updates within 2.x, and a 30-day refund period. Future major upgrades may be sold separately. Cloud API usage costs extra. Online activation and periodic refresh required.</p>
+              <p class="mechape-fine">PayPal checkout is being prepared; purchases are not open yet. The Obsidian plugin stays free. Existing MIT community releases remain available.</p>
             </div>
           </div>
           <div class="mechape-meta-foot">
-            <a class="service-btn" href="https://github.com/codalanguez/MechApe" target="_blank" rel="noopener">Get it on GitHub</a>
-            <a class="service-btn lab-btn-ghost" href="<?php echo esc_url(home_url('/mechape/')); ?>">Take the Full Tour</a>
+            <a class="service-btn" href="<?php echo esc_url(home_url('/mechape/#purchase')); ?>">US$29 edition &amp; PayPal details</a>
+            <a class="service-btn lab-btn-ghost" href="https://github.com/codalanguez/MechApe" target="_blank" rel="noopener">Free community edition</a>
           </div>
         </div>
       </div>
