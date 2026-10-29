@@ -1453,7 +1453,7 @@
   .crt-section { padding: 6rem 3rem; max-width: 1300px; margin: 0 auto; }
   .crt-monitor {
     position: relative;
-    max-width: 1000px;
+    max-width: 1280px;
     margin: 0 auto;
     background: linear-gradient(180deg, #2a2722 0%, #14110C 50%, #1a1714 100%);
     padding: 32px 32px 80px;
@@ -4521,7 +4521,7 @@ body.commission-open .static-burst { display: none !important; }
   /* ============ THE LAB (free & open-source software) ============ */
   .lab-grid {
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    max-width: 1000px;
+    max-width: 1280px;
     margin: 0 auto;
   }
   .lab-icon-area { aspect-ratio: 16/7; }
@@ -4783,7 +4783,7 @@ body.commission-open .static-burst { display: none !important; }
   /* The toggle is a mobile control only. */
   .nav-toggle { display: none; }
 
-  @media (max-width: 700px) {
+  @media (max-width: 1280px) {
     .nav-toggle {
       display: inline-flex;
       align-items: center;
@@ -4962,7 +4962,7 @@ body.commission-open .static-burst { display: none !important; }
   }
 
   /* Desktop keeps hover dropdowns; the injected buttons must not show. */
-  @media (min-width: 701px) {
+  @media (min-width: 1281px) {
     .submenu-toggle { display: none; }
     .nav-scrim { display: none; }
   }

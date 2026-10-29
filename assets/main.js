@@ -696,7 +696,7 @@
     const scrim  = document.getElementById('nav-scrim');
     if (!toggle || !panel) return;
 
-    const mq = window.matchMedia('(max-width: 700px)');
+    const mq = window.matchMedia('(max-width: 1280px)');
     const trap = htFocusTrap(panel);
 
     // ---- Submenu collapsibles ----
