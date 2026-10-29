@@ -49,3 +49,38 @@
 .mechape-modal .mechape-visual { align-self:stretch; }
 .mechape-modal .mechape-eyebrow { color:#b3ad98; text-shadow:none; }
 .mechape-modal .mechape-badge { box-shadow:none; }
+/* Homepage popup: the same bento hierarchy as the MechApe page. */
+.mechape-modal::before { display:none; }
+.mechape-modal .mechape-bento-frame { display:block; grid-template-rows:none; width:min(1120px,94vw); max-height:92dvh; border-radius:24px; padding:0 18px 18px; font-family:'MechApe Inter',sans-serif; color:#f6f1de; scrollbar-gutter:stable; }
+.mechape-modal .mp-toolbar { position:sticky; top:0; z-index:12; display:flex; justify-content:space-between; align-items:center; min-height:62px; gap:16px; background:#0a0908; color:#b3ad98; font-size:12px; }
+.mechape-modal .mp-toolbar .mechape-close { position:static; flex:none; width:40px; height:40px; border-radius:10px; border-color:#ffd40050; background:#17140e; box-shadow:none; }
+.mechape-modal .mp-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+.mechape-modal .mp-panel { min-width:0; border:1px solid #ffd4002e; background:#100e0b; border-radius:16px; }
+.mechape-modal .mp-brand { grid-column:1; grid-row:1; padding:26px; background:#17140e; }
+.mechape-modal .mp-brand>img { display:block; width:50px; height:50px; object-fit:contain; }
+.mechape-modal .mp-brand .mechape-name { font-size:60px; line-height:1.1; display:block; margin:14px 0; }
+.mechape-modal .mp-headline { font-size:22px; line-height:1.4; font-weight:500; margin:0 0 12px; max-width:25ch; }
+.mechape-modal .mp-brand>p:last-child { font-size:13px; line-height:1.8; color:#b3ad98; margin:0; max-width:48ch; }
+.mechape-modal .mp-preview { grid-column:2; grid-row:1; display:flex; flex-direction:column; justify-content:center; overflow:hidden; }
+.mechape-modal .mp-preview-heading { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; padding:18px; color:#b3ad98; font-size:12px; }
+.mechape-modal .mp-preview-heading>span { border:1px solid #ffd40040; border-radius:20px; color:#ffd400; padding:3px 8px; font-size:10px; }
+.mechape-modal .mp-preview img { display:block; width:100%; height:auto; border-block:1px solid #ffd4002e; }
+.mechape-modal .mp-preview>p { padding:14px 18px; margin:0; font-size:11px; color:#b3ad98; line-height:1.7; }
+.mechape-modal .mp-edition { grid-row:2; min-width:0; border:1px solid #ffd40050; border-radius:16px; padding:20px 24px; display:grid; gap:10px; text-decoration:none; color:#f6f1de; background:#17140e; }
+.mechape-modal .mp-edition-top { display:flex; justify-content:space-between; gap:10px; align-items:center; font-size:11px; }
+.mechape-modal .mp-price { border:1px solid currentColor; border-radius:20px; padding:2px 8px; font-weight:600; white-space:nowrap; }
+.mechape-modal .mp-edition>strong { display:flex; justify-content:space-between; gap:12px; font-size:17px; font-weight:600; line-height:1.5; }
+.mechape-modal .mp-edition>span:last-child { font-size:11px; line-height:1.7; }
+.mechape-modal .mp-free { background:#ffd400; border-color:#ffd400; color:#0a0908; }
+.mechape-modal .mp-free:hover { background:#ffe875; }
+.mechape-modal .mp-desktop:hover { background:#241f12; border-color:#ffd400; }
+.mechape-modal .mp-features { grid-column:1/-1; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+.mechape-modal .mp-features>.mp-panel { padding:18px; }
+.mechape-modal .mp-features strong { font-size:12px; font-weight:600; }
+.mechape-modal .mp-features p { font-size:11px; color:#b3ad98; line-height:1.7; margin:6px 0 0; }
+.mechape-modal .mp-tour { grid-column:1/-1; padding:16px 20px; display:flex; align-items:center; justify-content:space-between; gap:16px; }
+.mechape-modal .mp-tour p { font-size:12px; color:#b3ad98; line-height:1.7; margin:0; }
+.mechape-modal .mp-tour a { border:1px solid #ffd40060; border-radius:12px; color:#ffd400; padding:12px 18px; display:flex; align-items:center; justify-content:space-between; gap:24px; white-space:nowrap; font-size:13px; font-weight:600; text-decoration:none; }
+.mechape-modal .mp-tour a:hover { background:#241f12; border-color:#ffd400; }
+@media(max-width:700px) { .mechape-modal { padding:12px; } .mechape-modal .mechape-bento-frame { width:100%; padding:0 12px 12px; border-radius:18px; max-height:94dvh; } .mechape-modal .mp-grid { grid-template-columns:minmax(0,1fr); } .mechape-modal .mp-brand,.mechape-modal .mp-preview,.mechape-modal .mp-edition { grid-column:auto; grid-row:auto; } .mechape-modal .mp-brand { padding:22px; } .mechape-modal .mp-brand .mechape-name { font-size:52px; } .mechape-modal .mp-features { grid-template-columns:minmax(0,1fr); } .mechape-modal .mp-tour { align-items:stretch; flex-direction:column; } }
+@media(prefers-reduced-motion:reduce) { .mechape-modal.active { animation:none; } }

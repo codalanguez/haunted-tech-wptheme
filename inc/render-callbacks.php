@@ -821,41 +821,16 @@ function ht_render_mechape_modal($attributes = []) {
     $shot = HAUNTED_TECH_URI . '/assets/mechape-workspace-chat.png';
     ob_start(); ?>
     <div class="mechape-modal" id="mechape-modal" role="dialog" aria-modal="true" aria-labelledby="mechape-name" aria-hidden="true" tabindex="-1">
-      <div class="mechape-frame">
-        <button class="mechape-close" aria-label="Close MechApe studio">&times;</button>
-        <div class="mechape-visual">
-          <a href="<?php echo esc_url($shot); ?>" target="_blank" rel="noopener"><img src="<?php echo esc_url($shot); ?>" alt="<?php esc_attr_e('MechApe workspace with chat and collapsible project sections', 'haunted-tech'); ?>" width="1440" height="960"></a>
-          <div class="mechape-visual-caption">Desktop preview · example project and conversation</div>
-        </div>
-        <div class="mechape-meta">
-          <div class="mechape-meta-head">
-            <div class="mechape-eyebrow"><img class="mechape-badge" src="<?php echo esc_url($icon); ?>" alt="" aria-hidden="true" width="256" height="256"><span>From the Lab</span></div>
-            <h2 class="mechape-name" id="mechape-name" data-text="MechApe">MechApe</h2>
-            <div class="mechape-title">Your models, projects, and skills in one workspace</div>
-            <div class="mechape-divider"></div>
-          </div>
-          <div class="mechape-body-wrap">
-            <div class="mechape-body">
-              <p>A desktop workspace for local models, projects, reusable skills, and file knowledge. Cloud models are optional and use your own provider account.</p>
-              <ul class="mechape-features">
-                <li><strong>Projects</strong> &mdash; instructions, knowledge files, skills &amp; chats bundled per obsession, each with its own model memory</li>
-                <li><strong>Skills</strong> &mdash; Claude-format SKILL.md instruction sets; toggle per project or summon mid-message with <code>/</code></li>
-                <li><strong>Live file knowledge</strong> &mdash; attach files or folders, read fresh from disk, indexed with on-device embeddings</li>
-                <li><strong>Its own engine</strong> &mdash; llama.cpp ships inside; GPU auto-detection, one-click model switching, honest health indicator</li>
-                <li><strong>Seven themes</strong> &mdash; four dark and three light palettes</li>
-                <li><strong>Remote models</strong> &mdash; strictly opt-in OpenRouter support, loudly badged, mildly judged</li>
-              </ul>
-              <p class="mechape-fine"><strong>Paid edition: US$29 once for MechApe 2.x.</strong> One active device, updates within 2.x, and a 30-day refund period. Future major upgrades may be sold separately. Cloud API usage costs extra. Delivery and activation details will be confirmed before sales open.</p>
-              <p class="mechape-fine">PayPal checkout is being prepared; purchases are not open yet. The free community edition is MechApe for Obsidian, the open-source Obsidian edition of MechApe. The full desktop app is a separate paid edition.</p>
-            </div>
-          </div>
-          <div class="mechape-meta-foot">
-            <a class="service-btn" href="<?php echo esc_url(home_url('/mechape/#purchase')); ?>">US$29 edition &amp; PayPal details</a>
-            <a class="service-btn lab-btn-ghost" href="<?php echo esc_url(home_url('/mechape/')); ?>">Take the Full Tour</a>
-          </div>
-        </div>
-      </div>
-    </div>
+<div class="mechape-frame mechape-bento-frame">
+<div class="mp-toolbar"><span><?php esc_html_e('Your own AI workspace', 'haunted-tech'); ?></span><button class="mechape-close" aria-label="<?php esc_attr_e('Close MechApe studio', 'haunted-tech'); ?>">&times;</button></div>
+<div class="mp-grid">
+<div class="mp-brand mp-panel"><img src="<?php echo esc_url($icon); ?>" alt="" width="56" height="56"><h2 class="mechape-name" id="mechape-name">MechApe</h2><p class="mp-headline"><?php esc_html_e('A place for your projects. A home for your models.', 'haunted-tech'); ?></p><p><?php esc_html_e('Bring your files, choose a skill, and pick up where you left off. Work locally or connect your own cloud provider.', 'haunted-tech'); ?></p></div>
+<a class="mp-edition mp-free" href="https://github.com/codalanguez/MechApe-Obsidian"><span class="mp-edition-top"><?php esc_html_e('For your Obsidian vault', 'haunted-tech'); ?><span class="mp-price"><?php esc_html_e('Free', 'haunted-tech'); ?></span></span><strong><?php esc_html_e('Get the community edition', 'haunted-tech'); ?> <span aria-hidden="true">↗</span></strong><span><?php esc_html_e('Sidebar chat, reusable skills, and note tools.', 'haunted-tech'); ?></span></a>
+<a class="mp-edition mp-desktop" href="<?php echo esc_url(home_url('/mechape/#purchase')); ?>"><span class="mp-edition-top"><?php esc_html_e('For your whole workspace', 'haunted-tech'); ?><span class="mp-price"><?php esc_html_e('$29 once', 'haunted-tech'); ?></span></span><strong><?php esc_html_e('Explore the desktop edition', 'haunted-tech'); ?> <span aria-hidden="true">↗</span></strong><span><?php esc_html_e('Standalone app. Purchases are not open yet.', 'haunted-tech'); ?></span></a>
+<div class="mp-preview mp-panel"><div class="mp-preview-heading"><?php esc_html_e('Inside the desktop app', 'haunted-tech'); ?><span><?php esc_html_e('Local workspace', 'haunted-tech'); ?></span></div><a href="<?php echo esc_url($shot); ?>" target="_blank" rel="noopener"><img src="<?php echo esc_url($shot); ?>" alt="<?php esc_attr_e('View full-size MechApe workspace screenshot (opens in a new tab)', 'haunted-tech'); ?>" width="1440" height="960"></a><p><?php esc_html_e('Desktop preview with an example project and conversation.', 'haunted-tech'); ?></p></div>
+<div class="mp-features"><div class="mp-panel"><strong><?php esc_html_e('Keep work together', 'haunted-tech'); ?></strong><p><?php esc_html_e('Files and instructions live with each project.', 'haunted-tech'); ?></p></div><div class="mp-panel"><strong><?php esc_html_e('Switch your approach', 'haunted-tech'); ?></strong><p><?php esc_html_e('Reusable skills for writing, research, and planning.', 'haunted-tech'); ?></p></div><div class="mp-panel"><strong><?php esc_html_e('Choose your engine', 'haunted-tech'); ?></strong><p><?php esc_html_e('Local models, or cloud access with your own key.', 'haunted-tech'); ?></p></div></div>
+<div class="mp-tour mp-panel"><p><?php esc_html_e('See the workspace, compare editions, and read the FAQs.', 'haunted-tech'); ?></p><a href="<?php echo esc_url(home_url('/mechape/')); ?>"><?php esc_html_e('Take the Full Tour', 'haunted-tech'); ?> <span aria-hidden="true">↗</span></a></div>
+</div></div></div>
     <?php
     return ob_get_clean();
 }
