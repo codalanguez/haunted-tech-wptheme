@@ -787,7 +787,6 @@ function ht_render_lab($attributes = []) {
             <div class="lab-actions">
               <a href="#mechape" class="service-btn" data-open-mechape>Enter the Studio</a>
               <a href="<?php echo esc_url(home_url('/mechape/#purchase')); ?>" class="service-btn lab-btn-ghost">Paid edition &mdash; US$29</a>
-              <a href="<?php echo esc_url(home_url('/mechape/')); ?>" class="service-btn lab-btn-ghost">Take the Full Tour</a>
             </div>
           </div>
         </div>
