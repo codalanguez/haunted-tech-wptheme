@@ -1,0 +1,22 @@
+/* Shared Haunted Tech UI contract. Keep component layouts and meaningful states intact. */
+:root { --ht-frame-shadow:0 0 0 4px var(--void),0 0 0 5px var(--gold),0 40px 80px rgba(229,9,20,.3); --ht-corner-glow:0 0 16px rgba(255,212,0,.4); }
+.about-frame,.lightbox-frame,.book-modal-frame,.commission-frame { border:1px solid var(--gold); border-radius:0; box-shadow:var(--ht-frame-shadow); }
+.simple-lightbox-img { border:1px solid var(--gold); border-radius:0; box-shadow:var(--ht-frame-shadow); }
+.about-frame::before,.about-frame::after,.lightbox-frame::before,.lightbox-frame::after,.book-modal-frame::before,.book-modal-frame::after,.commission-frame::before,.commission-frame::after,.simple-lightbox-frame::before,.simple-lightbox-frame::after { content:''; position:absolute; width:50px; height:50px; border:2px solid var(--gold); box-shadow:var(--ht-corner-glow); z-index:10; pointer-events:none; }
+.about-frame::before,.lightbox-frame::before,.book-modal-frame::before,.commission-frame::before,.simple-lightbox-frame::before { top:8px; left:8px; border-right:0; border-bottom:0; }
+.about-frame::after,.lightbox-frame::after,.book-modal-frame::after,.commission-frame::after,.simple-lightbox-frame::after { bottom:8px; right:8px; border-left:0; border-top:0; }
+.about-close,.lightbox-close,.book-modal-close,.commission-close,.simple-lightbox-close { width:48px; height:48px; min-width:48px; flex-shrink:0; border:1px solid var(--gold); border-radius:0; background:var(--void); color:var(--gold); font-family:'Forum',serif; font-size:1.4rem; z-index:20; }
+.about-close:hover,.lightbox-close:hover,.book-modal-close:hover,.commission-close:hover,.simple-lightbox-close:hover { border-color:var(--red); background:var(--red); color:var(--bone); }
+/* Text actions share geometry; filled primaries and selected tabs keep their hierarchy. */
+.service-btn,.buy-btn,.find-btn,.newsletter-submit,.htf-submit,.gallery-inquire,.gallery-chip,.gallery-tab,.wp-block-button .wp-block-button__link,.wp-block-search .wp-block-search__button { border-radius:0; border-style:solid; border-width:1px; border-color:var(--gold); min-height:44px; }
+.wp-block-search .wp-block-search__button { background:var(--void); color:var(--gold); font-family:'Forum',serif; }
+.wp-block-search .wp-block-search__button:hover { background:var(--gold); color:var(--void); }
+/* Match native form controls to the site's dark, square fields. */
+.htf-field input,.htf-field textarea,.htf-field select,.newsletter-input,.wp-block-search .wp-block-search__input { border-radius:0; border:1px solid var(--border); background:var(--void); color:var(--bone); }
+.transmission-channel,.lab-icon { border-radius:0; }
+.transmission-channel { border-color:var(--border); }
+:where(a,button,input,textarea,select,summary,[tabindex]):focus-visible { outline:2px solid var(--gold-bright); outline-offset:3px; }
+:where(.about-close,.lightbox-close,.book-modal-close,.commission-close,.simple-lightbox-close):focus-visible { outline-offset:-5px; }
+:where(.about-body,.lightbox-desc,.book-modal-body,.commission-body) { scrollbar-width:thin; scrollbar-color:var(--gold) var(--void); }
+:where(button:disabled,[aria-disabled='true']) { cursor:not-allowed; }
+@media(prefers-reduced-motion:reduce) { .about-modal.active,.lightbox.active,.book-modal.active,.commission-modal.active,.simple-lightbox.active,.buy-btn:hover,.wp-block-button .wp-block-button__link:hover { animation:none; } }

@@ -20,7 +20,7 @@
 
 if (!defined('ABSPATH')) { exit; }
 
-define('HAUNTED_TECH_VERSION', '0.24.8');
+define('HAUNTED_TECH_VERSION', '0.24.9');
 define('HAUNTED_TECH_DIR', get_template_directory());
 define('HAUNTED_TECH_URI', get_template_directory_uri());
 
@@ -110,6 +110,8 @@ add_action('wp_enqueue_scripts', function () {
         ['haunted-tech-main'],
         (string) filemtime(HAUNTED_TECH_DIR . '/assets/serial-funnel.css')
     );
+
+    wp_enqueue_style('haunted-tech-ui', HAUNTED_TECH_URI . '/assets/ui-consistency.css', ['haunted-tech-main', 'haunted-tech-mechape', 'haunted-tech-serial-funnel'], HAUNTED_TECH_VERSION);
 
     // overflow-x:clip has the same visual effect as hidden (no horizontal
     // overflow shown) but does NOT create a scroll container, so the header's
