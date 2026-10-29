@@ -845,7 +845,7 @@ function ht_render_mechape_modal($attributes = []) {
                 <li><strong>Remote models</strong> &mdash; strictly opt-in OpenRouter support, loudly badged, mildly judged</li>
               </ul>
               <p class="mechape-fine"><strong>Paid edition: US$29 once for MechApe 2.x.</strong> One active device, updates within 2.x, and a 30-day refund period. Future major upgrades may be sold separately. Cloud API usage costs extra. Online activation and periodic refresh required.</p>
-              <p class="mechape-fine">PayPal checkout is being prepared; purchases are not open yet. The Obsidian plugin stays free. Existing MIT community releases remain available.</p>
+              <p class="mechape-fine">PayPal checkout is being prepared; purchases are not open yet. The free community edition is MechApe for Obsidian, an independent open-source plugin. The full desktop app is a separate paid edition.</p>
             </div>
           </div>
           <div class="mechape-meta-foot">
