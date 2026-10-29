@@ -20,7 +20,7 @@
 
 if (!defined('ABSPATH')) { exit; }
 
-define('HAUNTED_TECH_VERSION', '0.24.5');
+define('HAUNTED_TECH_VERSION', '0.24.6');
 define('HAUNTED_TECH_DIR', get_template_directory());
 define('HAUNTED_TECH_URI', get_template_directory_uri());
 
@@ -101,6 +101,8 @@ add_action('wp_enqueue_scripts', function () {
         ['haunted-tech-style'],
         HAUNTED_TECH_VERSION
     );
+
+    wp_enqueue_style('haunted-tech-mechape', HAUNTED_TECH_URI . '/assets/mechape.css', ['haunted-tech-main'], HAUNTED_TECH_VERSION);
 
     wp_enqueue_style(
         'haunted-tech-serial-funnel',

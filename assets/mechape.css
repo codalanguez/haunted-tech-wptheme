@@ -1,0 +1,51 @@
+/* MechApe product surfaces share the desktop's locally bundled typography. */
+@font-face { font-family: 'MechApe Inter'; src: url('fonts/Inter-var.woff2') format('woff2'); font-weight: 100 900; font-display: swap; }
+@font-face { font-family: 'MechApe Forum'; src: url('fonts/Forum-400.woff2') format('woff2'); font-weight: 400; font-display: swap; }
+.cl-mechape.cl-mechape { --mk-pitch:#0a0908; --mk-teal:#ffd400; --mk-magenta:#ffd400; --mk-gold:#ffd400; --mk-ivory:#f6f1de; font-family:'MechApe Inter',sans-serif; font-size:16px; line-height:1.75; }
+.cl-mechape::before,.cl-mechape::after,.cl-mechape .cl-mk-shot::before,.cl-mechape .cl-mk-shot::after { display:none; }
+.cl-mechape .cl-mk-title,.cl-mechape .cl-mk-h2 { font-family:'MechApe Forum',serif; letter-spacing:0; text-transform:none; animation:none; text-shadow:none; }
+.cl-mechape .cl-mk-title { color:#ffd400; }
+.cl-mechape .cl-mk-tagline,.cl-mechape .cl-mk-row h3,.cl-mechape .cl-mk-card h3,.cl-mechape .cl-mk-honest h3 { font-family:'MechApe Inter',sans-serif; letter-spacing:0; text-transform:none; font-weight:600; color:#f6f1de; }
+.cl-mechape .cl-mk-tagline { font-size:clamp(20px,3vw,28px); }
+.cl-mechape .cl-mk-sub,.cl-mechape .cl-mk-lede,.cl-mechape .cl-mk-final p { font-style:normal; font-size:16px; color:#b3ad98; }
+.cl-mechape .cl-mk-btn,.cl-mechape .cl-mk-kicker,.cl-mechape .cl-mk-strip p,.cl-mechape .cl-mk-row h3 .num,.cl-mechape .cl-mk-req,.cl-mechape .cl-mk-back,.cl-mechape .cl-mk-badge,.cl-mechape .cl-mk-prompt { font-family:'MechApe Inter',sans-serif; letter-spacing:0; text-transform:none; }
+.cl-mechape .cl-mk-btn { border-radius:6px; font-size:14px; font-weight:600; box-shadow:none; }
+.cl-mechape .cl-mk-btn:disabled { opacity:.6; cursor:not-allowed; }
+.cl-mechape .cl-mk-btn:hover { box-shadow:none; }
+.cl-mechape .cl-mk-icon { box-shadow:none; }
+.cl-mechape .cl-mk-cursor { display:none; }
+.cl-mechape .cl-mk-strip { background:#100e0b; border-color:#ffd4002e; }
+.cl-mechape .cl-mk-strip .pulse { animation:none; }
+.cl-mechape .cl-mk-shot img { border:1px solid #ffd4002e; border-radius:10px; box-shadow:0 12px 36px #0004; }
+.cl-mechape .cl-mk-card { background:#100e0b; border-color:#ffd4002e; border-radius:10px; }
+.cl-mechape .cl-mk-card:hover { transform:none; }
+.cl-mechape .cl-mk-card p { font-size:14px; }
+.cl-mechape .cl-mk-row { grid-template-columns:minmax(0,1.6fr) minmax(0,1fr); gap:32px; }
+.cl-mechape .cl-mk-row.flip { grid-template-columns:minmax(0,1fr) minmax(0,1.6fr); }
+.cl-mechape a:focus-visible,.mechape-modal a:focus-visible,.mechape-modal button:focus-visible { outline:2px solid #ffd400; outline-offset:4px; }
+.mechape-modal .mechape-frame { width:min(1200px,94vw); max-width:1200px; height:auto; max-height:90dvh; overflow-y:auto; grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); background:#0a0908; border:1px solid #ffd4002e; border-radius:12px; box-shadow:0 20px 70px #0008; }
+.mechape-modal .mechape-visual { background:#100e0b; min-height:0; display:flex; flex-direction:column; justify-content:center; padding:24px; }
+.mechape-modal .mechape-visual::after,.mechape-modal .mechape-name::before,.mechape-modal .mechape-name::after { display:none; }
+.mechape-modal .mechape-visual img { display:block; width:100%; height:auto; border:1px solid #ffd4002e; border-radius:8px; }
+.mechape-modal .mechape-visual-caption { position:static; padding:16px 0 0; font:12px/1.6 'MechApe Inter',sans-serif; color:#b3ad98; letter-spacing:0; text-transform:none; }
+.mechape-modal .mechape-meta { min-width:0; font-family:'MechApe Inter',sans-serif; color:#f6f1de; }
+.mechape-modal .mechape-body-wrap { overflow:visible; }
+.mechape-modal .mechape-name { font-family:'MechApe Forum',serif; color:#ffd400; letter-spacing:0; text-shadow:none; animation:none; text-transform:none; }
+.mechape-modal .mechape-title,.mechape-modal .mechape-body,.mechape-modal .mechape-fine,.mechape-modal .mechape-eyebrow,.mechape-modal .service-btn { font-family:'MechApe Inter',sans-serif; letter-spacing:0; text-transform:none; }
+.mechape-modal .mechape-title { font-size:16px; color:#b3ad98; }
+.mechape-modal .mechape-body { font-size:14px; line-height:1.7; }
+.mechape-modal .mechape-fine { font-size:12px; }
+.mechape-modal .service-btn { border-radius:6px; font-size:13px; }
+#lab-mechape .service-title { font-family:'MechApe Forum',serif; letter-spacing:0; }
+#lab-mechape .service-desc,#lab-mechape .service-btn { font-family:'MechApe Inter',sans-serif; letter-spacing:0; text-transform:none; }
+@media(max-width:781px) { .cl-mechape .cl-mk-row,.cl-mechape .cl-mk-row.flip { grid-template-columns:minmax(0,1fr); } .mechape-modal .mechape-frame { grid-template-columns:minmax(0,1fr); } .mechape-modal .mechape-visual { padding:20px; } }
+.cl-mechape .cl-mk-title,.cl-mechape .cl-mk-h2,.mechape-modal .mechape-name { font-weight:400; }
+.mechape-modal .mechape-frame { align-items:start; }
+.mechape-modal .mechape-frame::before,.mechape-modal .mechape-frame::after { display:none; }
+.mechape-modal .mechape-meta { height:auto; overflow:visible; }
+.mechape-modal .mechape-body-wrap { display:block; }
+.mechape-modal .mechape-body { overflow:visible; padding:0; margin:0; }
+.mechape-modal .mechape-title,.mechape-modal .mechape-fine { font-style:normal; }
+.mechape-modal .mechape-visual { align-self:stretch; }
+.mechape-modal .mechape-eyebrow { color:#b3ad98; text-shadow:none; }
+.mechape-modal .mechape-badge { box-shadow:none; }

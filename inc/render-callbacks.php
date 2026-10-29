@@ -818,19 +818,20 @@ function ht_render_lab($attributes = []) {
  * ============================================================ */
 function ht_render_mechape_modal($attributes = []) {
     $icon = HAUNTED_TECH_URI . '/assets/mechape-icon.png';
-    $shot = HAUNTED_TECH_URI . '/assets/mechape-chat.png';
+    $shot = HAUNTED_TECH_URI . '/assets/mechape-workspace-chat.png';
     ob_start(); ?>
     <div class="mechape-modal" id="mechape-modal" role="dialog" aria-modal="true" aria-labelledby="mechape-name" aria-hidden="true" tabindex="-1">
       <div class="mechape-frame">
         <button class="mechape-close" aria-label="Close MechApe studio">&times;</button>
-        <div class="mechape-visual" style="background-image: url('<?php echo esc_url($shot); ?>');">
-          <div class="mechape-visual-caption">// broadcasting from a machine near you</div>
+        <div class="mechape-visual">
+          <a href="<?php echo esc_url($shot); ?>" target="_blank" rel="noopener"><img src="<?php echo esc_url($shot); ?>" alt="<?php esc_attr_e('MechApe workspace with chat and collapsible project sections', 'haunted-tech'); ?>" width="1440" height="960"></a>
+          <div class="mechape-visual-caption">Desktop preview · example project and conversation</div>
         </div>
         <div class="mechape-meta">
           <div class="mechape-meta-head">
             <div class="mechape-eyebrow"><img class="mechape-badge" src="<?php echo esc_url($icon); ?>" alt="" aria-hidden="true" width="256" height="256"><span>From the Lab</span></div>
             <h2 class="mechape-name" id="mechape-name" data-text="MechApe">MechApe</h2>
-            <div class="mechape-title">A Local, Private LLM Studio &mdash; No Separate Install</div>
+            <div class="mechape-title">Your models, projects, and skills in one workspace</div>
             <div class="mechape-divider"></div>
           </div>
           <div class="mechape-body-wrap">
@@ -841,11 +842,11 @@ function ht_render_mechape_modal($attributes = []) {
                 <li><strong>Skills</strong> &mdash; Claude-format SKILL.md instruction sets; toggle per project or summon mid-message with <code>/</code></li>
                 <li><strong>Live file knowledge</strong> &mdash; attach files or folders, read fresh from disk, indexed with on-device embeddings</li>
                 <li><strong>Its own engine</strong> &mdash; llama.cpp ships inside; GPU auto-detection, one-click model switching, honest health indicator</li>
-                <li><strong>Seven themes</strong> &mdash; four dark, three light, all WCAG AA</li>
+                <li><strong>Seven themes</strong> &mdash; four dark and three light palettes</li>
                 <li><strong>Remote models</strong> &mdash; strictly opt-in OpenRouter support, loudly badged, mildly judged</li>
               </ul>
-              <p class="mechape-fine"><strong>Paid edition: US$29 once for MechApe 2.x.</strong> One active device, updates within 2.x, and a 30-day refund period. Future major upgrades may be sold separately. Cloud API usage costs extra. Online activation and periodic refresh required.</p>
-              <p class="mechape-fine">PayPal checkout is being prepared; purchases are not open yet. The free community edition is MechApe for Obsidian, an independent open-source plugin. The full desktop app is a separate paid edition.</p>
+              <p class="mechape-fine"><strong>Paid edition: US$29 once for MechApe 2.x.</strong> One active device, updates within 2.x, and a 30-day refund period. Future major upgrades may be sold separately. Cloud API usage costs extra. Delivery and activation details will be confirmed before sales open.</p>
+              <p class="mechape-fine">PayPal checkout is being prepared; purchases are not open yet. The free community edition is MechApe for Obsidian, the open-source Obsidian edition of MechApe. The full desktop app is a separate paid edition.</p>
             </div>
           </div>
           <div class="mechape-meta-foot">
