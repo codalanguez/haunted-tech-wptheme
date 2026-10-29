@@ -787,7 +787,7 @@ function ht_render_lab($attributes = []) {
             <div class="lab-actions">
               <a href="#mechape" class="service-btn" data-open-mechape>Enter the Studio</a>
               <a href="<?php echo esc_url(home_url('/mechape/#purchase')); ?>" class="service-btn lab-btn-ghost">Paid edition &mdash; US$29</a>
-              <a href="https://github.com/codalanguez/MechApe" class="service-btn lab-btn-ghost" target="_blank" rel="noopener">GitHub</a>
+              <a href="<?php echo esc_url(home_url('/mechape/')); ?>" class="service-btn lab-btn-ghost">Take the Full Tour</a>
             </div>
           </div>
         </div>
@@ -851,7 +851,7 @@ function ht_render_mechape_modal($attributes = []) {
           </div>
           <div class="mechape-meta-foot">
             <a class="service-btn" href="<?php echo esc_url(home_url('/mechape/#purchase')); ?>">US$29 edition &amp; PayPal details</a>
-            <a class="service-btn lab-btn-ghost" href="https://github.com/codalanguez/MechApe" target="_blank" rel="noopener">Free community edition</a>
+            <a class="service-btn lab-btn-ghost" href="<?php echo esc_url(home_url('/mechape/')); ?>">Take the Full Tour</a>
           </div>
         </div>
       </div>
