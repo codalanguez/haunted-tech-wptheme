@@ -84,3 +84,32 @@
 .mechape-modal .mp-tour a:hover { background:#241f12; border-color:#ffd400; }
 @media(max-width:700px) { .mechape-modal { padding:12px; } .mechape-modal .mechape-bento-frame { width:100%; padding:0 12px 12px; border-radius:18px; max-height:94dvh; } .mechape-modal .mp-grid { grid-template-columns:minmax(0,1fr); } .mechape-modal .mp-brand,.mechape-modal .mp-preview,.mechape-modal .mp-edition { grid-column:auto; grid-row:auto; } .mechape-modal .mp-brand { padding:22px; } .mechape-modal .mp-brand .mechape-name { font-size:52px; } .mechape-modal .mp-features { grid-template-columns:minmax(0,1fr); } .mechape-modal .mp-tour { align-items:stretch; flex-direction:column; } }
 @media(prefers-reduced-motion:reduce) { .mechape-modal.active { animation:none; } }
+/* Haunted Tech frame treatment shared by the product page and homepage dialog. */
+.mechape-modal::before { display:block; animation:none; }
+.mechape-modal .mechape-bento-frame { display:flex; flex-direction:column; padding:0; overflow:hidden; border-radius:0; border:1px solid var(--gold,#ffd400); background:var(--obsidian,#100e0b); box-shadow:0 0 0 4px var(--void,#0a0908),0 0 0 5px var(--gold,#ffd400),0 40px 80px rgba(229,9,20,.3); scrollbar-gutter:auto; }
+.mechape-modal .mechape-bento-frame::before,.mechape-modal .mechape-bento-frame::after { display:block; content:''; position:absolute; width:50px; height:50px; border:2px solid var(--gold,#ffd400); box-shadow:0 0 16px rgba(255,212,0,.4); z-index:15; pointer-events:none; }
+.mechape-modal .mechape-bento-frame::before { top:8px; left:8px; border-right:0; border-bottom:0; }
+.mechape-modal .mechape-bento-frame::after { bottom:8px; right:8px; border-left:0; border-top:0; }
+.mechape-modal .mp-toolbar { position:relative; flex:none; min-height:48px; padding-left:72px; background:var(--obsidian,#100e0b); border-bottom:1px solid #ffd4002e; }
+.mechape-modal .mp-toolbar>span { font-family:'MechApe Forum',serif; color:var(--gold,#ffd400); letter-spacing:.12em; }
+.mechape-modal .mp-toolbar .mechape-close { width:48px; height:48px; border-radius:0; border-color:var(--gold,#ffd400); background:var(--void,#0a0908); }
+.mechape-modal .mp-grid { min-height:0; overflow-y:auto; padding:18px 22px 24px; scrollbar-color:#ffd400 #100e0b; scrollbar-width:thin; }
+.mechape-modal .mp-grid::-webkit-scrollbar { width:6px; }
+.mechape-modal .mp-grid::-webkit-scrollbar-track { background:#100e0b; }
+.mechape-modal .mp-grid::-webkit-scrollbar-thumb { background:#ffd400; }
+.mechape-modal .mp-panel,.mechape-modal .mp-edition,.mechape-modal .mp-tour a,.mechape-modal .mp-price,.mechape-modal .mp-preview-heading>span { border-radius:0; }
+.mechape-modal .mp-panel { background:var(--obsidian,#100e0b); }
+.mechape-modal .mp-brand .mechape-name { text-shadow:2px 0 #e50914,-2px 0 #33ffe6; }
+.mechape-modal .mp-tour a,.mechape-modal .mp-edition { border-color:#ffd400; }
+.mechape-modal .mp-toolbar .mechape-close:hover,.mechape-modal .mp-tour a:hover,.mechape-modal .mp-desktop:hover { background:#e50914; border-color:#e50914; color:#f6f1de; }
+/* Additional scope keeps unrelated theme components on their existing styles. */
+.cl-mechape.cl-mechape .mk-brand-panel,.cl-mechape.cl-mechape .mk-preview-panel,.cl-mechape.cl-mechape .mk-edition,.cl-mechape.cl-mechape .mk-feature-tile,.cl-mechape.cl-mechape .mk-price,.cl-mechape.cl-mechape .mk-preview-status,.cl-mechape.cl-mechape .cl-mk-btn,.cl-mechape.cl-mechape .cl-mk-card,.cl-mechape.cl-mechape .cl-mk-faq-item,.cl-mechape.cl-mechape .cl-mk-shot img { border-radius:0; }
+.cl-mechape.cl-mechape .cl-mk-bento { margin:24px 0 40px; padding:24px; position:relative; border:1px solid #ffd400; box-shadow:0 0 0 4px #0a0908,0 0 0 5px #ffd400,0 30px 70px #e5091420; }
+.cl-mechape.cl-mechape .cl-mk-bento::before,.cl-mechape.cl-mechape .cl-mk-bento::after { content:''; position:absolute; width:42px; height:42px; border:2px solid #ffd400; box-shadow:0 0 16px #ffd40066; pointer-events:none; z-index:3; }
+.cl-mechape.cl-mechape .cl-mk-bento::before { top:8px; left:8px; border-right:0; border-bottom:0; }
+.cl-mechape.cl-mechape .cl-mk-bento::after { bottom:8px; right:8px; border-left:0; border-top:0; }
+.cl-mechape.cl-mechape .mk-edition,.cl-mechape.cl-mechape .cl-mk-btn { border-color:#ffd400; }
+.cl-mechape.cl-mechape .mk-edition-desktop:hover,.cl-mechape.cl-mechape .cl-mk-btn:not(:disabled):hover { background:#e50914; border-color:#e50914; color:#f6f1de; }
+.cl-mechape.cl-mechape .cl-mk-faq-item>summary:focus-visible { border-radius:0; }
+@media(max-width:700px) { .mechape-modal .mp-grid { padding:16px 14px 24px; } .cl-mechape.cl-mechape .cl-mk-bento { padding:16px; } }
+.mechape-modal .mechape-bento-frame { align-items:stretch; }
