@@ -65,3 +65,14 @@
   .lightbox-image { min-height:160px; max-height:55dvh; }
   .lightbox-meta { padding:24px 20px; }
 }
+/* Loaded book/web-novel recommendations need to fit the dialog, not the page width. */
+@media(max-width:900px) {
+  .book-modal .crt-monitor { padding:16px 14px 56px; }
+  .book-modal .crt-screen { padding:20px 16px; min-height:0; overflow-wrap:anywhere; }
+  .book-modal .crt-row { grid-template-columns:20px minmax(0,1fr); gap:8px; }
+  .book-modal .crt-title { min-width:0; }
+  .book-modal .crt-title-name,.book-modal .crt-title-slug,.book-modal .crt-prompt,.book-modal .crt-screen .path,.book-modal .crt-screen .user { white-space:normal; overflow-wrap:anywhere; }
+  .book-modal .crt-tag,.book-modal .crt-state,.book-modal .crt-meta { grid-column:2; text-align:left; }
+  .book-modal .crt-tip { min-width:0; max-width:100%; width:100%; }
+  .book-modal .crt-brand { letter-spacing:.15em; }
+}
