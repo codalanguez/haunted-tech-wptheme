@@ -76,3 +76,7 @@
   .book-modal .crt-tip { min-width:0; max-width:100%; width:100%; }
   .book-modal .crt-brand { letter-spacing:.15em; }
 }
+
+/* Optional Lab support uses the same square button treatment. */
+.lab-support-actions { justify-content: center; margin-top: 1rem; }
+.lab-support-actions .service-btn { max-width: 100%; white-space: normal; text-align: center; }
