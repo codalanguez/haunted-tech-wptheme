@@ -806,7 +806,7 @@ function ht_render_lab($attributes = []) {
       </div>
       <div class="lab-foot">More experiments are on the slab &mdash; the full dossiers live in <a href="<?php echo esc_url(home_url('/lab/')); ?>">the Lab archive</a>.</div>
       <div class="lab-actions lab-support-actions">
-        <a href="https://www.paypal.com/ncp/payment/GBFACZQK4TXBL" class="service-btn lab-btn-ghost" target="_blank" rel="noopener noreferrer">Support the Lab &mdash; Leave a Tip</a>
+        <a href="https://codalanguez.com/go/tipjar" class="service-btn lab-btn-ghost" target="_blank" rel="noopener noreferrer">Support the Lab &mdash; Leave a Tip</a>
       </div>
       <p class="lab-foot">Tips are optional. MechApe for Obsidian stays free; tips do not purchase the desktop edition.</p>
     </section>
