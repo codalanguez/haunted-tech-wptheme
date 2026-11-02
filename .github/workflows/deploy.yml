@@ -39,6 +39,12 @@ jobs:
             -e "ssh -i ~/.ssh/deploy_key -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no" \
             ./ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.THEME_PATH }}/
 
+      - name: Update MechApe sales page
+        run: |
+          ssh -i ~/.ssh/deploy_key -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=yes \
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
+            "php '${{ secrets.THEME_PATH }}/scripts/open-mechape-sales.php'"
+
       - name: Smoke test reader funnel
         continue-on-error: true
         timeout-minutes: 1
