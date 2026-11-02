@@ -474,6 +474,18 @@ function ht_lantern_mark($class = 'social-svg social-svg--tall') {
  * 6. Walker that renders nav-menu items as Font Awesome icons (used by the
  *    social bar block when the user assigns a menu to the 'social' location).
  * ------------------------------------------------------------------------- */
+// Keep the shop in the shared social row on the homepage and links page.
+add_filter('wp_nav_menu_items', function ($items, $args) {
+    if (($args->theme_location ?? '') !== 'social' || strpos($items, '/go/payhip') !== false) {
+        return $items;
+    }
+    $label = __('Payhip — Coda Languez Labs', 'haunted-tech');
+    return $items . sprintf(
+        '<li><a href="https://codalanguez.com/go/payhip" rel="noopener" data-label="%1$s" aria-label="%1$s"><img src="%2$s" alt="" width="24" height="24" decoding="async" style="display:block;width:24px;height:24px"></a></li>',
+        esc_attr($label), esc_url(get_theme_file_uri('/assets/payhip.png'))
+    );
+}, 10, 2);
+
 if (!class_exists('Haunted_Tech_Social_Walker')) {
     class Haunted_Tech_Social_Walker extends Walker_Nav_Menu {
         public function start_el(&$output, $item, $depth = 0, $args = null, $id = 0) {
