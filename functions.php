@@ -491,8 +491,8 @@ add_filter('wp_nav_menu_items', function ($items, $args) {
     }
     $label = __('Payhip — Coda Languez Labs', 'haunted-tech');
     return $items . sprintf(
-        '<li><a href="https://codalanguez.com/go/payhip" rel="noopener" data-label="%1$s" aria-label="%1$s"><img src="%2$s" alt="" width="24" height="24" decoding="async" style="display:block;width:24px;height:24px"></a></li>',
-        esc_attr($label), esc_url(get_theme_file_uri('/assets/payhip.png'))
+        '<li><a href="https://codalanguez.com/go/payhip" rel="noopener" data-label="%1$s" aria-label="%1$s">%2$s</a></li>',
+        esc_attr($label), Haunted_Tech_Social_Walker::svg_for('https://codalanguez.com/go/payhip')
     );
 }, 10, 2);
 
@@ -520,6 +520,10 @@ if (!class_exists('Haunted_Tech_Social_Walker')) {
         public static function svg_for($url, $label = '') {
             $s = strtolower(($url ?: '') . ' ' . ($label ?: ''));
             $open = '<svg class="social-svg" width="1em" height="1em" fill="currentColor" aria-hidden="true" focusable="false" style="display:block" ';
+            // Transparent Payhip tag/heart mark; inherit the row's gold and hover colors.
+            if (strpos($s, 'payhip') !== false) {
+                return $open . 'viewBox="0 0 24 24"><path opacity=".55" d="M12 5.3l1.4-1.4a6.3 6.3 0 0 1 8.9 8.9l-1.2 1.2z"/><path fill-rule="evenodd" d="M12 5.3L10.6 4A6.3 6.3 0 0 0 1.7 12.9L12 23.2l9.1-9.2zM3.7 5.3c0-.4.3-.7.7-.7h3.1c.4 0 .7.3.7.7v3.1c0 .4-.3.7-.7.7H4.4a.7.7 0 0 1-.7-.7z"/></svg>';
+            }
             /* Matches the /go/lantern pretty link and the lanternserials.com
              * host alike — both carry the string. */
             if (strpos($s, 'lantern') !== false) {
