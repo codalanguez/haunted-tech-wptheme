@@ -3962,6 +3962,29 @@
     box-shadow: 0 0 26px rgba(0,255,224,0.34);
   }
 
+  /* Keep the signup form in a stationary card, not inside a clickable CTA.
+   * Native iframe lazy loading also works without the homepage initializer. */
+  .lt-newsletter {
+    min-width: 0;
+    margin: 0 0 2.2rem;
+    padding: 1rem;
+    border: 1px solid var(--gold);
+    background: var(--void);
+    box-shadow: 0 0 18px rgba(255,212,0,0.12);
+  }
+  .lt-newsletter-heading { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1rem; }
+  .lt-newsletter-heading .lt-cta-mark { flex-shrink: 0; }
+  .lt-newsletter-heading h2 { margin: 0; }
+  .lt-newsletter-heading p { margin-bottom: 0; }
+  .lt-newsletter-embed { display: block; width: 100%; max-width: 100%; height: 400px; border: 0; background: var(--void); }
+  .lt-newsletter-fallback { display: flex; align-items: center; justify-content: center; gap: 0.5rem; min-height: 44px; margin-top: 0.75rem; padding: 0.5rem; color: var(--gold); text-align: center; overflow-wrap: anywhere; }
+  .lt-newsletter-fallback:hover { color: var(--bone); }
+  .lt-newsletter-fallback:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  @media (max-width: 480px) {
+    .lt-newsletter { padding: 0.6rem; }
+    .lt-newsletter-embed { height: 480px; }
+  }
+
   .lt-tile-art {
     display: flex; align-items: center; justify-content: center;
     width: 52px; aspect-ratio: 2/3;
