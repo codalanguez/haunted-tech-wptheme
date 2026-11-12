@@ -24,6 +24,8 @@ define('HAUNTED_TECH_VERSION', '0.24.13');
 define('HAUNTED_TECH_DIR', get_template_directory());
 define('HAUNTED_TECH_URI', get_template_directory_uri());
 
+require_once HAUNTED_TECH_DIR . '/inc/mcp-worker-guard.php';
+
 /* ---------------------------------------------------------------------------
  * 1. Theme supports + menu locations
  * ------------------------------------------------------------------------- */
