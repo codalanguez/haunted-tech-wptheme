@@ -28,7 +28,13 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
-          ssh-keyscan -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts || true
+          for attempt in 1 2 3; do
+            if ssh-keyscan -T 10 -t ed25519 -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts && test -s ~/.ssh/known_hosts; then
+              break
+            fi
+            sleep 2
+          done
+          test -s ~/.ssh/known_hosts
 
       # Install the MU plugin first, while the previous theme guard still exists.
       # Never mirror/delete the shared mu-plugins directory owned by WordPress.
@@ -51,7 +57,7 @@ jobs:
             --exclude='.DS_Store' \
             --exclude='*.log' \
             --exclude='.env' \
-            -e "ssh -i ~/.ssh/deploy_key -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no" \
+            -e "ssh -i ~/.ssh/deploy_key -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=yes" \
             ./ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.THEME_PATH }}/
 
       - name: Update MechApe sales page
