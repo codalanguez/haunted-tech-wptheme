@@ -25,3 +25,5 @@ After service recovery, verify /mechape/ returns HTTP 200 promptly; confirm Desk
 - https://github.com/codalanguez/haunted-tech-wptheme/actions/runs/43164771606
 
 The temporary SSH diagnostic workflow and script were removed after the investigation. Existing unrelated edits to inc/render-callbacks.php are excluded from these commits.
+
+Final follow-up: the readable PHP 8.3 pool configuration reports `pm = ondemand` and `pm.max_children = 1`. This is a capacity concern, but the diagnostic did not establish whether that file controls the live site's pool or prove that worker exhaustion caused the outage. Ask hosting support to verify the effective pool configuration. The host's own /wp-login.php request also timed out after 65 seconds without a first byte. Final diagnostic: https://github.com/codalanguez/haunted-tech-wptheme/actions/runs/43164946966
