@@ -20,7 +20,7 @@ The initial pre-dispatch approach was superseded by the final after-permission c
 - PHP lint, worker-guard validation, reader-funnel smoke check, homepage smoke check, and required MechApe release-page smoke check all passed: https://github.com/codalanguez/haunted-tech-wptheme/actions/runs/43167125047
 - Existing unrelated `inc/render-callbacks.php` edits were preserved and excluded from commits.
 
-This protects the current theme's small shared PHP pool; changing themes removes the guard. If standalone MCP push notifications are needed later, use a separate service/pool or reassess hosting capacity before removing the protection. No paid hosting upgrade was made.
+The protection is now packaged as the standalone Coda MCP Worker Protection must-use plugin (`mu-plugins/coda-mcp-worker-guard.php` in this repository). Deployment installs an independent copy into WordPress's configured `WPMU_PLUGIN_DIR` before removing the legacy theme include. Changing or deleting the theme therefore leaves protection active. See `mu-plugins/README.md` for updates and intentional removal. If standalone MCP push notifications are needed later, use a separate service/pool or reassess hosting capacity before removing the protection. No paid hosting upgrade was made.
 
 ## Historical investigation
 ## Verified before repair
