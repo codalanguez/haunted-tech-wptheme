@@ -247,7 +247,7 @@ A single-block dynamic page for social-bio-link use (Instagram bio, TikTok bio, 
 - **Bio** — pulled from Settings → General → Tagline (`blogdescription`)
 - **Start Reading** — the same deliberately selected featured serial used on the homepage, linked to its configured reading destination
 - **Latest Episodes** — the three newest `chapter` posts, linked directly to their Lantern, Substack, or local reading destinations
-- **Follow on Substack** — the secondary audience-retention route
+- **Subscribe on Substack** — responsive signup embed with a direct signup-page fallback
 - **Choose a Serial** — every remaining published `webnovel` post (cover, status eyebrow, title, tagline)
 - **Free Books** — published `book` posts with a download URL, separated from the paid catalogue
 - **Books** — the remaining published books

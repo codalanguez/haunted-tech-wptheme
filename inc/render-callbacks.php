@@ -2111,15 +2111,18 @@ function ht_linktree_tile($args) {
 /** Secondary reader action: keep the audience after the first chapter. */
 function ht_linktree_substack_cta() {
     ob_start(); ?>
-    <a class="lt-cta lt-cta--follow" href="https://codalanguez.com/go/substack" target="_blank" rel="noopener" data-serial-action="follow-substack">
-      <span class="lt-cta-mark" aria-hidden="true">&#9993;</span>
-      <span class="lt-cta-body">
-        <span class="lt-cta-eyebrow"><?php esc_html_e('Newsletter · Serial updates', 'haunted-tech'); ?></span>
-        <span class="lt-cta-title"><?php esc_html_e('Follow on Substack', 'haunted-tech'); ?></span>
-        <span class="lt-cta-sub"><?php esc_html_e('New chapters, free fiction, and dispatches from the static.', 'haunted-tech'); ?></span>
-      </span>
-      <span class="lt-cta-arrow" aria-hidden="true">&rarr;</span>
-    </a>
+    <section class="lt-newsletter" aria-label="<?php esc_attr_e('Subscribe to the newsletter', 'haunted-tech'); ?>">
+      <div class="lt-newsletter-heading">
+        <span class="lt-cta-mark" aria-hidden="true">&#9993;</span>
+        <div class="lt-cta-body">
+          <span class="lt-cta-eyebrow"><?php esc_html_e('Newsletter · Serial updates', 'haunted-tech'); ?></span>
+          <h2 class="lt-cta-title"><?php esc_html_e('Subscribe on Substack', 'haunted-tech'); ?></h2>
+          <p class="lt-cta-sub"><?php esc_html_e('New chapters, free fiction, and dispatches from the static.', 'haunted-tech'); ?></p>
+        </div>
+      </div>
+      <iframe class="lt-newsletter-embed" src="https://newsletter.codalanguez.com/embed" width="480" height="400" loading="lazy" title="<?php esc_attr_e('Subscribe to Coda Languez on Substack', 'haunted-tech'); ?>"></iframe>
+      <a class="lt-newsletter-fallback" href="https://newsletter.codalanguez.com/subscribe" target="_blank" rel="noopener" data-serial-action="follow-substack"><?php esc_html_e('Open the signup page on Substack', 'haunted-tech'); ?> <span aria-hidden="true">&rarr;</span></a>
+    </section>
     <?php
     return ob_get_clean();
 }

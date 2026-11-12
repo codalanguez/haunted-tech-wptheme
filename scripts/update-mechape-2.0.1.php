@@ -28,3 +28,8 @@ $stored = get_post($page->ID)->post_content;
 if (strpos($stored, 'https://payhip.com/b/OAadS') === false || strpos($stored, 'id="release-updates"') === false || strpos($stored, '0.1.10') === false) { exit(1); }
 echo "MechApe page updated and purchase link verified; page ID " . $page->ID . "\n";
 update_option('ht_mechape_release_2_0_1_v1', gmdate('c'), false);
+
+// Refresh generated page/CSS caches through the hosting provider public API.
+if (is_callable(["\\TenWebOptimizer\\OptimizerAdmin", "clear_cache"])) {
+    \TenWebOptimizer\OptimizerAdmin::clear_cache(false, true);
+}
