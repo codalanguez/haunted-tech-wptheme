@@ -113,3 +113,10 @@
 .cl-mechape.cl-mechape .cl-mk-faq-item>summary:focus-visible { border-radius:0; }
 @media(max-width:700px) { .mechape-modal .mp-grid { padding:16px 14px 24px; } .cl-mechape.cl-mechape .cl-mk-bento { padding:16px; } }
 .mechape-modal .mechape-bento-frame { align-items:stretch; }
+/* Release screenshots and always-visible provider pricing disclosure. */
+.cl-mechape .cl-mk-shot { min-width:0; margin:0; }
+.cl-mechape .cl-mk-shot figcaption { color:var(--mk-ivory,#f5efd8); font-size:.9rem; line-height:1.6; padding-top:12px; opacity:.8; }
+.cl-mechape .cl-mk-cloud-costs { border:1px solid #ffd400; border-left-width:4px; padding:18px 20px; background:#14110c; color:#f5efd8; line-height:1.7; }
+.cl-mechape .cl-mk-cloud-costs strong { display:block; color:#ffd400; margin-bottom:6px; }
+.cl-mechape #quick-start > .cl-mk-shot { max-width:900px; margin:0 auto 32px; }
+.cl-mechape #release-updates .cl-mk-card { margin-top:24px; }
