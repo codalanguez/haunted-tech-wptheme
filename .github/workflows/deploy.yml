@@ -93,3 +93,14 @@ jobs:
           grep --fixed-strings 'id="hero-slider"' "$page"
           grep --fixed-strings 'aria-label="Story carousel"' "$page"
           grep --fixed-strings 'data-serial-action="start-reading"' "$page"
+
+      - name: Verify live MechApe release page
+        timeout-minutes: 1
+        run: |
+          page="$(mktemp)"
+          curl --fail --silent --show-error --max-time 15 \
+            "https://codalanguez.com/mechape/" --output "$page"
+          grep --quiet --fixed-strings 'Desktop 2.0.1' "$page"
+          grep --quiet --fixed-strings 'Obsidian 0.1.10' "$page"
+          grep --quiet --fixed-strings 'Cloud API charges are separate.' "$page"
+          grep --quiet --fixed-strings 'https://payhip.com/b/OAadS' "$page"
