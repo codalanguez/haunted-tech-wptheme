@@ -1,0 +1,23 @@
+name: Validate worker protection
+on:
+  push:
+    paths:
+      - 'mu-plugins/**'
+      - 'tests/mcp-worker-guard.php'
+      - 'scripts/*mcp-worker-guard.php'
+      - '.github/workflows/validate-worker-guard.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Lint plugin and migration
+        run: |
+          php -l mu-plugins/coda-mcp-worker-guard.php
+          php -l scripts/install-mcp-worker-guard.php
+          php -l scripts/check-mcp-worker-guard.php
+      - name: Check behavior without a theme
+        run: php tests/mcp-worker-guard.php

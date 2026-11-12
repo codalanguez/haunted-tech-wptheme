@@ -1,8 +1,25 @@
 <?php
 if (PHP_SAPI !== 'cli') { http_response_code(403); exit; }
+// WordPress accepts preinitialized hooks before loading its plugin API. Verify
+// the MU plugin is present before it loads any theme's functions.php.
+$guard_loaded_before_theme = false;
+$GLOBALS['wp_filter']['setup_theme'][1][] = [
+    'function' => function () use (&$guard_loaded_before_theme) {
+        $guard_loaded_before_theme = function_exists('coda_mcp_guard_dispatch')
+            && has_filter('rest_dispatch_request', 'coda_mcp_guard_dispatch') !== false;
+    },
+    'accepted_args' => 0,
+];
 require dirname(__DIR__, 4) . '/wp-load.php';
 echo 'Active template: ' . get_option('template') . PHP_EOL;
-echo 'Guard included: ' . (in_array(dirname(__DIR__) . '/inc/mcp-worker-guard.php', get_included_files(), true) ? 'yes' : 'no') . PHP_EOL;
+$plugin = realpath(WPMU_PLUGIN_DIR . '/coda-mcp-worker-guard.php');
+$included = $plugin && in_array($plugin, array_map('realpath', get_included_files()), true);
+echo 'MU plugin included: ' . ($included ? 'yes' : 'no') . PHP_EOL;
+echo 'Protection loaded before theme: ' . ($guard_loaded_before_theme ? 'yes' : 'no') . PHP_EOL;
+if (!$included || !$guard_loaded_before_theme) { exit(1); }
+if (in_array(dirname(__DIR__) . '/inc/mcp-worker-guard.php', get_included_files(), true)) {
+    throw new RuntimeException('Legacy theme guard is still loaded');
+}
 $request = new WP_REST_Request('GET', '/mcp/v1/http');
 $anonymous = rest_do_request($request);
 echo 'Anonymous MCP status: ' . $anonymous->get_status() . PHP_EOL;
