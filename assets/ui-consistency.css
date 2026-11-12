@@ -80,3 +80,7 @@
 /* Optional Lab support uses the same square button treatment. */
 .lab-support-actions { justify-content: center; margin-top: 1rem; }
 .lab-support-actions .service-btn { max-width: 100%; white-space: normal; text-align: center; }
+
+/* Keep loading, retry and fallback controls readable inside either story dialog. */
+.story-load-state { padding:clamp(24px,5vw,64px); overflow-wrap:anywhere; }
+.story-load-state button,.story-load-state a { display:inline-flex; align-items:center; min-height:44px; padding:10px 16px; margin:8px 8px 0 0; border:1px solid var(--gold); color:var(--gold); background:var(--void); }

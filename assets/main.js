@@ -487,77 +487,102 @@
     });
   })();
 
-  // ===== v0.8 — Book modal (REST-fetched) + Back-to-top arrow =====
-  (function(){
-    const modal = document.getElementById('book-modal');
+  // Shared cancellable loader: a slow connection must never look like a dead link.
+  let closeActiveStory = null;
+  function htStoryModal(kind, label, trigger, closeSelector) {
+    const modal = document.getElementById(kind + '-modal');
     if (!modal) return;
-    const body  = document.getElementById('book-modal-body');
-    const title = document.getElementById('book-modal-title');
-    const close = modal.querySelector('.book-modal-close');
-    const trap  = htFocusTrap(modal);
-
-    // Endpoint base — same-origin /wp-json/haunted-tech/v1/book-modal/<slug>
-    const REST_ROOT = (window.wpApiSettings && window.wpApiSettings.root) || (location.origin + '/wp-json/');
-    const ENDPOINT  = REST_ROOT + 'haunted-tech/v1/book-modal/';
+    const body = document.getElementById(kind + '-modal-body');
+    const title = document.getElementById(kind + '-modal-title');
+    const close = modal.querySelector(closeSelector);
+    const trap = htFocusTrap(modal);
+    const root = (window.wpApiSettings && window.wpApiSettings.root) || (location.origin + '/wp-json/');
+    const endpoint = root + 'haunted-tech/v1/' + kind + '-modal/';
     const cache = new Map();
-
-    async function openBook(slug, fromHash) {
-      if (!slug) return;
-      try {
-        let data = cache.get(slug);
-        if (!data) {
-          const resp = await fetch(ENDPOINT + encodeURIComponent(slug));
-          if (!resp.ok) throw new Error('Book fetch failed: ' + resp.status);
-          data = await resp.json();
-          cache.set(slug, data);
-        }
-        body.innerHTML = data.html;
-        if (title) title.textContent = data.title || '';
-        modal.classList.add('active');
-        modal.setAttribute('aria-hidden', 'false');
-        document.body.classList.add('book-modal-open');
-        body.scrollTop = 0;
-        trap.activate();
-        if (!fromHash) history.replaceState(null, '', '#book-' + slug);
-        // Close conflicting modals
-        const about = document.getElementById('about-modal');
-        if (about && about.classList.contains('active')) {
-          about.classList.remove('active');
-          about.setAttribute('aria-hidden', 'true');
-        }
-      } catch (e) {
-        console.warn('[haunted-tech] book modal load failed', e);
-      }
-    }
+    let pending = null;
+    let generation = 0;
     function shut() {
+      generation++;
+      if (pending) pending.abort();
+      pending = null;
       modal.classList.remove('active');
       modal.setAttribute('aria-hidden', 'true');
+      body.removeAttribute('aria-busy');
       document.body.classList.remove('book-modal-open');
       trap.deactivate();
-      if (location.hash.startsWith('#book-')) {
+      if (closeActiveStory === shut) closeActiveStory = null;
+      if (location.hash.startsWith('#' + kind + '-')) {
         history.replaceState(null, '', location.pathname + location.search);
       }
     }
-    // Delegate clicks for any [data-open-book] (works for dynamically-injected links too)
-    document.addEventListener('click', e => {
-      const t = e.target.closest('[data-open-book]');
-      if (!t) return;
-      e.preventDefault();
-      openBook(t.dataset.openBook);
+    async function open(slug, fromHash) {
+      if (!slug) return;
+      if (closeActiveStory && closeActiveStory !== shut) closeActiveStory();
+      closeActiveStory = shut;
+      const about = document.getElementById('about-modal');
+      if (about && about.classList.contains('active')) about.querySelector('.about-close').click();
+      if (pending) pending.abort();
+      const request = ++generation;
+      const controller = new AbortController();
+      pending = controller;
+      if (title) title.textContent = 'Loading ' + label + '…';
+      body.innerHTML = '<div class="story-load-state" role="status">Loading ' + label + '…</div>';
+      body.setAttribute('aria-busy', 'true');
+      modal.classList.add('active');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('book-modal-open');
+      body.scrollTop = 0;
+      trap.activate();
+      if (!fromHash) history.replaceState(null, '', '#' + kind + '-' + slug);
+      const timer = setTimeout(() => controller.abort(), 12000);
+      try {
+        let data = cache.get(slug);
+        if (!data) {
+          const response = await fetch(endpoint + encodeURIComponent(slug), { signal: controller.signal });
+          if (!response.ok) throw new Error('Story request failed');
+          data = await response.json();
+          if (!data || typeof data.html !== 'string' || !data.html.trim()) throw new Error('Empty story');
+        }
+        if (request !== generation) return;
+        cache.set(slug, data);
+        body.innerHTML = data.html;
+        if (title) title.textContent = data.title || label;
+        body.scrollTop = 0;
+      } catch (error) {
+        if (request !== generation) return;
+        if (title) title.textContent = 'Unable to load ' + label;
+        body.innerHTML = '<div class="story-load-state" role="alert"><p>This story could not load. Please try again or open its full page.</p><button type="button">Try again</button> <a>Open full page</a></div>';
+        body.querySelector('button').addEventListener('click', () => open(slug, true));
+        const pageRoot = root.replace(/wp-json\/?$/, '');
+        body.querySelector('a').href = pageRoot + kind + '/' + encodeURIComponent(slug) + '/';
+      } finally {
+        clearTimeout(timer);
+        if (request === generation) {
+          pending = null;
+          body.removeAttribute('aria-busy');
+        }
+      }
+    }
+    document.addEventListener('click', event => {
+      const link = event.target.closest('[' + trigger + ']');
+      if (!link || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      event.preventDefault();
+      open(link.getAttribute(trigger));
     });
     close.addEventListener('click', shut);
-    modal.addEventListener('click', e => { if (e.target === modal) shut(); });
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape' && modal.classList.contains('active')) shut();
+    modal.addEventListener('click', event => { if (event.target === modal) shut(); });
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && modal.classList.contains('active')) shut();
     });
-    // Open on direct hash load (e.g. someone shared codalanguez.com/#book-hexrose)
-    const m = location.hash.match(/^#book-([\w-]+)/);
-    if (m) openBook(m[1], true);
-    window.addEventListener('hashchange', () => {
-      const m2 = location.hash.match(/^#book-([\w-]+)/);
-      if (m2) openBook(m2[1], true);
-    });
-  })();
+    function fromHash() {
+      const match = location.hash.match(new RegExp('^#' + kind + '-([\\w-]+)$'));
+      if (match) open(match[1], true);
+    }
+    fromHash();
+    window.addEventListener('hashchange', fromHash);
+  }
+  htStoryModal('book', 'book', 'data-open-book', '.book-modal-close');
+  htStoryModal('webnovel', 'web novel', 'data-open-webnovel', '[data-close-webnovel]');
 
   (function(){
     const btn = document.getElementById('back-to-top');
@@ -576,73 +601,6 @@
     btn.addEventListener('click', e => {
       e.preventDefault();
       window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-  })();
-
-  // ===== v0.9 — Web novel modal (parity with book modal) =====
-  (function(){
-    const modal = document.getElementById('webnovel-modal');
-    if (!modal) return;
-    const body  = document.getElementById('webnovel-modal-body');
-    const title = document.getElementById('webnovel-modal-title');
-    const close = modal.querySelector('[data-close-webnovel]');
-    const trap  = htFocusTrap(modal);
-    const REST_ROOT = (window.wpApiSettings && window.wpApiSettings.root) || (location.origin + '/wp-json/');
-    const ENDPOINT  = REST_ROOT + 'haunted-tech/v1/webnovel-modal/';
-    const cache = new Map();
-    async function openWN(slug, fromHash) {
-      if (!slug) return;
-      try {
-        let data = cache.get(slug);
-        if (!data) {
-          const resp = await fetch(ENDPOINT + encodeURIComponent(slug));
-          if (!resp.ok) throw new Error('Web novel fetch failed: ' + resp.status);
-          data = await resp.json();
-          cache.set(slug, data);
-        }
-        body.innerHTML = data.html;
-        if (title) title.textContent = data.title || '';
-        modal.classList.add('active');
-        modal.setAttribute('aria-hidden', 'false');
-        document.body.classList.add('book-modal-open');
-        body.scrollTop = 0;
-        trap.activate();
-        if (!fromHash) history.replaceState(null, '', '#webnovel-' + slug);
-        // Close conflicting modals
-        const bookModal = document.getElementById('book-modal');
-        if (bookModal && bookModal.classList.contains('active')) {
-          bookModal.classList.remove('active');
-          bookModal.setAttribute('aria-hidden', 'true');
-        }
-      } catch (e) {
-        console.warn('[haunted-tech] webnovel modal load failed', e);
-      }
-    }
-    function shut() {
-      modal.classList.remove('active');
-      modal.setAttribute('aria-hidden', 'true');
-      document.body.classList.remove('book-modal-open');
-      trap.deactivate();
-      if (location.hash.startsWith('#webnovel-')) {
-        history.replaceState(null, '', location.pathname + location.search);
-      }
-    }
-    document.addEventListener('click', e => {
-      const t = e.target.closest('[data-open-webnovel]');
-      if (!t) return;
-      e.preventDefault();
-      openWN(t.dataset.openWebnovel);
-    });
-    close.addEventListener('click', shut);
-    modal.addEventListener('click', e => { if (e.target === modal) shut(); });
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape' && modal.classList.contains('active')) shut();
-    });
-    const m = location.hash.match(/^#webnovel-([\w-]+)/);
-    if (m) openWN(m[1], true);
-    window.addEventListener('hashchange', () => {
-      const m2 = location.hash.match(/^#webnovel-([\w-]+)/);
-      if (m2) openWN(m2[1], true);
     });
   })();
 

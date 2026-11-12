@@ -804,7 +804,7 @@ function ht_render_lab($attributes = []) {
           </div>
         </div>
       </div>
-      <div class="lab-foot">More experiments are on the slab &mdash; the full dossiers live in <a href="<?php echo esc_url(home_url('/lab/')); ?>">the Lab archive</a>.</div>
+      <div class="lab-foot">Explore the full dossiers: <a href="<?php echo esc_url(home_url('/mechape/')); ?>">MechApe</a> &middot; <a href="<?php echo esc_url(home_url('/haunted-tech/')); ?>">Haunted Tech</a>.</div>
       <div class="lab-actions lab-support-actions">
         <a href="https://codalanguez.com/go/tipjar" class="service-btn lab-btn-ghost" target="_blank" rel="noopener noreferrer">Support the Lab &mdash; Leave a Tip</a>
       </div>
@@ -2498,9 +2498,9 @@ function ht_render_linktree($attributes = []) {
                 'modifier' => 'lt-tile--flat',
             ]);
             echo ht_linktree_tile([
-                'url'   => home_url('/lab/'),
+                'url'   => home_url('/#lab'),
                 'title' => __('The Lab', 'haunted-tech'),
-                'sub'   => __('Free, open-source software', 'haunted-tech'),
+                'sub'   => __('Independent apps and open-source tools', 'haunted-tech'),
                 'glyph' => '&#9879;',
                 'modifier' => 'lt-tile--flat',
             ]);
