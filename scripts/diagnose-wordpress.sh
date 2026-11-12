@@ -33,3 +33,21 @@ for route in '/mechape/' '/wp-json/' '/wp-login.php' '/wp-content/themes/haunted
   printf '%s ' "$route"
   curl -sS -o /dev/null --max-time 12 -w 'status=%{http_code} total=%{time_total}\n' "https://codalanguez.com$route" || true
 done
+echo 'Web process counts'
+ps -eo comm= | sort | uniq -c | grep -E 'php|nginx|apache|mysql' || true
+echo 'Readable log filenames'
+find /var/log -maxdepth 2 -type f -readable -name '*log*' 2>/dev/null | head -25
+find "$(dirname "$WP_ROOT")" -maxdepth 2 -type f -readable -name '*log*' 2>/dev/null | sed "s|$(dirname "$WP_ROOT")|SITE_PARENT|g" | head -25
+echo 'PHP service state'
+systemctl list-units --type=service --no-pager --plain 2>/dev/null | grep -E 'php|nginx|apache' || true
+echo 'Web server log error categories'
+"$PHP_BIN" <<'PHP'
+<?php
+$paths=array_merge(glob('/var/log/*log')?:[],glob('/var/log/nginx/*log')?:[],glob('/var/log/apache2/*log')?:[]);
+foreach($paths as $file){
+ if(!is_readable($file)||!is_file($file))continue;
+ $f=fopen($file,'r');fseek($f,max(0,filesize($file)-128000));$tail=stream_get_contents($f);fclose($f);
+ $counts=[];foreach(['upstream timed out','connect() failed','Connection refused','No such file','pm.max_children','server reached','Fatal error','Allowed memory size','Maximum execution time',' 502 ',' 504 '] as $needle){$count=substr_count($tail,$needle);if($count)$counts[$needle]=$count;}
+ echo basename($file).': '.json_encode($counts)."\n";
+}
+PHP
