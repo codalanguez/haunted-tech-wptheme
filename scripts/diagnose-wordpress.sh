@@ -51,3 +51,11 @@ foreach($paths as $file){
  echo basename($file).': '.json_encode($counts)."\n";
 }
 PHP
+echo 'PHP worker wait states'
+ps -eo comm,stat,wchan:25,etime | grep php-fpm || true
+echo 'Recent PHP service error counts'
+for term in 'max_children' 'WARNING' 'ERROR' 'exited' 'failed'; do printf '%s: ' "$term"; journalctl -u php8.3-fpm --since '30 minutes ago' --no-pager 2>/dev/null | grep -c "$term" || true; done
+echo 'Configured PHP pool capacity'
+grep -hE '^\s*(pm|pm.max_children|pm.max_requests|request_terminate_timeout|request_slowlog_timeout)\s*=' /etc/php/8.3/fpm/pool.d/*.conf 2>/dev/null || true
+echo 'Long request result'
+curl -sS -o /dev/null --max-time 65 -w 'status=%{http_code} first_byte=%{time_starttransfer} total=%{time_total}\n' https://codalanguez.com/wp-login.php || true
