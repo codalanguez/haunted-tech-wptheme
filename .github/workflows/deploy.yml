@@ -77,6 +77,12 @@ jobs:
             ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
             "for candidate in php8.4 php8.3 php8.2 php8.1 php8.0 php; do if command -v \$candidate >/dev/null 2>&1 && \$candidate -r 'exit(PHP_VERSION_ID >= 80000 ? 0 : 1);'; then exec \$candidate '${{ secrets.THEME_PATH }}/scripts/update-mechape-2.0.1.php'; fi; done; echo 'PHP 8 or newer CLI required' >&2; exit 1"
 
+      - name: Update MechApe 2.0.2 readability release page
+        run: |
+          ssh -i ~/.ssh/deploy_key -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=yes \
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
+            "for candidate in php8.4 php8.3 php8.2 php8.1 php8.0 php; do if command -v \$candidate >/dev/null 2>&1 && \$candidate -r 'exit(PHP_VERSION_ID >= 80000 ? 0 : 1);'; then exec \$candidate '${{ secrets.THEME_PATH }}/scripts/update-mechape-2.0.2.php'; fi; done; echo 'PHP 8 or newer CLI required' >&2; exit 1"
+
       - name: Refresh links signup cache
         run: |
           ssh -i ~/.ssh/deploy_key -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=yes \
@@ -126,7 +132,7 @@ jobs:
           page="$(mktemp)"
           curl --fail --silent --show-error --max-time 15 \
             "https://codalanguez.com/mechape/" --output "$page"
-          grep --quiet --fixed-strings 'Desktop 2.0.1' "$page"
+          grep --quiet --fixed-strings 'Desktop 2.0.2' "$page"
           grep --quiet --fixed-strings 'Obsidian 0.1.10' "$page"
           grep --quiet --fixed-strings 'Cloud API charges are separate.' "$page"
           grep --quiet --fixed-strings 'https://payhip.com/b/OAadS' "$page"
