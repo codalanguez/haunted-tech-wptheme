@@ -83,6 +83,12 @@ jobs:
             ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
             "for candidate in php8.4 php8.3 php8.2 php8.1 php8.0 php; do if command -v \$candidate >/dev/null 2>&1 && \$candidate -r 'exit(PHP_VERSION_ID >= 80000 ? 0 : 1);'; then exec \$candidate '${{ secrets.THEME_PATH }}/scripts/update-mechape-2.0.2.php'; fi; done; echo 'PHP 8 or newer CLI required' >&2; exit 1"
 
+      - name: Correct historical MechApe launch article
+        run: |
+          ssh -i ~/.ssh/deploy_key -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=yes \
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
+            "for candidate in php8.4 php8.3 php8.2 php8.1 php8.0 php; do if command -v \$candidate >/dev/null 2>&1 && \$candidate -r 'exit(PHP_VERSION_ID >= 80000 ? 0 : 1);'; then exec \$candidate '${{ secrets.THEME_PATH }}/scripts/update-mechape-launch-article.php'; fi; done; echo 'PHP 8 or newer CLI required' >&2; exit 1"
+
       - name: Refresh links signup cache
         run: |
           ssh -i ~/.ssh/deploy_key -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=yes \
